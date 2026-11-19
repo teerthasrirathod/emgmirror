@@ -1,0 +1,15 @@
+# One channel: CH1 = GPIO34 (header D34, red wire), the only Candy with a measured output on
+# 2026-11-16 (docs/HARDWARE_INVENTORY.md). Everything else comes from esp32_candy.yaml.
+# The host sends this pin map to the device (PINS 34) on connect; the device stores it in NVS.
+base: configs/esp32_candy.yaml
+
+hardware:
+  channels:
+    - { ch: 1, gpio: 34, adc_channel: ADC1_CH6, wire: red, sensor: "Candy OUT (driven, ~1.66 V idle, 2026-11-16)" }
+
+hardware_safety_note: "gate passed with conditions 2026-11-16: right forearm, battery only, CH1 only (docs/ELECTRICAL_SAFETY.md)"
+
+# Sequential mode: pass --arm right|left at record time. Rename the muscle to wherever the
+# electrodes actually go.
+channels:
+  - { name: ch1, arm: right, muscle: flexors }

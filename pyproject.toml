@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "emgmirror"
+version = "0.1.0"
+description = "Bilateral forearm sEMG: use the healthy arm as a live reference to visualise and quantify the recovering arm."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "pyyaml>=6.0",
+    "plotly>=5.20",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "pyserial>=3.5",
+    "pydicom>=3.0",
+    "SimpleITK>=2.5",
+    "nibabel>=5.3",
+    "scikit-image>=0.25",
+    "trimesh>=4.5",
+    "networkx>=3.0",
+    "fast-simplification>=0.1.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "httpx>=0.27"]
+
+[project.scripts]
+emgmirror = "emgmirror.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+emgmirror = ["server/static/*", "ct/static/*", "viewer/static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["hardware: needs a connected ESP32 running firmware/emg_esp32_v2 (set EMGMIRROR_PORT)"]

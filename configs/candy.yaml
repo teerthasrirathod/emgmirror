@@ -1,0 +1,91 @@
+# emgmirror configuration for 3x Upside Down Labs Muscle BioAmp Candy on an Arduino UNO.
+# Candy: fixed gain x2420, hardware band-pass 72-720 Hz, 1 channel per board.
+# Flash firmware with NUM_CHANNELS 3 and SAMPLE_RATE_HZ 2000 (1000 Hz would alias the 500-720 Hz band).
+# Based on default.yaml.
+# Copy to `configs/me.local.yaml` (git-ignored) for your personal values and pass
+# `--config configs/me.local.yaml` to any command.
+
+acquisition:
+  fs: 2000                 # samples per second per channel (Candy passes up to 720 Hz)
+  mains_hz: 50             # 50 in India/Europe, 60 in the Americas
+  # How the raw ADC counts map to millivolts at the electrode.
+  adc_bits: 10             # Arduino Uno/Nano = 10, ESP32 = 12
+  adc_vref: 5.0            # ADC reference voltage (V)
+  amp_gain: 2420.0         # Muscle BioAmp Candy fixed gain
+  serial_baud: 500000
+
+# Every channel = one electrode pair. `arm` is left|right, `muscle` must match a
+# muscle group in `anatomy.groups`.
+#  - Mirror mode (simultaneous, needs >= 2 channels per arm): list both arms.
+#  - Sequential mode (small kit): list one arm and pass --arm at record time;
+#    the arm label is overridden per recording block.
+channels:
+  # Sequential mode: all 3 Candys on one arm; --arm left|right at record time.
+  - { name: flex,  arm: left, muscle: flexors }
+  - { name: ext,   arm: left, muscle: extensors }
+  - { name: brach, arm: left, muscle: brachioradialis }
+
+processing:
+  band_hz: [75, 700]       # inside the Candy's 72-720 Hz hardware band
+  envelope_window_s: 0.10
+  notch: true              # remove mains at all
+  # Offline mains removal. "regression" fits and subtracts the hum (keeps the EMG
+  # at 50/100/150 Hz: ~2 % RMS error in experiments); "notch" is the classic
+  # filter (~15 % RMS loss, median frequency -16 Hz). The live view always uses a notch.
+  mains_removal: regression
+
+# Recording protocol. The same tasks are done with each arm (or both at once in
+# mirror mode). `drive` is what the simulator uses as the descending command and
+# what the on-screen guide shows as the target effort (0..1 of maximum).
+protocol:
+  - { task: rest,          kind: hold, level: 0.0,  duration_s: 5,  instruction: "Relax the forearm completely." }
+  - { task: grip_mvc,      kind: hold, level: 1.0,  duration_s: 4,  instruction: "Squeeze as hard as you can." }
+  - { task: wrist_flex_mvc,kind: hold, level: 1.0,  duration_s: 4,  instruction: "Bend the wrist toward the palm as hard as you can." }
+  - { task: wrist_ext_mvc, kind: hold, level: 1.0,  duration_s: 4,  instruction: "Bend the wrist back as hard as you can." }
+  - { task: grip_ramp,     kind: ramp, level: 0.6,  duration_s: 10, instruction: "Slowly increase grip from nothing to firm over 10 s." }
+  - { task: grip_low_hold, kind: hold, level: 0.15, duration_s: 15, instruction: "Hold a light, steady grip (like holding a cup). 15 s: motor-unit estimates need >= 12 s." }
+  - { task: open_close,    kind: reps, level: 0.6,  duration_s: 10, reps: 5, instruction: "Open and close the hand, once every 2 s." }
+protocol_rest_between_s: 3
+
+# Which muscle groups each task drives (0..1). Used by the simulator only.
+task_muscle_drive:
+  rest:           { flexors: 0.0,  extensors: 0.0 }
+  grip_mvc:       { flexors: 1.0,  extensors: 0.45 }
+  wrist_flex_mvc: { flexors: 1.0,  extensors: 0.10 }
+  wrist_ext_mvc:  { flexors: 0.15, extensors: 1.0 }
+  grip_ramp:      { flexors: 1.0,  extensors: 0.40 }
+  grip_low_hold:  { flexors: 1.0,  extensors: 0.30 }
+  open_close:     { flexors: 0.9,  extensors: 0.70 }
+
+# Tape-measure values (cm). Measured on both arms, same landmarks:
+# length = elbow crease to wrist crease; proximal = widest girth (~1/3 down from
+# elbow); distal = girth just above the wrist bones.
+subject:
+  right: { length_cm: 26.0, circ_proximal_cm: 27.0, circ_distal_cm: 16.5 }
+  left:  { length_cm: 26.0, circ_proximal_cm: 24.5, circ_distal_cm: 16.0 }
+
+anatomy:
+  # Channel muscle group -> anatomical muscles drawn in 3D.
+  groups:
+    flexors:   [FCR, PL, FDS, FDP, FCU]
+    extensors: [ECRL, ECRB, EDC, ECU]
+    brachioradialis: [BR]
+    pronators: [PT]
+    supinators: [SUP]
+
+# Synthetic data. Only used when there is no real recording yet.
+simulation:
+  seed: 7
+  motor_units_per_muscle: 120      # healthy pool (scaled down from real counts)
+  noise_uv_rms: 4.0
+  mains_uv: 15.0
+  # Post-injury model for the LEFT arm, per muscle group.
+  #  mu_fraction: share of motor units that still have a working nerve supply
+  #  enlargement: size gain of surviving units from collateral reinnervation
+  #  drive_max:   how much of the maximum descending drive reaches the pool
+  left_impairment:
+    flexors:   { mu_fraction: 0.35, enlargement: 1.5, drive_max: 0.80 }
+    extensors: { mu_fraction: 0.50, enlargement: 1.3, drive_max: 0.85 }
+    brachioradialis: { mu_fraction: 0.70, enlargement: 1.2, drive_max: 0.90 }
+    pronators:       { mu_fraction: 0.50, enlargement: 1.3, drive_max: 0.85 }
+    supinators:      { mu_fraction: 0.60, enlargement: 1.2, drive_max: 0.90 }

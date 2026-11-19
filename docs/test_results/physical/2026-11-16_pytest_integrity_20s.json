@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-16T19:29:29",
+  "port": "COM9",
+  "rates": {
+    "nominal_hz": 2000.0,
+    "host_window_hz": 1999.192,
+    "device_clock_hz": 2000.0,
+    "host_since_start_hz": 1999.192
+  },
+  "counts": {
+    "samples": 40010,
+    "missing": 0,
+    "missing_by_cause": {},
+    "invalid": 0,
+    "runs": 1,
+    "first_index": 100,
+    "last_index": 40109
+  },
+  "decoder": {
+    "packets": 4029,
+    "crc_errors": 0,
+    "frame_errors": 0,
+    "bytes_dropped": 11
+  },
+  "device_status": {
+    "run": "23",
+    "running": "1",
+    "rate_dev": "2000.00",
+    "index": "38680",
+    "frames": "209572",
+    "dma_overflow": "0",
+    "incomplete_rows": "0",
+    "ts_lost": "0",
+    "tx_free": "8164",
+    "uptime_ms": "1048230"
+  },
+  "stages": {
+    "connection": {
+      "state": "ok",
+      "detail": "open on COM9"
+    },
+    "device": {
+      "state": "ok",
+      "detail": "emg_esp32_v2/2.1.0 on ESP32-D0WD-V3 rev 301 (MAC 489d31047070), pins 34,39,36"
+    },
+    "acquisition": {
+      "state": "ok",
+      "detail": "40010 samples, none missing, 2000.0 Hz"
+    },
+    "channels": {
+      "state": "warn",
+      "detail": "CH1 ok; CH2 warn; CH3 warn"
+    },
+    "emg": {
+      "state": "not_verified",
+      "detail": "EMG capture is not verified. Electrode tests are blocked until the electrical safety gate passes (docs/ELECTRICAL_SAFETY.md)."
+    }
+  }
+}

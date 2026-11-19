@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Understand your CT scan</title>
+<style>
+:root { --bg:#f6f5f2; --card:#ffffff; --ink:#22262b; --soft:#5d6670; --line:#e2dfd8; --accent:#2f6f8f; --accent-ink:#ffffff;
+        --warn:#8a5a00; --warn-bg:#fbf3df; --bad:#9b2c2c; --radius:10px; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#16181b; --card:#1f2226; --ink:#e8e6e1; --soft:#a2a9b1; --line:#32363c; --accent:#6fb3d2; --accent-ink:#10202a;
+          --warn:#e8c170; --warn-bg:#2c2617; --bad:#f08a8a; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1080px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; font-weight: 650; }
+h2 { font-size: 1.1rem; margin: 0 0 12px; font-weight: 650; }
+h3 { font-size: 1rem; margin: 0 0 4px; font-weight: 650; }
+p { margin: 0 0 12px; }
+.lead { color: var(--soft); max-width: 62ch; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-top: 20px; }
+.muted { color: var(--soft); font-size: .92rem; }
+.drop { border: 2px dashed var(--line); border-radius: var(--radius); padding: 28px 16px; text-align: center; transition: border-color .15s, background .15s; }
+.drop.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; margin-top: 12px; }
+button, .btn { font: inherit; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+button.quiet { border-color: transparent; color: var(--soft); text-decoration: underline; padding: 4px 6px; }
+button:disabled { opacity: .5; cursor: default; }
+button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; }
+input[type=text] { font: inherit; padding: 9px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: min(100%, 460px); }
+progress { width: 100%; height: 10px; accent-color: var(--accent); }
+details { margin-top: 14px; }
+summary { cursor: pointer; color: var(--soft); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.tile { border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+.num { font-size: 1.35rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.note { background: var(--warn-bg); color: var(--warn); border-radius: 8px; padding: 10px 14px; margin-top: 12px; }
+.error { color: var(--bad); }
+iframe { width: 100%; height: min(78vh, 820px); border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); }
+ul { margin: 0; padding-left: 20px; }
+li { margin-bottom: 6px; }
+.jobs li { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.downloads { columns: 2 260px; font-size: .92rem; }
+a { color: var(--accent); }
+footer { margin-top: 28px; color: var(--soft); font-size: .88rem; text-align: center; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Understand your CT scan</h1>
+  <p class="lead">Load the scan your hospital gave you. This page turns it into a 3D model you can rotate, with the bones, muscle and fat
+    measured in millimetres and explained in plain words.</p>
+  <p class="muted">Your scan stays on this computer. Nothing is uploaded to the internet.</p>
+
+  <section class="card" id="load" aria-labelledby="load-h">
+    <h2 id="load-h">1. Choose your scan</h2>
+    <div class="drop" id="drop">
+      <p>Drag the scan folder or a zip file here</p>
+      <p class="muted">A CT scan is usually a folder with hundreds of files, often on a CD or USB stick, sometimes named DICOM or IMAGES.</p>
+      <div class="row">
+        <button class="primary" id="pick-folder">Choose folder</button>
+        <button id="pick-zip">Choose zip file</button>
+      </div>
+      <input type="file" id="in-folder" webkitdirectory multiple hidden>
+      <input type="file" id="in-zip" accept=".zip" hidden>
+    </div>
+    <details>
+      <summary>The scan is already in a folder on this computer</summary>
+      <p class="muted" style="margin-top:8px">Paste the folder's location. This is faster for large scans because nothing is copied.</p>
+      <div class="row" style="justify-content:flex-start">
+        <label for="in-path" class="muted">Folder</label>
+        <input type="text" id="in-path" placeholder="C:\Users\me\Documents\my-ct" autocomplete="off" spellcheck="false">
+        <button id="use-path">Use this folder</button>
+      </div>
+    </details>
+    <p class="error" id="load-error" role="alert" hidden></p>
+  </section>
+
+  <section class="card" id="work" aria-labelledby="work-h" hidden>
+    <h2 id="work-h">2. Building your model</h2>
+    <p id="work-step" aria-live="polite">Starting</p>
+    <progress id="work-bar" max="1" value="0" aria-label="Progress"></progress>
+    <p class="muted" id="work-hint">A full-resolution scan can take a long time on a small laptop. You can leave this page open.</p>
+    <p class="error" id="work-error" role="alert" hidden></p>
+    <button id="work-again" hidden>Try another scan</button>
+  </section>
+
+  <section id="result" hidden>
+    <div class="card">
+      <h2 id="res-title">3. Your scan</h2>
+      <p id="res-headline"></p>
+      <div id="res-warnings"></div>
+      <div class="grid" id="res-numbers"></div>
+    </div>
+    <div class="card">
+      <h2>Look around</h2>
+      <p class="muted">Drag to rotate. Tick boxes to show or hide parts. Use the sliders to move through the scan slice by slice.</p>
+      <iframe id="res-viewer" title="3D model and slices of the scan"></iframe>
+    </div>
+    <div class="card">
+      <h2>What you are looking at</h2>
+      <div id="res-plain"></div>
+    </div>
+    <div class="card">
+      <h2>What this cannot tell you</h2>
+      <ul id="res-limits"></ul>
+    </div>
+    <div class="card">
+      <h2>Files</h2>
+      <p class="muted">3D models for printing or other software (STL, OBJ, PLY, GLB), the labelled scan, and the full technical report.</p>
+      <ul class="downloads" id="res-downloads"></ul>
+      <div class="row" style="justify-content:flex-start;margin-top:16px">
+        <button id="res-new">Load another scan</button>
+        <button id="res-delete">Delete this scan and its results from this computer</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="history" hidden>
+    <h2>Earlier scans on this computer</h2>
+    <ul class="jobs" id="jobs"></ul>
+  </section>
+
+  <footer>Research use, not for diagnosis or surgical planning. This is not a medical device. Talk to your doctor about what your scan means for you.</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
+const NO_SERVER = "This page works only through the local CT program. In a terminal in the project folder run: emgmirror ct serve, then open 127.0.0.1:8010 in your browser. Your scan still stays on this computer.";
+const api = async (path, opt) => {
+  if (!/^https?:$/.test(location.protocol)) throw new Error(NO_SERVER);
+  let r;
+  try { r = await fetch(path, opt); } catch (_) { throw new Error("The local CT program is not answering. " + NO_SERVER.slice(NO_SERVER.indexOf("In a terminal"))); }
+  if (!r.ok) { let m = r.statusText; try { m = (await r.json()).detail || m; } catch (_) {} throw new Error(m); }
+  return r.json();
+};
+let current = null, timer = null;
+
+function show(which) {
+  for (const id of ["load", "work", "result"]) $(id).hidden = id !== which;
+  if (which !== "work") clearTimeout(timer);
+}
+function fail(where, msg) { const e = $(where); e.textContent = msg; e.hidden = false; }
+
+async function uploadFiles(files, name) {
+  $("load-error").hidden = true;
+  if (!files.length) return;
+  show("work"); $("work-error").hidden = true; $("work-again").hidden = true;
+  try {
+    const job = await api("/api/ct/jobs", {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify({name})});
+    current = job.id;
+    const total = files.reduce((s, f) => s + f.size, 0) || 1;
+    let sent = 0, next = 0;
+    const worker = async () => {
+      while (next < files.length) {
+        const f = files[next++];
+        const rel = f.webkitRelativePath || f.relPath || f.name;
+        await api(`/api/ct/jobs/${job.id}/files?name=${encodeURIComponent(rel)}`, {method: "PUT", body: f});
+        sent += f.size;
+        $("work-bar").value = 0.999 * sent / total;
+        $("work-step").textContent = `Copying your scan: ${Math.round(100 * sent / total)}%`;
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]);
+    await api(`/api/ct/jobs/${job.id}/start`, {method: "POST"});
+    poll();
+  } catch (e) { workFailed(e.message); }
+}
+
+async function usePath() {
+  $("load-error").hidden = true;
+  const path = $("in-path").value.trim();
+  if (!path) return;
+  try {
+    const job = await api("/api/ct/jobs", {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify({path})});
+    current = job.id;
+    show("work"); $("work-error").hidden = true; $("work-again").hidden = true;
+    await api(`/api/ct/jobs/${job.id}/start`, {method: "POST"});
+    poll();
+  } catch (e) { fail("load-error", e.message); }
+}
+
+function workFailed(msg) {
+  fail("work-error", msg || "Something went wrong.");
+  $("work-again").hidden = false;
+  refreshJobs();
+}
+
+async function poll() {
+  clearTimeout(timer);
+  if (!current) return;
+  try {
+    const st = await api(`/api/ct/jobs/${current}`);
+    if (st.state === "done") { render(st); refreshJobs(); return; }
+    if (st.state === "failed") { show("work"); $("work-step").textContent = "This scan could not be processed"; workFailed(st.error); return; }
+    show("work");
+    $("work-step").textContent = st.step || "Working";
+    $("work-bar").value = st.progress || 0;
+  } catch (e) { workFailed(e.message); return; }
+  timer = setTimeout(poll, 2000);
+}
+
+function render(st) {
+  const s = st.summary || {};
+  show("result");
+  $("res-title").textContent = s.title || "3. Your scan";
+  $("res-headline").textContent = s.headline || "";
+  const w = $("res-warnings"); w.replaceChildren();
+  for (const t of s.warnings || []) w.append(el("p", t, "note"));
+  const n = $("res-numbers"); n.replaceChildren();
+  for (const x of s.numbers || []) {
+    const t = el("div", null, "tile");
+    t.append(el("div", x.label, "muted"), el("div", x.value, "num"));
+    if (x.hint) t.append(el("div", x.hint, "muted"));
+    n.append(t);
+  }
+  const p = $("res-plain"); p.replaceChildren();
+  for (const x of s.plain || []) { p.append(el("h3", x.title), el("p", x.body)); }
+  const l = $("res-limits"); l.replaceChildren();
+  for (const t of s.limits || []) l.append(el("li", t));
+  const d = $("res-downloads"); d.replaceChildren();
+  for (const f of st.downloads || []) {
+    const a = el("a", f); a.href = `/api/ct/jobs/${st.id}/files/${f.split("/").map(encodeURIComponent).join("/")}`;
+    const li = el("li"); li.append(a); d.append(li);
+  }
+  $("res-viewer").src = `/api/ct/jobs/${st.id}/viewer`;
+}
+
+async function refreshJobs() {
+  try {
+    const jobs = await api("/api/ct/jobs");
+    const ul = $("jobs"); ul.replaceChildren();
+    $("history").hidden = !jobs.length;
+    const words = {created: "not started", queued: "waiting", running: "in progress", done: "ready", failed: "did not work"};
+    for (const j of jobs) {
+      const li = el("li");
+      const b = el("button", j.name || "Scan", "quiet");
+      b.onclick = () => { current = j.id; poll(); window.scrollTo({top: 0, behavior: "smooth"}); };
+      li.append(b, el("span", `${new Date(j.created * 1000).toLocaleString()} · ${words[j.state] || j.state}`, "muted"));
+      ul.append(li);
+    }
+  } catch (_) {}
+}
+
+async function walk(entry, prefix, out) {
+  if (entry.isFile) {
+    const f = await new Promise((ok, no) => entry.file(ok, no));
+    f.relPath = prefix + f.name; out.push(f);
+  } else if (entry.isDirectory) {
+    const reader = entry.createReader();
+    for (;;) {
+      const batch = await new Promise((ok, no) => reader.readEntries(ok, no));
+      if (!batch.length) break;
+      for (const e of batch) await walk(e, prefix + entry.name + "/", out);
+    }
+  }
+}
+
+$("pick-folder").onclick = () => $("in-folder").click();
+$("pick-zip").onclick = () => $("in-zip").click();
+$("in-folder").onchange = e => { const f = [...e.target.files]; uploadFiles(f, (f[0]?.webkitRelativePath || "My scan").split("/")[0]); e.target.value = ""; };
+$("in-zip").onchange = e => { const f = [...e.target.files]; uploadFiles(f, f[0]?.name.replace(/\.zip$/i, "") || "My scan"); e.target.value = ""; };
+$("use-path").onclick = usePath;
+$("in-path").onkeydown = e => { if (e.key === "Enter") usePath(); };
+$("work-again").onclick = () => { current = null; show("load"); };
+$("res-new").onclick = () => { current = null; $("res-viewer").src = "about:blank"; show("load"); };
+$("res-delete").onclick = async () => {
+  if (!current || !confirm("Delete this scan and everything made from it? This cannot be undone.")) return;
+  try { await api(`/api/ct/jobs/${current}`, {method: "DELETE"}); } catch (e) { alert(e.message); return; }
+  current = null; $("res-viewer").src = "about:blank"; show("load"); refreshJobs();
+};
+const drop = $("drop");
+for (const ev of ["dragenter", "dragover"]) drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); });
+for (const ev of ["dragleave", "drop"]) drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); });
+drop.addEventListener("drop", async e => {
+  const items = [...(e.dataTransfer.items || [])].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+  const files = [];
+  if (items.length) { for (const it of items) await walk(it, "", files); } else files.push(...e.dataTransfer.files);
+  uploadFiles(files, items[0]?.name?.replace(/\.zip$/i, "") || "My scan");
+});
+if (!/^https?:$/.test(location.protocol)) { $("load-error").textContent = NO_SERVER; $("load-error").hidden = false; }
+else refreshJobs();
+</script>
+</body>
+</html>

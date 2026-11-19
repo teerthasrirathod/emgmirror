@@ -1,0 +1,3 @@
+encode (emulator side)      75819 packets/s  = 379.1x the device's 200 packets/s
+decode only                 18317 packets/s  =  91.6x the device's 200 packets/s
+Esp32Source end-to-end       7691 packets/s  =  38.5x the device's 200 packets/s

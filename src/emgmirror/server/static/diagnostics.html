@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>emgmirror acquisition</title>
+<script src="/static/plotly.min.js"></script>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#1c232c;--muted:#5d6876;--line:#dde2e8;--accent:#1f7a5a;
+  --ok:#1f7a5a;--ok-bg:#e3f3ec;--warn:#8a6100;--warn-bg:#fff4d1;--fail:#b3261e;--fail-bg:#fde7e5;--na:#5d6876;--na-bg:#eef0f3;
+  --c1:#3b6fb6;--c2:#d0582f;--c3:#7a4fb0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#12161b;--panel:#1a2027;--ink:#e6eaef;--muted:#9aa5b2;--line:#2b333d;
+  --ok:#6fd3a8;--ok-bg:#16352a;--warn:#f0c75e;--warn-bg:#3a3217;--fail:#ff8a80;--fail-bg:#3d1c1a;--na:#9aa5b2;--na-bg:#232a33;--c1:#7aa5e6;--c2:#f08a62;--c3:#b48ae6}}
+:root[data-theme="dark"]{--bg:#12161b;--panel:#1a2027;--ink:#e6eaef;--muted:#9aa5b2;--line:#2b333d;
+  --ok:#6fd3a8;--ok-bg:#16352a;--warn:#f0c75e;--warn-bg:#3a3217;--fail:#ff8a80;--fail-bg:#3d1c1a;--na:#9aa5b2;--na-bg:#232a33;--c1:#7aa5e6;--c2:#f08a62;--c3:#b48ae6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+header h1{font-size:18px;margin:0 12px 0 0}
+header a{color:var(--muted);font-size:14px}
+input,button,select{font:inherit;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+button{cursor:pointer}button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.rec{background:var(--fail);color:#fff;border-color:var(--fail)}
+button:disabled{opacity:.5;cursor:default}
+main{max-width:1280px;margin:0 auto;padding:16px;display:grid;gap:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.panel h2{font-size:13px;margin:0 0 10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.stages{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:900px){.stages{grid-template-columns:1fr}}
+.stage{border-radius:8px;padding:10px 12px;border:1px solid var(--line);min-width:0}
+.stage b{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.stage .st{font-weight:700;font-size:16px}
+.stage p{margin:4px 0 0;font-size:13px;overflow-wrap:anywhere}
+.s-ok{background:var(--ok-bg);color:var(--ok)}.s-warn{background:var(--warn-bg);color:var(--warn)}
+.s-fail{background:var(--fail-bg);color:var(--fail)}.s-waiting,.s-na,.s-not_verified{background:var(--na-bg);color:var(--na)}
+.s-ok p,.s-warn p,.s-fail p,.s-waiting p,.s-na p,.s-not_verified p{color:var(--ink)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.metric{border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.metric span{display:block;font-size:12px;color:var(--muted)}
+.metric b{font-size:18px;font-variant-numeric:tabular-nums}
+.chan{display:grid;grid-template-columns:260px 1fr;gap:12px;align-items:stretch;border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.chan:first-of-type{border-top:0;margin-top:0;padding-top:0}
+@media (max-width:900px){.chan{grid-template-columns:1fr}}
+.chan .plot{height:170px;min-width:0}
+.chan h3{margin:0 0 4px;font-size:16px}
+.badge{display:inline-block;border-radius:999px;padding:1px 10px;font-size:12px;font-weight:700;text-transform:uppercase}
+.kv{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.kv div{display:flex;justify-content:space-between;gap:8px}
+.detail{font-size:13px;margin-top:6px}
+#events{font:12px/1.5 ui-monospace,Consolas,monospace;max-height:180px;overflow:auto;white-space:pre-wrap;color:var(--muted)}
+.banner{border-radius:8px;padding:8px 12px;font-size:14px}
+.small{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Acquisition diagnostics</h1>
+  <input id="spec" list="specs" size="26" placeholder="esp32:COM9" title="Source">
+  <datalist id="specs">
+    <option value="esp32:COM9"><option value="emulator"><option value="emulator:emg,flat_low,saturated">
+    <option value="virtual"><option value="text:COM9">
+  </datalist>
+  <button id="start" class="primary">Connect</button>
+  <button id="stop">Disconnect</button>
+  <span style="flex:1"></span>
+  <input id="label" size="14" placeholder="recording label">
+  <button id="rec" class="rec">Start raw recording</button>
+  <a href="/">Analysis dashboard</a>
+</header>
+<main>
+  <div id="sourceBanner" class="banner s-na">No source connected. Ports: <span id="ports">…</span></div>
+  <section class="panel"><h2>Stages: each must be OK before the next one means anything</h2>
+    <div class="stages" id="stages"></div>
+  </section>
+  <section class="panel"><h2>Stream</h2><div class="metrics" id="metrics"></div></section>
+  <section class="panel"><h2>Channels (voltage at the ESP32 ADC pin, last 2 s)</h2><div id="chans"></div>
+    <p class="small">Electrical checks only: stuck at 0 V, stuck high, clipping, flat, or mostly mains hum. A channel
+      marked OK is mid-range and varying. That is not proof of muscle signal.</p></section>
+  <section class="panel"><h2>Events</h2><div id="events">–</div></section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const STAGES = [['connection','1 · Connection'],['device','2 · Device'],['acquisition','3 · Acquisition'],['channels','4 · Channel signals'],['emg','5 · EMG capture']];
+let plotsFor = '', ws = null;
+const fmt = (v, d=1) => v === null || v === undefined ? '–' : (typeof v === 'number' ? v.toFixed(d) : v);
+async function api(path, body){
+  const r = await fetch(path, body === undefined ? {} : {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.detail || r.statusText);
+  return j;
+}
+function stageHtml(st){
+  return STAGES.map(([k, label]) => {
+    const s = (st && st[k]) || {state:'waiting', detail:'not connected'};
+    const name = s.state === 'not_verified' ? 'not verified' : s.state;
+    return `<div class="stage s-${s.state}"><b>${label}</b><span class="st">${name}</span><p>${s.detail}</p></div>`;
+  }).join('');
+}
+function metric(label, value){ return `<div class="metric"><span>${label}</span><b>${value}</b></div>`; }
+function render(m){
+  const s = m.status;
+  $('stages').innerHTML = stageHtml(s.stages);
+  if (!s.running){
+    $('sourceBanner').className = 'banner s-na';
+    $('sourceBanner').innerHTML = (s.error ? `<b>Could not connect:</b> ${s.error}` : 'No source connected.') + ` Ports: <span id="ports">${window.PORTS || '…'}</span>`;
+    $('metrics').innerHTML = s.last_recording ? metric('Last recording', `${s.last_recording.recording_id}<br><span class="small">${s.last_recording.samples} samples</span>`) : '';
+    $('chans').innerHTML = '<span class="small">–</span>'; plotsFor = '';
+    $('rec').disabled = true; return;
+  }
+  const real = s.source.is_real_hardware;
+  $('sourceBanner').className = 'banner ' + (real ? 's-warn' : 's-na');
+  $('sourceBanner').innerHTML = `<b>${real ? 'REAL HARDWARE' : (s.source.kind === 'esp32-emulator' ? 'EMULATED DEVICE' : 'VIRTUAL DATA')}</b> · ${s.source.label}` + (s.error ? ` · <b>error:</b> ${s.error}` : '');
+  const r = s.rates, c = s.counts, t = s.transport || {}, dec = t.decoder || {};
+  const rec = s.recording;
+  $('metrics').innerHTML = [
+    metric('Rate, device clock', `${fmt(r.device_clock_hz, 2)} Hz`),
+    metric('Rate, host clock (5 s)', `${fmt(r.host_window_hz, 1)} Hz`),
+    metric('Nominal rate', `${fmt(r.nominal_hz, 0)} Hz`),
+    metric('Samples received', c.samples.toLocaleString()),
+    metric('Missing samples', `${c.missing} <span class="small">${Object.entries(c.missing_by_cause||{}).map(([k,v])=>`${k} ${v}`).join(', ')}</span>`),
+    metric('Invalid samples', c.invalid),
+    metric('CRC / framing errors', `${dec.crc_errors ?? '–'} / ${dec.frame_errors ?? '–'}`),
+    metric('Reconnects · runs', `${t.reconnects ?? 0} · ${c.runs}`),
+    metric('Recording', rec ? `<span style="color:var(--fail)">● REC</span> ${rec.seconds} s<br><span class="small">${rec.recording_id}</span>` : 'off'),
+  ].join('');
+  $('rec').disabled = false;
+  $('rec').textContent = rec ? 'Stop raw recording' : 'Start raw recording';
+  renderChannels(s, m.waveform);
+  const ev = (t.events || []).slice(-12).reverse();
+  $('events').textContent = ev.length ? ev.map(e => `${new Date(e.t*1000).toLocaleTimeString()}  ${e.level.padEnd(7)} ${e.text}`).join('\n') : '–';
+}
+function renderChannels(s, wf){
+  const key = s.channels.map(c => c.name).join('|') + s.spec;
+  if (key !== plotsFor){
+    plotsFor = key;
+    $('chans').innerHTML = s.channels.map((c, i) => `<div class="chan"><div><h3>CH${c.ch} · ${c.name} <span class="small">${c.arm} ${c.muscle}</span></h3>
+      <div class="kv" id="kv${i}"></div><div class="detail" id="det${i}"></div></div><div class="plot" id="plot${i}"></div></div>`).join('');
+    s.channels.forEach((c, i) => Plotly.newPlot(`plot${i}`, [{y:[], mode:'lines', line:{width:1, color:css(`--c${i%3+1}`)}, hoverinfo:'y'}],
+      {paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', font:{color:css('--ink'), size:11}, margin:{l:50,r:8,t:6,b:20},
+       xaxis:{showticklabels:false, gridcolor:css('--line')}, yaxis:{title:{text:c.units === 'mV at ADC pin' ? 'mV (pin)' : 'mV'}, gridcolor:css('--line')}},
+      {displayModeBar:false, responsive:true}));
+  }
+  s.channels.forEach((c, i) => {
+    $(`kv${i}`).innerHTML = `<div><span class="badge s-${c.state}">${c.state}</span><span>GPIO ${c.gpio ?? '–'}</span></div>
+      <div><span>mean</span><span>${fmt(c.mean)} mV</span></div><div><span>min / max</span><span>${fmt(c.min)} / ${fmt(c.max)}</span></div>
+      <div><span>peak-to-peak</span><span>${fmt(c.p2p)} mV</span></div><div><span>mains share</span><span>${c.mains_fraction == null ? '–' : (100*c.mains_fraction).toFixed(0)+' %'}</span></div>
+      <div><span>sensor</span><span>${c.sensor || '–'}</span></div>`;
+    $(`det${i}`).textContent = c.detail;
+    const y = (wf.series || [])[i] || [];
+    Plotly.restyle(`plot${i}`, {y:[y]});
+  });
+}
+function connectWs(){
+  ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws/acq`);
+  ws.onmessage = ev => render(JSON.parse(ev.data));
+  ws.onclose = () => setTimeout(connectWs, 1000);
+}
+$('start').onclick = async () => {
+  $('start').disabled = true; $('start').textContent = 'Connecting…';
+  try { await api('/api/acq/start', {source: $('spec').value.trim()}); }
+  catch (e) { $('sourceBanner').className = 'banner s-fail'; $('sourceBanner').innerHTML = `<b>Could not connect:</b> ${e.message}`; }
+  finally { $('start').disabled = false; $('start').textContent = 'Connect'; }
+};
+$('stop').onclick = () => api('/api/acq/stop', {});
+$('rec').onclick = async () => {
+  const s = await api('/api/acq/status');
+  try {
+    if (s.recording) await api('/api/acq/record/stop', {});
+    else await api('/api/acq/record/start', {label: $('label').value.trim()});
+  } catch (e) { alert(e.message); }
+};
+(async () => {
+  try { const p = await api('/api/ports'); window.PORTS = Array.isArray(p) && p.length ? p.join(', ') : 'none found'; } catch { window.PORTS = 'unknown'; }
+  const ports = $('ports'); if (ports) ports.textContent = window.PORTS;
+  const first = (window.PORTS.match(/COM\d+|\/dev\/\S+/) || [])[0];
+  $('spec').value = first ? `esp32:${first}` : 'emulator';
+  connectWs();
+})();
+</script>
+</body>
+</html>

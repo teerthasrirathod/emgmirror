@@ -1,0 +1,10 @@
+# Is the electrode cable on the Candy that CH1 (GPIO34, red wire) reads?
+# Pull the electrode cable out of that Candy, then plug it back. If CH1 changes sharply, it is.
+# Arm relaxed throughout; no contractions needed.
+base: configs/esp32_candy_1ch.yaml
+
+protocol:
+  - { task: rest,    kind: hold, level: 0.0, duration_s: 8, instruction: "Cable PLUGGED IN. Arm relaxed, don't move." }
+  - { task: unplug,  kind: hold, level: 0.0, duration_s: 8, instruction: "PULL the electrode cable OUT of the Candy on the RED wire. Leave it out." }
+  - { task: replug,  kind: hold, level: 0.0, duration_s: 8, instruction: "PLUG the electrode cable back IN. Then keep still." }
+protocol_rest_between_s: 4

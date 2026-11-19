@@ -1,0 +1,53 @@
+{
+  "port": "COM9",
+  "rows": 49,
+  "seconds": 41.7,
+  "row_interval_ms": 841,
+  "board_uptime_s": 2661.323,
+  "pins": {
+    "GPIO32": {
+      "mean_mV": 2680.2,
+      "min_mV": 2579,
+      "max_mV": 2812,
+      "stdev_mV": 61.0,
+      "mean_raw": 3605
+    },
+    "GPIO33": {
+      "mean_mV": 2857.9,
+      "min_mV": 2851,
+      "max_mV": 2864,
+      "stdev_mV": 3.2,
+      "mean_raw": 3783
+    },
+    "GPIO34": {
+      "mean_mV": 154.6,
+      "min_mV": 142,
+      "max_mV": 181,
+      "stdev_mV": 13.6,
+      "mean_raw": 16
+    },
+    "GPIO35": {
+      "mean_mV": 236.1,
+      "min_mV": 225,
+      "max_mV": 251,
+      "stdev_mV": 5.9,
+      "mean_raw": 130
+    },
+    "GPIO36": {
+      "mean_mV": 2151.0,
+      "min_mV": 2144,
+      "max_mV": 2173,
+      "stdev_mV": 3.7,
+      "mean_raw": 2461
+    },
+    "GPIO39": {
+      "mean_mV": 753.4,
+      "min_mV": 716,
+      "max_mV": 783,
+      "stdev_mV": 17.3,
+      "mean_raw": 783
+    }
+  },
+  "date": "2026-11-16T17:14:45",
+  "firmware": "esp32_pin_survey (structured CSV), already on the board; not flashed by this script"
+}

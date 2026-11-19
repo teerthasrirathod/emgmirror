@@ -1,0 +1,236 @@
+{
+  "pins": [
+    {
+      "gpio": 32,
+      "verdict": "floating",
+      "why": "copies its predecessor's fluctuations (r = 0.98)",
+      "forward": {
+        "mean_mv": 277.8,
+        "std_mv": 29.68,
+        "min_mv": 232.2,
+        "max_mv": 341.8,
+        "predecessor": 39,
+        "corr_with_predecessor": 0.978,
+        "mains_fraction": 0.996
+      },
+      "reverse": {
+        "mean_mv": 369.0,
+        "std_mv": 3.87,
+        "min_mv": 359.1,
+        "max_mv": 378.1,
+        "predecessor": 33,
+        "corr_with_predecessor": 0.757,
+        "mains_fraction": 0.952
+      },
+      "mean_mv": 323.4
+    },
+    {
+      "gpio": 33,
+      "verdict": "floating",
+      "why": "mean moves 493 mV when the scan order changes",
+      "forward": {
+        "mean_mv": 208.9,
+        "std_mv": 8.09,
+        "min_mv": 198.5,
+        "max_mv": 229.4,
+        "predecessor": 32,
+        "corr_with_predecessor": 0.937,
+        "mains_fraction": 0.989
+      },
+      "reverse": {
+        "mean_mv": 701.6,
+        "std_mv": 7.21,
+        "min_mv": 683.6,
+        "max_mv": 718.4,
+        "predecessor": 34,
+        "corr_with_predecessor": 0.56,
+        "mains_fraction": 0.902
+      },
+      "mean_mv": 455.2
+    },
+    {
+      "gpio": 34,
+      "verdict": "driven",
+      "why": "same level in both orders (shift 2 mV), not copying its predecessor",
+      "forward": {
+        "mean_mv": 1664.9,
+        "std_mv": 32.81,
+        "min_mv": 1609.7,
+        "max_mv": 1795.4,
+        "predecessor": 33,
+        "corr_with_predecessor": 0.137,
+        "mains_fraction": 0.74
+      },
+      "reverse": {
+        "mean_mv": 1662.5,
+        "std_mv": 33.86,
+        "min_mv": 1586.5,
+        "max_mv": 1791.2,
+        "predecessor": 35,
+        "corr_with_predecessor": null,
+        "mains_fraction": 0.78
+      },
+      "mean_mv": 1663.7
+    },
+    {
+      "gpio": 35,
+      "verdict": "floating",
+      "why": "mean moves 621 mV when the scan order changes",
+      "forward": {
+        "mean_mv": 772.9,
+        "std_mv": 11.81,
+        "min_mv": 751.5,
+        "max_mv": 810.1,
+        "predecessor": 34,
+        "corr_with_predecessor": 0.799,
+        "mains_fraction": 0.897
+      },
+      "reverse": {
+        "mean_mv": 152.0,
+        "std_mv": 0.0,
+        "min_mv": 152.0,
+        "max_mv": 152.0,
+        "predecessor": 36,
+        "corr_with_predecessor": null,
+        "mains_fraction": null
+      },
+      "mean_mv": 462.4
+    },
+    {
+      "gpio": 36,
+      "verdict": "floating",
+      "why": "copies its predecessor's fluctuations (r = 0.91)",
+      "forward": {
+        "mean_mv": 306.4,
+        "std_mv": 9.32,
+        "min_mv": 285.6,
+        "max_mv": 328.1,
+        "predecessor": 35,
+        "corr_with_predecessor": 0.718,
+        "mains_fraction": 0.966
+      },
+      "reverse": {
+        "mean_mv": 217.7,
+        "std_mv": 45.99,
+        "min_mv": 152.4,
+        "max_mv": 308.8,
+        "predecessor": 39,
+        "corr_with_predecessor": 0.911,
+        "mains_fraction": 0.996
+      },
+      "mean_mv": 262.0
+    },
+    {
+      "gpio": 39,
+      "verdict": "floating",
+      "why": "copies its predecessor's fluctuations (r = 0.90)",
+      "forward": {
+        "mean_mv": 554.6,
+        "std_mv": 124.56,
+        "min_mv": 317.4,
+        "max_mv": 793.2,
+        "predecessor": 36,
+        "corr_with_predecessor": 0.899,
+        "mains_fraction": 0.992
+      },
+      "reverse": {
+        "mean_mv": 555.8,
+        "std_mv": 121.21,
+        "min_mv": 337.0,
+        "max_mv": 768.0,
+        "predecessor": 32,
+        "corr_with_predecessor": 0.46,
+        "mains_fraction": 0.996
+      },
+      "mean_mv": 555.2
+    }
+  ],
+  "runs": {
+    "forward": {
+      "order": [
+        32,
+        33,
+        34,
+        35,
+        36,
+        39
+      ],
+      "samples": 3000,
+      "fs": 1000.0,
+      "device": {
+        "proto": "EMGM/2",
+        "fw": "emg_esp32_v2/2.1.0",
+        "built": "Nov_16_2026_18:44:51",
+        "chip": "ESP32-D0WD-V3",
+        "rev": "301",
+        "mac": "489d31047070",
+        "run": "3",
+        "running": "1",
+        "fs": "1000",
+        "os": "4",
+        "nch": "6",
+        "pins": "32,33,34,35,36,39",
+        "adc_unit": "1",
+        "atten_db": "12",
+        "bits": "12",
+        "rows_per_frame": "10",
+        "cal": "efuse_line_fitting",
+        "cal_a": "0.806000",
+        "cal_b": "152.0000",
+        "baud": "500000"
+      },
+      "missing": 0,
+      "invalid": 0
+    },
+    "reverse": {
+      "order": [
+        39,
+        36,
+        35,
+        34,
+        33,
+        32
+      ],
+      "samples": 3020,
+      "fs": 1000.0,
+      "device": {
+        "proto": "EMGM/2",
+        "fw": "emg_esp32_v2/2.1.0",
+        "built": "Nov_16_2026_18:44:51",
+        "chip": "ESP32-D0WD-V3",
+        "rev": "301",
+        "mac": "489d31047070",
+        "run": "4",
+        "running": "1",
+        "fs": "1000",
+        "os": "4",
+        "nch": "6",
+        "pins": "39,36,35,34,33,32",
+        "adc_unit": "1",
+        "atten_db": "12",
+        "bits": "12",
+        "rows_per_frame": "10",
+        "cal": "efuse_line_fitting",
+        "cal_a": "0.806000",
+        "cal_b": "152.0000",
+        "baud": "500000"
+      },
+      "missing": 0,
+      "invalid": 0
+    }
+  },
+  "rate_hz": 1000,
+  "seconds_per_order": 3.0,
+  "device": {
+    "fw": "emg_esp32_v2/2.1.0",
+    "chip": "ESP32-D0WD-V3",
+    "rev": "301",
+    "mac": "489d31047070",
+    "fs": "1000",
+    "os": "4"
+  },
+  "method": "Which ADC pins are actually driven by something? An electrical test, no body involved.",
+  "date": "2026-11-17T14:15:26",
+  "source_spec": "esp32:COM7",
+  "label": "after removing faulty Candy; 2 Candys on D34/VN"
+}

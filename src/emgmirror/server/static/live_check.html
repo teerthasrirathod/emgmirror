@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>emgmirror live check</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#1c232c;--muted:#5d6876;--line:#dde2e8;--accent:#1f7a5a;
+  --rest-bg:#e3f3ec;--rest:#1f7a5a;--act-bg:#fde2cf;--act:#b4410e;--warn-bg:#fff4d1;--warn:#8a6100;--sig:#3b6fb6;--env:#d0582f;--shade:rgba(208,88,47,.12)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#12161b;--panel:#1a2027;--ink:#e6eaef;--muted:#9aa5b2;--line:#2b333d;
+  --rest-bg:#16352a;--rest:#6fd3a8;--act-bg:#47240f;--act:#ffa36b;--warn-bg:#3a3217;--warn:#f0c75e;--sig:#7aa5e6;--env:#f08a62;--shade:rgba(240,138,98,.16)}}
+:root[data-theme="dark"]{--bg:#12161b;--panel:#1a2027;--ink:#e6eaef;--muted:#9aa5b2;--line:#2b333d;
+  --rest-bg:#16352a;--rest:#6fd3a8;--act-bg:#47240f;--act:#ffa36b;--warn-bg:#3a3217;--warn:#f0c75e;--sig:#7aa5e6;--env:#f08a62;--shade:rgba(240,138,98,.16)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+header h1{font-size:18px;margin:0 10px 0 0}
+header a{color:var(--muted);font-size:14px}
+input,button{font:inherit;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+button{cursor:pointer}button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+button:disabled{opacity:.5;cursor:default}
+main{max-width:1280px;margin:0 auto;padding:14px 16px;display:grid;gap:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.panel h2{font-size:12px;margin:0 0 8px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+#cue{border-radius:12px;padding:18px 20px;display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;background:var(--panel);border:1px solid var(--line)}
+#cue.rest{background:var(--rest-bg);color:var(--rest)}#cue.active{background:var(--act-bg);color:var(--act)}
+#say{font-size:clamp(26px,5vw,52px);font-weight:800;line-height:1.1}
+#count{font-size:clamp(48px,10vw,110px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1;text-align:right}
+#next{grid-column:1/-1;font-size:16px;color:var(--ink);opacity:.8}
+#timeline{grid-column:1/-1;display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--line);position:relative}
+#timeline div{height:100%}
+#timeline .tl-rest{background:rgba(31,122,90,.35)}#timeline .tl-act{background:rgba(180,65,14,.55)}
+#playhead{position:absolute;top:-3px;bottom:-3px;width:3px;background:var(--ink)}
+.row{display:grid;grid-template-columns:3fr 1fr;gap:14px}
+@media (max-width:900px){.row{grid-template-columns:1fr}#cue{grid-template-columns:1fr}#count{text-align:left}}
+canvas{width:100%;height:260px;display:block}
+#meter{font-size:56px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.bar{height:16px;background:var(--line);border-radius:8px;overflow:hidden;margin:8px 0}
+.bar div{height:100%;width:0;background:var(--env);transition:width .08s linear}
+.kv{display:flex;justify-content:space-between;gap:8px;font-size:14px;padding:3px 0;border-bottom:1px dashed var(--line);font-variant-numeric:tabular-nums}
+.kv:last-child{border-bottom:0}.kv span{color:var(--muted)}
+.small{color:var(--muted);font-size:13px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{text-align:left;padding:4px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}
+.banner{border-radius:8px;padding:8px 12px;font-size:14px;background:var(--warn-bg);color:var(--warn)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Live check</h1>
+  <input id="spec" size="16" value="esp32:COM9" title="Source">
+  <button id="connect">Connect</button>
+  <button id="disconnect">Disconnect</button>
+  <button id="start" class="primary">Start guided check</button>
+  <button id="stopbtn">Stop check</button>
+  <span style="flex:1"></span>
+  <a href="/diagnostics">Diagnostics</a>
+</header>
+<main>
+  <div id="banner" class="banner">Not connected.</div>
+  <section id="cue"><div id="say">Press "Start guided check" when the electrodes are on and you are seated.</div>
+    <div id="count"></div><div id="next"></div><div id="timeline"><span id="playhead" style="display:none"></span></div></section>
+  <div class="row">
+    <section class="panel"><h2>Signal: band-passed, mains notched (last 8 s)</h2><canvas id="scope"></canvas>
+      <div class="small">Blue: signal range per 20 ms. Orange: RMS envelope. Shaded: squeeze/bend cues. Units: electrode-referred mV estimate (nominal gain, not calibrated).</div></section>
+    <section class="panel"><h2>Level now</h2>
+      <div id="meter">–</div><div class="small" id="meterNote">× rest (rest is measured during the first RELAX)</div>
+      <div class="bar"><div id="meterBar"></div></div>
+      <h2 style="margin-top:12px">Latency (measured)</h2>
+      <div class="kv"><span>host → screen p50 / p95</span><b id="l_scr">–</b></div>
+      <div class="kv"><span>device → host, above best p50 / p95</span><b id="l_dev">–</b></div>
+      <div class="kv"><span>sample age on screen ≥</span><b id="l_age">–</b></div>
+      <div class="kv"><span>updates / s</span><b id="l_rate">–</b></div>
+      <div class="small">Host → screen is exact (same clock). Device → host shows only queueing above the fastest packet; the fixed USB/serial part is not measurable here, so the age is a lower bound.</div></section>
+  </div>
+  <section class="panel"><h2>Per cue: median level ÷ rest (live)</h2><table id="results"><thead><tr><th>#</th><th>cue</th><th>median × rest</th><th>windows &gt; 3× rest</th></tr></thead><tbody></tbody></table>
+    <div class="small" id="recInfo"></div></section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let items = [], cue = {running:false}, rest = null, latency = null, ch = 0, ws = null;
+let cueT0 = null, timeline = [], lastAck = 0, newestDrawn = null, updates = [], localScr = [];
+const KEEP = 8.0;
+
+async function api(path, body){
+  const r = await fetch(path, body === undefined ? {} : {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.detail || r.statusText);
+  return j;
+}
+function connectWs(){
+  ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws/live-check`);
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data);
+    if (m.items && m.items.length){ items.push(...m.items); updates.push(performance.now()); }
+    const cut = Date.now()/1000 - KEEP - 1;
+    while (items.length && items[0].t_host < cut) items.shift();
+    if ('cue' in m) onStatus(m);
+  };
+  ws.onclose = () => setTimeout(connectWs, 500);
+}
+function onStatus(m){
+  cue = m.cue || {running:false}; rest = m.rest; latency = m.latency;
+  if (!m.running){ $('banner').textContent = 'Not connected. Enter a source and press Connect.'; }
+  else $('banner').innerHTML = `<b>${m.real ? 'REAL HARDWARE' : 'NOT REAL HARDWARE'}</b> · ${m.source} · channel ${m.channels[ch] || '?'}` +
+       (m.recording ? ` · <b>recording</b> ${m.recording.seconds} s (${m.recording.recording_id})` : '');
+  if (cue.running){
+    cueT0 = cue.t_server - cue.elapsed_s; timeline = cue.timeline;
+    $('cue').className = cue.active ? 'active' : 'rest';
+    $('say').textContent = cue.say;
+    $('count').textContent = Math.ceil(cue.seconds_left);
+    $('next').textContent = cue.next ? `Next: ${cue.next}` : 'Last one';
+    drawTimeline();
+  } else if (cue.done){
+    $('cue').className = ''; $('say').textContent = cue.aborted ? `Stopped: ${cue.aborted}` : 'Done. Relax.';
+    $('count').textContent = ''; $('next').textContent = '';
+  }
+  if (m.last_check && m.last_check.recording) $('recInfo').textContent = `Raw recording: ${m.last_check.recording.recording_id} · ${m.last_check.recording.samples} samples`;
+  if (latency){
+    const f = v => v == null ? '–' : v.toFixed(1);
+    const s = latency.host_to_screen_ms, d = latency.device_to_host_excess_ms, a = latency.sample_age_on_screen_ms_lower_bound;
+    $('l_scr').textContent = `${f(s.p50)} / ${f(s.p95)} ms`;
+    $('l_dev').textContent = `${f(d.p50)} / ${f(d.p95)} ms`;
+    $('l_age').textContent = a ? `${f(a.p50)} / ${f(a.p95)} ms` : '–';
+  }
+}
+function drawTimeline(){
+  const tl = $('timeline');
+  if (tl.dataset.n != timeline.length){
+    const tot = timeline.reduce((s, c) => s + c.seconds, 0);
+    tl.innerHTML = timeline.map(c => `<div class="${c.active ? 'tl-act' : 'tl-rest'}" style="width:${100*c.seconds/tot}%"></div>`).join('') + '<span id="playhead"></span>';
+    tl.dataset.n = timeline.length;
+  }
+  const tot = timeline.reduce((s, c) => s + c.seconds, 0);
+  $('playhead').style.display = 'block';
+  $('playhead').style.left = `${Math.min(100, 100*cue.elapsed_s/tot)}%`;
+}
+function cueSpans(){
+  if (cueT0 == null) return [];
+  let t = cueT0; const out = [];
+  timeline.forEach((c, i) => { out.push({i, task:c.task, active:c.active, a:t, b:t + c.seconds}); t += c.seconds; });
+  return out;
+}
+function median(v){ if (!v.length) return null; const s = [...v].sort((a,b)=>a-b); return s[Math.floor(s.length/2)]; }
+function draw(){
+  const cv = $('scope'), dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+  if (cv.width !== W*dpr){ cv.width = W*dpr; cv.height = H*dpr; }
+  const g = cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
+  const now = Date.now()/1000, t0 = now - KEEP, x = t => (t - t0)/KEEP*W;
+  for (const s of cueSpans()) if (s.active && s.b > t0){ g.fillStyle = css('--shade'); g.fillRect(x(s.a), 0, x(s.b)-x(s.a), H); }
+  const vis = items.filter(it => it.t_host >= t0);
+  let amp = 1e-3; for (const it of vis) amp = Math.max(amp, Math.abs(it.lo[ch]), Math.abs(it.hi[ch]));
+  const y = v => H/2 - v/amp*(H/2-6);
+  g.strokeStyle = css('--line'); g.beginPath(); g.moveTo(0,H/2); g.lineTo(W,H/2); g.stroke();
+  g.strokeStyle = css('--sig'); g.lineWidth = 1; g.beginPath();
+  for (const it of vis){ const X = x(it.t_host); g.moveTo(X, y(it.lo[ch])); g.lineTo(X, y(it.hi[ch])); }
+  g.stroke();
+  g.strokeStyle = css('--env'); g.lineWidth = 2; g.beginPath();
+  vis.forEach((it, k) => { const X = x(it.t_host), Y = y(it.rms[ch]); k ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.stroke();
+  g.fillStyle = css('--muted'); g.font = '12px system-ui'; g.fillText(`±${amp.toFixed(4)} mV (est.)`, 6, 14);
+  // level meter: last 100 ms
+  const recent = items.slice(-5).map(it => it.rms[ch]);
+  if (recent.length){
+    const lvl = median(recent);
+    if (rest && rest[ch] > 0){ const r = lvl/rest[ch]; $('meter').textContent = `${r.toFixed(1)}×`; $('meterBar').style.width = `${Math.min(100, r*10)}%`; }
+    else { $('meter').textContent = `${(lvl*1000).toFixed(1)} µV`; $('meterNote').textContent = 'rest not measured yet (first RELAX)'; }
+  }
+  // per-cue table from live items
+  if (rest && rest[ch] > 0 && cueT0 != null){
+    const rows = cueSpans().filter(s => s.a < now).map(s => {
+      const v = items.filter(it => it.t_host >= s.a + .25 && it.t_host < Math.min(s.b, now) - .25).map(it => it.rms[ch]);
+      const m = median(v); return {s, m: m == null ? null : m/rest[ch], over: v.filter(q => q > 3*rest[ch]).length, n: v.length};
+    });
+    if (rows.length) $('results').tBodies[0].innerHTML = rows.map(r => `<tr><td>${r.s.i+1}</td><td>${r.s.task}</td><td>${r.m == null ? '–' : r.m.toFixed(2)}</td><td>${r.over} / ${r.n}</td></tr>`).join('');
+  }
+  // render acknowledgement: newest sample shown now
+  const newest = items.length ? items[items.length-1] : null;
+  if (newest && newest !== newestDrawn){
+    newestDrawn = newest; const rendered = Date.now()/1000;
+    localScr.push((rendered - newest.t_host)*1000); if (localScr.length > 200) localScr.shift();
+    if (ws && ws.readyState === 1 && rendered - lastAck > 0.1){ ws.send(JSON.stringify({t_host:newest.t_host, rendered})); lastAck = rendered; }
+  }
+  const pn = performance.now(); while (updates.length && updates[0] < pn - 1000) updates.shift();
+  $('l_rate').textContent = updates.length;
+  requestAnimationFrame(draw);
+}
+$('connect').onclick = async () => { $('connect').disabled = true; try { await api('/api/acq/start', {source: $('spec').value.trim()}); } catch(e){ $('banner').textContent = 'Could not connect: ' + e.message; } finally { $('connect').disabled = false; } };
+$('disconnect').onclick = () => api('/api/acq/stop', {});
+$('start').onclick = async () => { try { items = []; await api('/api/acq/check/start', {label:'live-check', arm:'right'}); $('results').tBodies[0].innerHTML = ''; } catch(e){ alert(e.message); } };
+$('stopbtn').onclick = () => api('/api/acq/check/stop', {});
+connectWs(); requestAnimationFrame(draw);
+</script>
+</body>
+</html>

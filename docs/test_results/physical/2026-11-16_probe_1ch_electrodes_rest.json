@@ -1,0 +1,149 @@
+{
+  "type": "status",
+  "t": 1794840308.9736536,
+  "source": {
+    "kind": "esp32",
+    "label": "ESP32 on COM9",
+    "is_real_hardware": true
+  },
+  "stages": {
+    "connection": {
+      "state": "ok",
+      "detail": "open on COM9"
+    },
+    "device": {
+      "state": "ok",
+      "detail": "emg_esp32_v2/2.1.0 on ESP32-D0WD-V3 rev 301 (MAC 489d31047070), pins 34"
+    },
+    "acquisition": {
+      "state": "ok",
+      "detail": "20110 samples, none missing, 2000.0 Hz"
+    },
+    "channels": {
+      "state": "ok",
+      "detail": "CH1 ok"
+    },
+    "emg": {
+      "state": "not_verified",
+      "detail": "EMG capture is not verified. Electrode tests are blocked until the electrical safety gate passes (docs/ELECTRICAL_SAFETY.md)."
+    }
+  },
+  "rates": {
+    "nominal_hz": 2000.0,
+    "host_window_hz": 1999.904,
+    "device_clock_hz": 1999.999,
+    "host_since_start_hz": 1999.904
+  },
+  "counts": {
+    "samples": 20110,
+    "missing": 0,
+    "missing_by_cause": {},
+    "invalid": 0,
+    "runs": 1,
+    "first_index": 1390970,
+    "last_index": 1411079
+  },
+  "channels": [
+    {
+      "ch": 1,
+      "name": "ch1",
+      "muscle": "flexors",
+      "arm": "right",
+      "gpio": 34,
+      "sensor": "Candy OUT (driven, ~1.66 V idle, 2026-11-16)",
+      "units": "mV at ADC pin",
+      "mean": 1661.84,
+      "min": 1582.01,
+      "max": 1779.88,
+      "p2p": 197.87,
+      "std": 39.249,
+      "invalid_fraction": 0.0,
+      "mains_fraction": 0.159,
+      "state": "ok",
+      "detail": "electrically plausible: mid-range and varying (not proof of EMG)"
+    }
+  ],
+  "transport": {
+    "connected": true,
+    "handshake": true,
+    "error": null,
+    "port": "COM9",
+    "device_status": {
+      "run": "26",
+      "running": "1",
+      "rate_dev": "2000.00",
+      "index": "1410140",
+      "frames": "757011",
+      "dma_overflow": "0",
+      "incomplete_rows": "0",
+      "ts_lost": "0",
+      "tx_free": "8164",
+      "uptime_ms": "3788230"
+    },
+    "run": 1,
+    "samples": 20110,
+    "device_dropped_samples": 0,
+    "link_lost_samples": 0,
+    "link_lost_frames": 0,
+    "invalid_samples": 0,
+    "pre_hello_frames": 0,
+    "reconnects": 0,
+    "decoder": {
+      "packets": 2023,
+      "crc_errors": 0,
+      "frame_errors": 0,
+      "bytes_dropped": 48
+    },
+    "last_data_age_s": 0.005,
+    "events": [
+      {
+        "t": 1794840298.865956,
+        "level": "info",
+        "text": "transport opened (COM9)"
+      },
+      {
+        "t": 1794840298.8748844,
+        "level": "info",
+        "text": "ack: cmd=INFO ok=1"
+      }
+    ]
+  },
+  "recording": null,
+  "fills": [],
+  "probe": {
+    "seconds": 10.0,
+    "source_spec": "esp32:COM9",
+    "date": "2026-11-16T20:15:08",
+    "device": {
+      "port": "COM9",
+      "proto": "EMGM/2",
+      "fw": "emg_esp32_v2/2.1.0",
+      "built": "Nov_16_2026_18:44:51",
+      "chip": "ESP32-D0WD-V3",
+      "rev": "301",
+      "mac": "489d31047070",
+      "run": "26",
+      "running": "1",
+      "fs": "2000",
+      "os": "10",
+      "nch": "1",
+      "pins": "34",
+      "adc_unit": "1",
+      "atten_db": "12",
+      "bits": "12",
+      "rows_per_frame": "10",
+      "cal": "efuse_line_fitting",
+      "cal_a": "0.806000",
+      "cal_b": "152.0000",
+      "baud": "500000"
+    },
+    "calibration": {
+      "raw": "sum of os=10 conversions per sample; code = raw / os",
+      "pin_mv": "cal_a * code + cal_b with cal_a=0.806, cal_b=152.0 (efuse_line_fitting from the device)",
+      "mv": "(pin_mv - 1650) / 2420: electrode-referred estimate using an ASSUMED bias and a NOMINAL front-end gain (neither measured on this unit)",
+      "bias_mv": 1650.0,
+      "gain": 2420.0,
+      "gain_source": "config acquisition.amp_gain (nominal)"
+    }
+  }
+}

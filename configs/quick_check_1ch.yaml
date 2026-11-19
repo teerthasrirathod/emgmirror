@@ -1,0 +1,11 @@
+# ~35 s EMG response check on CH1: is the muscle signal there at all?
+# Use with: emgmirror --config configs/quick_check_1ch.yaml record --source esp32:COM9 --arm right --session <name>
+# Then:     python scripts/check_emg_response.py <raw_recording_id>
+base: configs/esp32_candy_1ch.yaml
+
+protocol:
+  - { task: rest,          kind: hold, level: 0.0, duration_s: 6, instruction: "RELAX the forearm completely. Hand resting, don't move." }
+  - { task: grip_mvc,      kind: hold, level: 1.0, duration_s: 4, instruction: "SQUEEZE your fist as HARD as you can and hold it." }
+  - { task: wrist_flex_mvc,kind: hold, level: 1.0, duration_s: 4, instruction: "BEND the wrist toward the palm, hard, and hold." }
+  - { task: open_close,    kind: reps, level: 0.6, duration_s: 8, reps: 4, instruction: "Make a fist and open it, every 2 s." }
+protocol_rest_between_s: 4

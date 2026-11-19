@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+build/
+dist/
+
+# Recorded / generated data (personal health data never goes in git)
+data/sessions/*
+!data/sessions/.gitkeep
+data/sessions_raw/
+data/raw/
+data/derived/
+
+# Full flash read-backs: 4 MB each, and the NVS partition can hold Wi-Fi credentials
+firmware_backups/*.bin
+reports/
+results/
+models/
+
+# Local tooling / editors
+.vscode/
+.idea/
+*.local.yaml
+.DS_Store
+Thumbs.db
+
+# Clinical imaging (personal health data, never in git)
+01_clinical_CT/
+data/dataset/

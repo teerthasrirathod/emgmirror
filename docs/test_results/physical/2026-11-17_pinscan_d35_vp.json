@@ -1,0 +1,236 @@
+{
+  "pins": [
+    {
+      "gpio": 32,
+      "verdict": "floating",
+      "why": "mean moves 289 mV when the scan order changes",
+      "forward": {
+        "mean_mv": 1245.1,
+        "std_mv": 151.17,
+        "min_mv": 830.0,
+        "max_mv": 1691.3,
+        "predecessor": 39,
+        "corr_with_predecessor": 0.252,
+        "mains_fraction": 0.496
+      },
+      "reverse": {
+        "mean_mv": 956.0,
+        "std_mv": 272.12,
+        "min_mv": 343.8,
+        "max_mv": 1476.7,
+        "predecessor": 33,
+        "corr_with_predecessor": 0.997,
+        "mains_fraction": 0.805
+      },
+      "mean_mv": 1100.5
+    },
+    {
+      "gpio": 33,
+      "verdict": "floating",
+      "why": "mean moves 286 mV when the scan order changes",
+      "forward": {
+        "mean_mv": 1245.6,
+        "std_mv": 145.19,
+        "min_mv": 849.4,
+        "max_mv": 1651.0,
+        "predecessor": 32,
+        "corr_with_predecessor": 0.962,
+        "mains_fraction": 0.492
+      },
+      "reverse": {
+        "mean_mv": 959.6,
+        "std_mv": 267.1,
+        "min_mv": 315.0,
+        "max_mv": 1479.1,
+        "predecessor": 34,
+        "corr_with_predecessor": 0.332,
+        "mains_fraction": 0.78
+      },
+      "mean_mv": 1102.6
+    },
+    {
+      "gpio": 34,
+      "verdict": "floating",
+      "why": "mean moves 134 mV when the scan order changes",
+      "forward": {
+        "mean_mv": 570.4,
+        "std_mv": 220.92,
+        "min_mv": 312.6,
+        "max_mv": 1579.6,
+        "predecessor": 33,
+        "corr_with_predecessor": 0.612,
+        "mains_fraction": 0.631
+      },
+      "reverse": {
+        "mean_mv": 704.0,
+        "std_mv": 218.73,
+        "min_mv": 189.5,
+        "max_mv": 1454.1,
+        "predecessor": 35,
+        "corr_with_predecessor": 0.451,
+        "mains_fraction": 0.729
+      },
+      "mean_mv": 637.2
+    },
+    {
+      "gpio": 35,
+      "verdict": "uncertain",
+      "why": "shift 15 mV, predecessor correlation up to 0.65",
+      "forward": {
+        "mean_mv": 943.9,
+        "std_mv": 274.11,
+        "min_mv": 392.6,
+        "max_mv": 1657.8,
+        "predecessor": 34,
+        "corr_with_predecessor": 0.654,
+        "mains_fraction": 0.816
+      },
+      "reverse": {
+        "mean_mv": 928.8,
+        "std_mv": 254.6,
+        "min_mv": 353.5,
+        "max_mv": 1460.5,
+        "predecessor": 36,
+        "corr_with_predecessor": 0.14,
+        "mains_fraction": 0.804
+      },
+      "mean_mv": 936.3
+    },
+    {
+      "gpio": 36,
+      "verdict": "floating",
+      "why": "mean moves 326 mV when the scan order changes",
+      "forward": {
+        "mean_mv": 723.0,
+        "std_mv": 935.25,
+        "min_mv": 184.4,
+        "max_mv": 3452.6,
+        "predecessor": 35,
+        "corr_with_predecessor": 0.622,
+        "mains_fraction": 0.208
+      },
+      "reverse": {
+        "mean_mv": 1048.6,
+        "std_mv": 951.79,
+        "min_mv": 152.0,
+        "max_mv": 2196.8,
+        "predecessor": 39,
+        "corr_with_predecessor": 0.439,
+        "mains_fraction": 0.992
+      },
+      "mean_mv": 885.8
+    },
+    {
+      "gpio": 39,
+      "verdict": "floating",
+      "why": "mean moves 267 mV when the scan order changes",
+      "forward": {
+        "mean_mv": 349.2,
+        "std_mv": 481.95,
+        "min_mv": 152.0,
+        "max_mv": 1858.7,
+        "predecessor": 36,
+        "corr_with_predecessor": 0.996,
+        "mains_fraction": 0.021
+      },
+      "reverse": {
+        "mean_mv": 615.8,
+        "std_mv": 245.33,
+        "min_mv": 152.0,
+        "max_mv": 1563.1,
+        "predecessor": 32,
+        "corr_with_predecessor": 0.3,
+        "mains_fraction": 0.84
+      },
+      "mean_mv": 482.5
+    }
+  ],
+  "runs": {
+    "forward": {
+      "order": [
+        32,
+        33,
+        34,
+        35,
+        36,
+        39
+      ],
+      "samples": 3010,
+      "fs": 1000.0,
+      "device": {
+        "proto": "EMGM/2",
+        "fw": "emg_esp32_v2/2.1.0",
+        "built": "Nov_16_2026_18:44:51",
+        "chip": "ESP32-D0WD-V3",
+        "rev": "301",
+        "mac": "489d31047070",
+        "run": "16",
+        "running": "1",
+        "fs": "1000",
+        "os": "4",
+        "nch": "6",
+        "pins": "32,33,34,35,36,39",
+        "adc_unit": "1",
+        "atten_db": "12",
+        "bits": "12",
+        "rows_per_frame": "10",
+        "cal": "efuse_line_fitting",
+        "cal_a": "0.806000",
+        "cal_b": "152.0000",
+        "baud": "500000"
+      },
+      "missing": 0,
+      "invalid": 0
+    },
+    "reverse": {
+      "order": [
+        39,
+        36,
+        35,
+        34,
+        33,
+        32
+      ],
+      "samples": 3010,
+      "fs": 1000.0,
+      "device": {
+        "proto": "EMGM/2",
+        "fw": "emg_esp32_v2/2.1.0",
+        "built": "Nov_16_2026_18:44:51",
+        "chip": "ESP32-D0WD-V3",
+        "rev": "301",
+        "mac": "489d31047070",
+        "run": "3",
+        "running": "1",
+        "fs": "1000",
+        "os": "4",
+        "nch": "6",
+        "pins": "39,36,35,34,33,32",
+        "adc_unit": "1",
+        "atten_db": "12",
+        "bits": "12",
+        "rows_per_frame": "10",
+        "cal": "efuse_line_fitting",
+        "cal_a": "0.806000",
+        "cal_b": "152.0000",
+        "baud": "500000"
+      },
+      "missing": 0,
+      "invalid": 0
+    }
+  },
+  "rate_hz": 1000,
+  "seconds_per_order": 3.0,
+  "device": {
+    "fw": "emg_esp32_v2/2.1.0",
+    "chip": "ESP32-D0WD-V3",
+    "rev": "301",
+    "mac": "489d31047070",
+    "fs": "1000",
+    "os": "4"
+  },
+  "method": "Which ADC pins are actually driven by something? An electrical test, no body involved.",
+  "date": "2026-11-17T14:28:31",
+  "source_spec": "esp32:COM7",
+  "label": "VN wire moved to D35; Candys on D35 and VP"
+}

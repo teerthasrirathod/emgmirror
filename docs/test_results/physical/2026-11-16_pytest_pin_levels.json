@@ -1,0 +1,61 @@
+{
+  "date": "2026-11-16T19:29:38",
+  "port": "COM9",
+  "channels": [
+    {
+      "ch": 1,
+      "name": "flex",
+      "muscle": "flexors",
+      "arm": "right",
+      "gpio": 34,
+      "sensor": "Candy OUT (not driving: no output seen 2026-11-16)",
+      "units": "mV at ADC pin",
+      "mean": 1659.74,
+      "min": 1499.43,
+      "max": 1744.66,
+      "p2p": 245.23,
+      "std": 33.21,
+      "invalid_fraction": 0.0,
+      "mains_fraction": 0.74,
+      "state": "warn",
+      "detail": "varying, but 74% of the AC power is mains hum: typical of open inputs or poor electrode contact"
+    },
+    {
+      "ch": 2,
+      "name": "ext",
+      "muscle": "extensors",
+      "arm": "right",
+      "gpio": 39,
+      "sensor": "Candy OUT (not driving: no output seen 2026-11-16)",
+      "units": "mV at ADC pin",
+      "mean": 807.98,
+      "min": 152.0,
+      "max": 1624.36,
+      "p2p": 1472.36,
+      "std": 409.004,
+      "invalid_fraction": 0.0,
+      "mains_fraction": 0.999,
+      "state": "warn",
+      "detail": "clipping: samples at the ADC limits"
+    },
+    {
+      "ch": 3,
+      "name": "brach",
+      "muscle": "brachioradialis",
+      "arm": "right",
+      "gpio": 36,
+      "sensor": "Candy OUT (driven, ~1.66 V idle, 2026-11-16)",
+      "units": "mV at ADC pin",
+      "mean": 254.75,
+      "min": 152.0,
+      "max": 518.53,
+      "p2p": 366.53,
+      "std": 145.558,
+      "invalid_fraction": 0.0,
+      "mains_fraction": 0.998,
+      "state": "warn",
+      "detail": "clipping: samples at the ADC limits"
+    }
+  ],
+  "note": "no electrodes connected"
+}

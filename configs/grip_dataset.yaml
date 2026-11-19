@@ -1,0 +1,33 @@
+# Grip dataset session: 3 rounds of light -> medium -> maximum grip, 5 s holds, rest between.
+# Run:  emgmirror --config configs/grip_dataset.yaml dataset run --source esp32:COM7 --subject self --arm right
+# Before it: a 10 s floor check (rest, no cues). After it: per-trial analysis into trials.csv + index.csv.
+# Effort levels are TARGETS shown to the person; actual force/movement is not measured yet.
+base: configs/esp32_candy_2ch.yaml
+
+placement:
+  ch1: { muscle_group: flexors,   site: "palm side, ~1/3 from elbow crease to wrist, along the forearm, 2-3 cm apart", ref: "elbow tip (olecranon)" }
+  ch2: { muscle_group: extensors, site: "back of forearm, ~1/3 from elbow crease to wrist, along the forearm, 2-3 cm apart", ref: "wrist bone, little-finger side" }
+  pads: "gel, fresh"
+  skin_prep: "not recorded"
+
+protocol_rest_between_s: 3
+protocol:
+  - { task: rest,        kind: hold, level: 0.0, duration_s: 5, instruction: "RELAX completely. Hand resting." }
+  - { task: grip_light,  kind: hold, level: 0.2, duration_s: 5, instruction: "LIGHT grip (like holding a cup). Hold steady." }
+  - { task: rest,        kind: hold, level: 0.0, duration_s: 5, instruction: "RELAX." }
+  - { task: grip_medium, kind: hold, level: 0.5, duration_s: 5, instruction: "MEDIUM grip (firm handshake). Hold steady." }
+  - { task: rest,        kind: hold, level: 0.0, duration_s: 5, instruction: "RELAX." }
+  - { task: grip_max,    kind: hold, level: 1.0, duration_s: 5, instruction: "MAXIMUM grip. Squeeze as hard as you can and HOLD for all 5 s." }
+  - { task: rest,        kind: hold, level: 0.0, duration_s: 5, instruction: "RELAX." }
+  - { task: grip_light,  kind: hold, level: 0.2, duration_s: 5, instruction: "LIGHT grip. Hold steady." }
+  - { task: rest,        kind: hold, level: 0.0, duration_s: 5, instruction: "RELAX." }
+  - { task: grip_medium, kind: hold, level: 0.5, duration_s: 5, instruction: "MEDIUM grip. Hold steady." }
+  - { task: rest,        kind: hold, level: 0.0, duration_s: 5, instruction: "RELAX." }
+  - { task: grip_max,    kind: hold, level: 1.0, duration_s: 5, instruction: "MAXIMUM grip. HOLD for all 5 s." }
+  - { task: rest,        kind: hold, level: 0.0, duration_s: 5, instruction: "RELAX." }
+  - { task: grip_light,  kind: hold, level: 0.2, duration_s: 5, instruction: "LIGHT grip. Hold steady." }
+  - { task: rest,        kind: hold, level: 0.0, duration_s: 5, instruction: "RELAX." }
+  - { task: grip_medium, kind: hold, level: 0.5, duration_s: 5, instruction: "MEDIUM grip. Hold steady." }
+  - { task: rest,        kind: hold, level: 0.0, duration_s: 5, instruction: "RELAX." }
+  - { task: grip_max,    kind: hold, level: 1.0, duration_s: 5, instruction: "MAXIMUM grip. HOLD for all 5 s." }
+  - { task: rest,        kind: hold, level: 0.0, duration_s: 5, instruction: "RELAX. Done after this." }

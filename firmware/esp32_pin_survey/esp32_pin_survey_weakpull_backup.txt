@@ -1,0 +1,72 @@
+// Low-current connection probe for a classic ESP32 (ESP32-D0WD family).
+// Never drives a pin HIGH or LOW. GPIO input pull resistors are weak (~tens of
+// kOhms); pins 34-39 have no internal pulls and are measured without them.
+// GPIO 1/3 (serial), 6-11 (flash), and 16/17 (possible PSRAM) are skipped.
+
+const int pins[] = {0, 2, 4, 5, 12, 13, 14, 15, 18, 19, 21, 22, 23, 25, 26, 27,
+                    32, 33, 34, 35, 36, 39};
+const int pinCount = sizeof(pins) / sizeof(pins[0]);
+
+bool isAdcPin(int pin) {
+  return pin == 0 || pin == 2 || pin == 4 || pin == 12 || pin == 13 || pin == 14 ||
+         pin == 15 || pin == 25 || pin == 26 || pin == 27 || pin == 32 || pin == 33 ||
+         pin == 34 || pin == 35 || pin == 36 || pin == 39;
+}
+
+bool hasInternalPulls(int pin) {
+  return pin < 34;
+}
+
+int readPin(int pin) {
+  uint32_t total = 0;
+  for (int i = 0; i < 8; ++i) total += analogReadMilliVolts(pin);
+  return total / 8;
+}
+
+int readAnalogIfAvailable(int pin) {
+  return isAdcPin(pin) ? readPin(pin) : -1;
+}
+
+void setup() {
+  Serial.begin(115200);
+  analogReadResolution(12);
+  analogSetAttenuation(ADC_11db);
+  delay(300);
+  Serial.println("gpio,baseD,base_mV,upD,up_mV,downD,down_mV");
+}
+
+void loop() {
+  for (int i = 0; i < pinCount; ++i) {
+    const int pin = pins[i];
+    pinMode(pin, INPUT);
+    delay(2);
+    const int baseD = digitalRead(pin);
+    const int baseA = readAnalogIfAvailable(pin);
+
+    Serial.printf("%d,%d,", pin, baseD);
+    if (baseA >= 0) Serial.printf("%d,", baseA);
+    else Serial.print("NA,");
+    if (hasInternalPulls(pin)) {
+      pinMode(pin, INPUT_PULLUP);
+      delay(2);
+      const int upD = digitalRead(pin);
+      const int upA = readAnalogIfAvailable(pin);
+      pinMode(pin, INPUT_PULLDOWN);
+      delay(2);
+      const int downD = digitalRead(pin);
+      const int downA = readAnalogIfAvailable(pin);
+      Serial.printf("%d,", upD);
+      if (upA >= 0) Serial.printf("%d,", upA);
+      else Serial.print("NA,");
+      Serial.printf("%d,", downD);
+      if (downA >= 0) Serial.println(downA);
+      else Serial.println("NA");
+    } else {
+      const int value = digitalRead(pin);
+      Serial.printf("%d,NA,%d,NA\n", value, value);
+    }
+    pinMode(pin, INPUT);
+  }
+  Serial.println("--");
+  delay(1000);
+}

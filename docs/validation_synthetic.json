@@ -1,0 +1,282 @@
+{
+  "rows": [
+    {
+      "seed": 7,
+      "muscle": "flexors",
+      "mu_fraction": 1.0,
+      "enlargement": 1.0,
+      "drive_max": 1.0,
+      "true_pool_pct": 100.0,
+      "true_firing_pct": 100.0,
+      "activation_pct": 106.54855141302913,
+      "mu_firing_pct": 101.82149608980605
+    },
+    {
+      "seed": 7,
+      "muscle": "extensors",
+      "mu_fraction": 1.0,
+      "enlargement": 1.0,
+      "drive_max": 1.0,
+      "true_pool_pct": 100.0,
+      "true_firing_pct": 103.57142857142857,
+      "activation_pct": 105.43479995099072,
+      "mu_firing_pct": 101.67615916100883
+    },
+    {
+      "seed": 7,
+      "muscle": "flexors",
+      "mu_fraction": 0.8,
+      "enlargement": 1.1,
+      "drive_max": 1.0,
+      "true_pool_pct": 84.16666666666667,
+      "true_firing_pct": 85.91549295774648,
+      "activation_pct": 100.21568063988869,
+      "mu_firing_pct": 90.59644382719522
+    },
+    {
+      "seed": 7,
+      "muscle": "extensors",
+      "mu_fraction": 0.8,
+      "enlargement": 1.1,
+      "drive_max": 1.0,
+      "true_pool_pct": 80.83333333333333,
+      "true_firing_pct": 92.85714285714286,
+      "activation_pct": 100.72732162504794,
+      "mu_firing_pct": 113.36935240863104
+    },
+    {
+      "seed": 7,
+      "muscle": "flexors",
+      "mu_fraction": 0.65,
+      "enlargement": 1.2,
+      "drive_max": 0.95,
+      "true_pool_pct": 69.16666666666667,
+      "true_firing_pct": 63.38028169014085,
+      "activation_pct": 104.65722120231855,
+      "mu_firing_pct": 55.97736958733036
+    },
+    {
+      "seed": 7,
+      "muscle": "extensors",
+      "mu_fraction": 0.65,
+      "enlargement": 1.2,
+      "drive_max": 0.95,
+      "true_pool_pct": 62.5,
+      "true_firing_pct": 67.85714285714286,
+      "activation_pct": 106.93238423303329,
+      "mu_firing_pct": 106.54728866731926
+    },
+    {
+      "seed": 7,
+      "muscle": "flexors",
+      "mu_fraction": 0.5,
+      "enlargement": 1.4,
+      "drive_max": 0.9,
+      "true_pool_pct": 52.5,
+      "true_firing_pct": 53.521126760563384,
+      "activation_pct": 83.79321679264173,
+      "mu_firing_pct": 38.57586902342128
+    },
+    {
+      "seed": 7,
+      "muscle": "extensors",
+      "mu_fraction": 0.5,
+      "enlargement": 1.4,
+      "drive_max": 0.9,
+      "true_pool_pct": 50.0,
+      "true_firing_pct": 46.42857142857143,
+      "activation_pct": 115.77804006656922,
+      "mu_firing_pct": 94.05563286370327
+    },
+    {
+      "seed": 7,
+      "muscle": "flexors",
+      "mu_fraction": 0.35,
+      "enlargement": 1.5,
+      "drive_max": 0.8,
+      "true_pool_pct": 39.166666666666664,
+      "true_firing_pct": 40.84507042253521,
+      "activation_pct": 69.19324452002893,
+      "mu_firing_pct": 25.39086530258503
+    },
+    {
+      "seed": 7,
+      "muscle": "extensors",
+      "mu_fraction": 0.35,
+      "enlargement": 1.5,
+      "drive_max": 0.8,
+      "true_pool_pct": 38.333333333333336,
+      "true_firing_pct": 28.571428571428573,
+      "activation_pct": 104.39586614217735,
+      "mu_firing_pct": 69.29964421069637
+    },
+    {
+      "seed": 7,
+      "muscle": "flexors",
+      "mu_fraction": 0.2,
+      "enlargement": 2.0,
+      "drive_max": 0.75,
+      "true_pool_pct": 20.833333333333332,
+      "true_firing_pct": 15.492957746478874,
+      "activation_pct": 70.6102822072775,
+      "mu_firing_pct": 19.769124696757526
+    },
+    {
+      "seed": 7,
+      "muscle": "extensors",
+      "mu_fraction": 0.2,
+      "enlargement": 2.0,
+      "drive_max": 0.75,
+      "true_pool_pct": 20.833333333333332,
+      "true_firing_pct": 14.285714285714286,
+      "activation_pct": 116.07568838449262,
+      "mu_firing_pct": 21.019060098265598
+    },
+    {
+      "seed": 11,
+      "muscle": "flexors",
+      "mu_fraction": 1.0,
+      "enlargement": 1.0,
+      "drive_max": 1.0,
+      "true_pool_pct": 100.0,
+      "true_firing_pct": 100.0,
+      "activation_pct": 94.06538914913558,
+      "mu_firing_pct": 115.40361128045191
+    },
+    {
+      "seed": 11,
+      "muscle": "extensors",
+      "mu_fraction": 1.0,
+      "enlargement": 1.0,
+      "drive_max": 1.0,
+      "true_pool_pct": 100.0,
+      "true_firing_pct": 100.0,
+      "activation_pct": 95.6242656561305,
+      "mu_firing_pct": 109.19180518289151
+    },
+    {
+      "seed": 11,
+      "muscle": "flexors",
+      "mu_fraction": 0.8,
+      "enlargement": 1.1,
+      "drive_max": 1.0,
+      "true_pool_pct": 82.5,
+      "true_firing_pct": 87.32394366197182,
+      "activation_pct": 90.38525483148914,
+      "mu_firing_pct": 161.4005422646091
+    },
+    {
+      "seed": 11,
+      "muscle": "extensors",
+      "mu_fraction": 0.8,
+      "enlargement": 1.1,
+      "drive_max": 1.0,
+      "true_pool_pct": 79.16666666666667,
+      "true_firing_pct": 67.85714285714286,
+      "activation_pct": 100.67991220668166,
+      "mu_firing_pct": 70.40617271203543
+    },
+    {
+      "seed": 11,
+      "muscle": "flexors",
+      "mu_fraction": 0.65,
+      "enlargement": 1.2,
+      "drive_max": 0.95,
+      "true_pool_pct": 69.16666666666667,
+      "true_firing_pct": 73.2394366197183,
+      "activation_pct": 86.33921300554209,
+      "mu_firing_pct": 92.3291220689035
+    },
+    {
+      "seed": 11,
+      "muscle": "extensors",
+      "mu_fraction": 0.65,
+      "enlargement": 1.2,
+      "drive_max": 0.95,
+      "true_pool_pct": 61.666666666666664,
+      "true_firing_pct": 50.0,
+      "activation_pct": 92.74993592511346,
+      "mu_firing_pct": 67.48677718943246
+    },
+    {
+      "seed": 11,
+      "muscle": "flexors",
+      "mu_fraction": 0.5,
+      "enlargement": 1.4,
+      "drive_max": 0.9,
+      "true_pool_pct": 55.0,
+      "true_firing_pct": 54.929577464788736,
+      "activation_pct": 91.02764936757309,
+      "mu_firing_pct": 72.262321950133
+    },
+    {
+      "seed": 11,
+      "muscle": "extensors",
+      "mu_fraction": 0.5,
+      "enlargement": 1.4,
+      "drive_max": 0.9,
+      "true_pool_pct": 44.166666666666664,
+      "true_firing_pct": 39.285714285714285,
+      "activation_pct": 88.09388306348474,
+      "mu_firing_pct": 42.727898780035886
+    },
+    {
+      "seed": 11,
+      "muscle": "flexors",
+      "mu_fraction": 0.35,
+      "enlargement": 1.5,
+      "drive_max": 0.8,
+      "true_pool_pct": 40.0,
+      "true_firing_pct": 40.84507042253521,
+      "activation_pct": 73.51042702956698,
+      "mu_firing_pct": 69.90193061877754
+    },
+    {
+      "seed": 11,
+      "muscle": "extensors",
+      "mu_fraction": 0.35,
+      "enlargement": 1.5,
+      "drive_max": 0.8,
+      "true_pool_pct": 26.666666666666668,
+      "true_firing_pct": 17.857142857142858,
+      "activation_pct": 64.81039387715659,
+      "mu_firing_pct": 50.28827996892493
+    },
+    {
+      "seed": 11,
+      "muscle": "flexors",
+      "mu_fraction": 0.2,
+      "enlargement": 2.0,
+      "drive_max": 0.75,
+      "true_pool_pct": 20.0,
+      "true_firing_pct": 26.760563380281692,
+      "activation_pct": 54.59573232503695,
+      "mu_firing_pct": 31.66936137885609
+    },
+    {
+      "seed": 11,
+      "muscle": "extensors",
+      "mu_fraction": 0.2,
+      "enlargement": 2.0,
+      "drive_max": 0.75,
+      "true_pool_pct": 16.666666666666668,
+      "true_firing_pct": 14.285714285714286,
+      "activation_pct": 77.49821352340126,
+      "mu_firing_pct": 46.21375967343017
+    }
+  ],
+  "scores": {
+    "activation_pct_vs_true_pool": {
+      "spearman": 0.46687169282530805,
+      "mae_pct_points": 33.376246841414265,
+      "bias_pct_points": 32.51705140851977,
+      "n": 24
+    },
+    "mu_firing_pct_vs_true_firing": {
+      "spearman": 0.8443293062981857,
+      "mae_pct_points": 19.236021406747625,
+      "bias_pct_points": 15.927884375887416,
+      "n": 24
+    }
+  }
+}
