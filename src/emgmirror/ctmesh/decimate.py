@@ -26,7 +26,7 @@ class LodSpec:
 
 
 PRINT = LodSpec("print", 200_000, 0.25)
-WEB = LodSpec("web", 40_000, 0.5)
+WEB = LodSpec("web", 30_000, 0.5)
 
 
 def simplify(mesh: trimesh.Trimesh, target_faces: int, max_error_mm: float) -> trimesh.Trimesh:

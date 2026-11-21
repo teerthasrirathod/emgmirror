@@ -211,27 +211,28 @@ def distance_to_surface(points: np.ndarray, V: np.ndarray, F: np.ndarray) -> np.
     return np.abs(ns.vtk_to_numpy(out)).astype(float)
 
 
-def surface_samples(V: np.ndarray, F: np.ndarray, spacing_mm: float, max_points: int = 1_500_000,
+def surface_samples(V: np.ndarray, F: np.ndarray, spacing_mm: float, max_points: int = 2_000_000,
                     seed: int = 0) -> np.ndarray:
-    """Vertices, triangle centroids and area-weighted random points (about one per (spacing/2)^2 of area), so big
-    decimated triangles are sampled as densely as small ones."""
+    """Vertices and triangle centroids, plus random points on triangles larger than half a voxel (about one per
+    (spacing/2)^2 of area), so big decimated triangles are sampled as densely as small native ones."""
     V, F = np.asarray(V, float), np.asarray(F)
     if not len(F):
         return V
     T = V[F]
     area = 0.5 * np.linalg.norm(np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]), axis=1)
-    n_rand = int(min(max_points, area.sum() / (0.5 * spacing_mm) ** 2))
+    extra = np.clip(np.floor(area / (0.5 * spacing_mm) ** 2).astype(np.int64) - 2, 0, None)
     pts = [V, T.mean(1)]
-    if n_rand > 0 and area.sum() > 0:
+    n = int(min(extra.sum(), max_points))
+    if n > 0:
         rng = np.random.default_rng(seed)
-        fi = rng.choice(len(F), n_rand, p=area / area.sum())
-        r1, r2 = np.sqrt(rng.random(n_rand)), rng.random(n_rand)
+        fi = np.repeat(np.arange(len(F)), extra)
+        if len(fi) > n:
+            fi = rng.choice(fi, n, replace=False)
+        r1, r2 = np.sqrt(rng.random(len(fi))), rng.random(len(fi))
         tri = T[fi]
-        pts.append(tri[:, 0] * (1 - r1)[:, None] + tri[:, 1] * (r1 * (1 - r2))[:, None] + tri[:, 2] * (r1 * r2)[:, None])
-    P = np.vstack(pts)
-    if len(P) > max_points:
-        P = P[np.random.default_rng(seed).choice(len(P), max_points, replace=False)]
-    return P
+        pts.append(tri[:, 0] * (1 - r1)[:, None] + tri[:, 1] * (r1 * (1 - r2))[:, None]
+                   + tri[:, 2] * (r1 * r2)[:, None])
+    return np.vstack(pts)
 
 
 def surface_distance(Va, Fa, Vb, Fb, spacing_mm: float) -> dict:
@@ -250,6 +251,7 @@ def surface_distance(Va, Fa, Vb, Fb, spacing_mm: float) -> dict:
 @dataclass
 class GateLimits:
     hd95_voxels: float = 1.0  # HD95 against the label's voxel boundary, in units of voxel_mm
+    web_hd95_voxels: float = 1.5  # web LOD: display geometry, looser distance limit
     volume_warn_pct: float = 5.0  # |volume change| above this is flagged (reported, not a failure)
 
 
@@ -259,16 +261,17 @@ def voxel_mm(spacing) -> float:
     return float(np.prod(np.asarray(spacing, float)) ** (1 / 3))
 
 
-def gate(qc: dict, spacing, limits: GateLimits = GateLimits()) -> tuple[bool, list[str]]:
-    """Pass/fail for one mesh. ``qc`` holds mesh_qc keys plus hd95_mm and volume_change_pct."""
+def gate(qc: dict, spacing, limits: GateLimits = GateLimits(), web: bool = False) -> tuple[bool, list[str]]:
+    """Pass/fail for one mesh. ``qc`` holds mesh_qc keys plus hd95_mm and volume_change_pct. ``web=True`` is the
+    display gate: closed and within ``web_hd95_voxels``; self-intersections are reported but do not fail it."""
     why = []
     if not qc.get("watertight"):
         why.append("not watertight")
     if not qc.get("winding_consistent", True):
         why.append("inconsistent winding")
-    if qc.get("self_intersections", 0):
+    if qc.get("self_intersections", 0) and not web:
         why.append(f"{qc['self_intersections']} self-intersecting triangle pairs")
-    lim = limits.hd95_voxels * voxel_mm(spacing)
+    lim = (limits.web_hd95_voxels if web else limits.hd95_voxels) * voxel_mm(spacing)
     if qc.get("hd95_mm") is None or qc["hd95_mm"] > lim:
         why.append(f"HD95 {qc.get('hd95_mm')} mm > {lim:.2f} mm")
     return not why, why

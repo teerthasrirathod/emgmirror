@@ -264,7 +264,6 @@ def surfacenets_all(lm: LabelMap, ids, params: SurfaceParams = SurfaceParams()) 
         sn.SetValue(k, v)
     sn.SetBackgroundLabel(0)
     sn.SetOutputMeshTypeToTriangles()
-    sn.SetOutputStyleToDefault()
     sn.SetNumberOfIterations(0)
     sn.Update()
     V0, F = _poly_arrays(sn.GetOutput())
@@ -275,6 +274,7 @@ def surfacenets_all(lm: LabelMap, ids, params: SurfaceParams = SurfaceParams()) 
     # lattice, so merge them by lattice key to get one shared vertex per corner.
     key = np.rint(V0 / spacing * 2).astype(np.int64)
     _, first, inv = np.unique(key, axis=0, return_index=True, return_inverse=True)
+    F_raw = F
     V0, F = V0[first], inv.ravel()[F]
     keep = (F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])
     F, sc = F[keep], sc[keep]
@@ -294,13 +294,16 @@ def surfacenets_all(lm: LabelMap, ids, params: SurfaceParams = SurfaceParams()) 
             sn2.SetConstraintDistance(params.sn_constraint_distance_mm)
         sn2.Update()
         V1, F1 = _poly_arrays(sn2.GetOutput())
-        if F1.shape != F.shape or not np.array_equal(F1, F):
+        if F1.shape != F_raw.shape or not np.array_equal(F1, F_raw):  # same point order as the first run
             raise RuntimeError("SurfaceNets smoothing changed the topology")
-        V0s = V1
+        V0s = V1[first]
     else:
         V0s = V0
-    Vs = windowed_sinc(V0s, F, params.smoothing_iterations, params.passband, non_manifold=True)
-    Vs = _clamp(V0, Vs, spacing, params.constraint_voxels)
+    if params.smoothing_iterations > 0:
+        Vs = windowed_sinc(V0s, F, params.smoothing_iterations, params.passband, non_manifold=True)
+        Vs = _clamp(V0, Vs, spacing, params.constraint_voxels)
+    else:
+        Vs = V0s  # (the built-in smoother applies its own constraint)
     t_smooth = time.perf_counter() - t
 
     M = lm.index_to_lps

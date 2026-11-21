@@ -1,0 +1,12 @@
+# Mesh pipeline (src/emgmirror/ctmesh, milestone S2). Install on top of the package:
+#   pip install -e ".[dev]" -r requirements-ctmesh.txt
+# All permissive licences (no GPL, no MeshLib):
+vtk>=9.5            # BSD-3: vtkSurfaceNets3D, flying edges, windowed-sinc smoothing, distance queries
+trimesh>=4.5        # MIT: mesh container, STL/3MF export, repair helpers
+manifold3d>=3.0     # Apache-2.0: 2-manifold check
+meshoptimizer>=0.2.30a0  # MIT (Python bindings of zeux/meshoptimizer): simplify, EXT_meshopt_compression codecs
+highdicom>=0.23     # MIT: DICOM-SEG
+pydicom>=3.0        # MIT
+SimpleITK>=2.5      # Apache-2.0: NIfTI I/O in LPS
+numpy>=1.26
+scipy>=1.11

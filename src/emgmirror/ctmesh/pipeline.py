@@ -20,6 +20,8 @@ Research use, not for diagnosis or surgical planning.
 from __future__ import annotations
 
 import json
+import multiprocessing
+import os
 import re
 import time
 from dataclasses import asdict, dataclass, field
@@ -40,8 +42,9 @@ class PipelineParams:
     surface: surface.SurfaceParams = field(default_factory=surface.SurfaceParams)
     print_lod: dec.LodSpec = field(default_factory=lambda: dec.LodSpec(**asdict(dec.PRINT)))
     web_lod: dec.LodSpec = field(default_factory=lambda: dec.LodSpec(**asdict(dec.WEB)))
-    web_total_faces: int = 1_500_000  # budget for combined_web.glb; per-structure budgets scale down to fit
+    web_total_faces: int = 800_000  # budget for combined_web.glb (~4 MB); per-structure budgets scale down to fit
     lod_retries: int = 3
+    workers: int | None = None  # label-level processes (None = all cores; 1 = in-process)
     limits: qc.GateLimits = field(default_factory=qc.GateLimits)
     dicom_seg: bool = True
     per_structure_files: bool = True
@@ -51,7 +54,8 @@ def _stem(lid: int, name: str) -> str:
     return f"{lid:03d}_{re.sub(r'[^A-Za-z0-9_.-]', '_', name)}"[:80]
 
 
-def evaluate(mesh: trimesh.Trimesh, boundary, voxel_volume_mm3: float, spacing, limits: qc.GateLimits) -> dict:
+def evaluate(mesh: trimesh.Trimesh, boundary, voxel_volume_mm3: float, spacing, limits: qc.GateLimits,
+             web: bool = False) -> dict:
     """QC numbers for one mesh against its label's voxel boundary."""
     vmm = qc.voxel_mm(spacing)
     if not len(mesh.faces):
@@ -66,8 +70,8 @@ def evaluate(mesh: trimesh.Trimesh, boundary, voxel_volume_mm3: float, spacing, 
              "n_vertices": int(len(mesh.vertices)), "volume_mm3": vol, "area_mm2": float(mesh.area),
              "volume_change_pct": (vol - voxel_volume_mm3) / voxel_volume_mm3 * 100 if voxel_volume_mm3 else None,
              "manifold3d_ok": dec.manifold_ok(mesh), **{k: d[k] for k in ("hd95_mm", "mean_dist_mm", "hausdorff_mm")}}
-    ok, why = qc.gate(r, spacing, limits)
-    if r["n_faces"] and not r["manifold3d_ok"]:
+    ok, why = qc.gate(r, spacing, limits, web=web)
+    if r["n_faces"] and not r["manifold3d_ok"] and not web:
         ok, why = False, why + ["manifold3d rejects the mesh"]
     r["passed"], r["issues"] = ok, why
     return r
@@ -104,25 +108,28 @@ def _crop(mask: np.ndarray) -> np.ndarray:
     return mask[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]]
 
 
-def _lod(native: trimesh.Trimesh, spec: dec.LodSpec, budget: int, boundary, vvol: float, lm: LabelMap,
-         p: PipelineParams) -> tuple[trimesh.Trimesh, dict]:
+def _lod(native: trimesh.Trimesh, native_report: dict, spec: dec.LodSpec, budget: int, boundary, vvol: float,
+         lm: LabelMap, p: PipelineParams, web: bool) -> tuple[trimesh.Trimesh, dict]:
+    """Decimate the native mesh once per attempt; retry with half the error cap and 1.5x the budget."""
     vmm = qc.voxel_mm(lm.spacing)
     err, tgt = spec.error_voxels * vmm, budget
-    last = None
     for attempt in range(p.lod_retries + 1):
+        if tgt >= len(native.faces):
+            break
         m, rep = dec.repair(dec.simplify(native, tgt, err))
-        r = evaluate(m, boundary, vvol, lm.spacing, p.limits)
+        if len(m.faces) >= len(native.faces):
+            break
+        r = evaluate(m, boundary, vvol, lm.spacing, p.limits, web=web)
         r.update({"target_faces": int(tgt), "error_cap_mm": float(err), "attempts": attempt + 1, "repair": rep,
-                  "source": "decimated" if len(m.faces) < len(native.faces) else "native"})
-        last = (m, r)
-        if r["passed"] or len(m.faces) >= len(native.faces):
-            return last
-        err, tgt = err / 2, tgt * 2
-    m = native.copy()
-    r = evaluate(m, boundary, vvol, lm.spacing, p.limits)
-    r.update({"target_faces": int(budget), "error_cap_mm": 0.0, "attempts": p.lod_retries + 2,
-              "source": "native (decimation kept failing QC)"})
-    return m, r
+                  "source": "decimated"})
+        if r["passed"]:
+            return m, r
+        err, tgt = err / 2, int(tgt * 1.5)
+    r = dict(native_report)
+    if web:  # re-gate the native numbers with the web limits
+        r["passed"], r["issues"] = qc.gate(r, lm.spacing, p.limits, web=True)
+    r.update({"target_faces": int(budget), "error_cap_mm": 0.0, "source": "native"})
+    return native.copy(), r
 
 
 def _structure_extras(lab, r_print: dict, s: surface.Surface) -> dict:
@@ -130,6 +137,35 @@ def _structure_extras(lab, r_print: dict, s: surface.Surface) -> dict:
             "snomed": snomed_triplet(lab.snomed), "source_model": lab.source_model, "flags": lab.flags,
             "volume_ml": r_print["volume_mm3"] / 1000.0, "cut_by_scan_edge": s.cut_by_scan_edge,
             "disclaimer": DISCLAIMER}
+
+
+_G: dict = {}
+
+
+def _process_label(lid: int):
+    """Native surface choice, both LODs and their QC for one label (runs in a worker process)."""
+    lm, sn, p = _G["lm"], _G["sn"], _G["p"]
+    tl = time.perf_counter()
+    lab = lm.label(lid)
+    boundary = qc.label_boundary(lm.array, lid, lm.index_to_lps)
+    s, r_nat, tried = _choose_native(lm, lid, sn.get(lid), boundary, p)
+    rep = {"id": lid, "name": lab.name, "method": s.method, "methods_tried": tried, "thin": s.thin,
+           "cut_by_scan_edge": s.cut_by_scan_edge, "split_vertices": s.split_vertices,
+           "voxel_count": s.voxel_count, "voxel_volume_mm3": s.voxel_volume_mm3, "native": r_nat,
+           "timings_s": {"native": time.perf_counter() - tl}}
+    t = time.perf_counter()
+    mp_, rp = _lod(s.mesh, r_nat, p.print_lod, p.print_lod.max_faces, boundary, s.voxel_volume_mm3, lm, p, False)
+    mw, rw = _lod(s.mesh, r_nat, p.web_lod, _G["web_budget"][lid], boundary, s.voxel_volume_mm3, lm, p, True)
+    rep["print"], rep["web"] = rp, rw
+    rep["timings_s"]["lods"] = time.perf_counter() - t
+    return s, (mp_, mw), rep
+
+
+def _log_line(log, lm, lid, r):
+    rp, rw = r["print"], r["web"]
+    log(f"  {lm.label(lid).name:<28} {r['method']:<12} native {r['native']['n_faces']:>7} print {rp['n_faces']:>7} "
+        f"web {rw['n_faces']:>6}  HD95 {rp['hd95_mm'] or 0:.2f} mm  dV {rp['volume_change_pct'] or 0:+.1f}%  "
+        f"{'ok' if rp['passed'] else 'FAIL ' + '; '.join(rp['issues'])}")
 
 
 def run(labels_nii: str | Path, out_dir: str | Path, labels_json: str | Path | None = None,
@@ -151,48 +187,37 @@ def run(labels_nii: str | Path, out_dir: str | Path, labels_json: str | Path | N
     sn = surface.surfacenets_all(lm, todo, p.surface)
     timings["surfacenets_all"] = time.perf_counter() - t
 
-    natives, reports = {}, {}
-    t = time.perf_counter()
-    for lid in todo:
-        lab = lm.label(lid)
-        tl = time.perf_counter()
-        boundary = qc.label_boundary(lm.array, lid, lm.index_to_lps)
-        s, r_nat, tried = _choose_native(lm, lid, sn.get(lid), boundary, p)
-        natives[lid] = (s, boundary)
-        reports[lid] = {"id": lid, "name": lab.name, "method": s.method, "methods_tried": tried, "thin": s.thin,
-                        "cut_by_scan_edge": s.cut_by_scan_edge, "split_vertices": s.split_vertices,
-                        "voxel_count": s.voxel_count, "voxel_volume_mm3": s.voxel_volume_mm3,
-                        "native": r_nat, "timings_s": {"native": time.perf_counter() - tl}}
-    timings["native_qc"] = time.perf_counter() - t
-
-    # web budgets: per-structure cap, then scale down so the whole scene fits web_total_faces
-    nf = {lid: len(natives[lid][0].mesh.faces) for lid in todo}
-    want = {lid: min(p.web_lod.max_faces, nf[lid]) for lid in todo}
+    nf_sn = {lid: len(sn[lid].mesh.faces) for lid in sn}
+    want = {lid: min(p.web_lod.max_faces, nf_sn.get(lid, p.web_lod.max_faces)) for lid in todo}
     tot = sum(want.values())
     scale = min(1.0, p.web_total_faces / tot) if tot else 1.0
     web_budget = {lid: max(500, int(want[lid] * scale)) for lid in todo}
 
     t = time.perf_counter()
-    lods = {}
-    for lid in todo:
-        s, boundary = natives[lid]
-        tl = time.perf_counter()
-        mp, rp = _lod(s.mesh, p.print_lod, p.print_lod.max_faces, boundary, s.voxel_volume_mm3, lm, p)
-        mw, rw = _lod(s.mesh, p.web_lod, web_budget[lid], boundary, s.voxel_volume_mm3, lm, p)
-        lods[lid] = (mp, mw)
-        reports[lid]["print"], reports[lid]["web"] = rp, rw
-        reports[lid]["timings_s"]["lods"] = time.perf_counter() - tl
-        log(f"  {lm.label(lid).name:<28} {s.method:<12} native {nf[lid]:>7} print {rp['n_faces']:>7} "
-            f"web {rw['n_faces']:>6}  HD95 {rp['hd95_mm'] or 0:.2f} mm  dV {rp['volume_change_pct'] or 0:+.1f}%  "
-            f"{'ok' if rp['passed'] else 'FAIL ' + '; '.join(rp['issues'])}")
-    timings["lods_qc"] = time.perf_counter() - t
+    global _G
+    _G = {"lm": lm, "sn": sn, "p": p, "web_budget": web_budget}
+    natives, lods, reports = {}, {}, {}
+    workers = max(1, min(p.workers or os.cpu_count() or 1, len(todo)))
+    if workers > 1 and "fork" in multiprocessing.get_all_start_methods():
+        with multiprocessing.get_context("fork").Pool(workers) as pool:
+            results = pool.imap(_process_label, todo, chunksize=1)
+            for lid, res in zip(todo, results):
+                natives[lid], lods[lid], reports[lid] = res
+                _log_line(log, lm, lid, reports[lid])
+    else:
+        for lid in todo:
+            natives[lid], lods[lid], reports[lid] = _process_label(lid)
+            _log_line(log, lm, lid, reports[lid])
+    _G = {}
+    timings["meshes_lods_qc"] = time.perf_counter() - t
+    timings["workers"] = workers
 
     # exports
     t = time.perf_counter()
     structures, web_nodes, print_nodes, print3mf = [], [], [], {}
     for lid in todo:
         lab = lm.label(lid)
-        s = natives[lid][0]
+        s = natives[lid]
         mp, mw = lods[lid]
         rp = reports[lid]["print"]
         extras = _structure_extras(lab, rp, s)
@@ -218,6 +243,7 @@ def run(labels_nii: str | Path, out_dir: str | Path, labels_json: str | Path | N
                    "passed": rp["passed"], "issues": rp["issues"], "method": s.method,
                    "triangles": {"print": rp["n_faces"], "web": reports[lid]["web"]["n_faces"]},
                    "web_hd95_mm": reports[lid]["web"]["hd95_mm"],
+                   "web_passed": reports[lid]["web"]["passed"],
                    "volume_warning": rp["volume_change_pct"] is not None and
                    abs(rp["volume_change_pct"]) > p.limits.volume_warn_pct}})
     frame = {"source_affine_index_to_lps": lm.index_to_lps.tolist(), "label_map_shape_zyx": list(lm.array.shape)}

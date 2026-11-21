@@ -172,7 +172,11 @@ def totalseg_to_contract(subject_dir: str | Path, out_dir: str | Path) -> LabelM
         overlap += int(np.count_nonzero(arr[m]))
         arr[m] = lid
         t = table.get(n, {})
-        labels.append(Label(lid, n, rgb=tuple(t.get("rgb") or (177, 122, 101)),
+        sn = t.get("snomed") or {}
+        display = ""
+        if sn.get("type"):
+            display = sn["type"]["meaning"] + (f" ({sn['modifier']['meaning'].lower()})" if sn.get("modifier") else "")
+        labels.append(Label(lid, n, display=display, rgb=tuple(t.get("rgb") or (177, 122, 101)),
                             snomed=t.get("snomed") if t.get("snomed", {}).get("type") else None,
                             source_model="TotalSegmentator dataset ground truth (Zenodo 6802613, CC BY 4.0)"))
     out = sitk.GetImageFromArray(arr)
