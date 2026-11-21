@@ -79,6 +79,9 @@ fails if a requirement has no test, or if a listed test does not exist. "Device"
 
 ## Open items
 
+- Vertebral level consistency (wrong-level hazard): the S1 benchmark found a one-level shift of T6-T10 in a
+  5 mm cardiac CT (s0684). Add a level check (count and order of vertebrae against ribs and sacrum) and a
+  requirement with tests before the spine is claimed.
 - Risk file (ISO 14971) linking each hazard to these requirements; software safety classification.
 - Clinician review and approval workflow (the `not_approved` state is set here; the sign-off itself belongs to the backend and viewer).
 - Verification on the GPU worker at 1.5 mm and on independent multi-site data, including Indian data.
