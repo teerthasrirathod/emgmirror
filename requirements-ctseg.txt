@@ -1,0 +1,18 @@
+# Segmentation engine (src/emgmirror/ctseg). Install on top of the package: pip install -e ".[dev]" -r requirements-ctseg.txt
+# Research use, not for diagnosis or surgical planning.
+#
+# Only commercial-safe weights are used; see src/emgmirror/ctseg/allowlist.py. Weights are downloaded by the
+# model packages on first use (bake them into the GPU image for hosting; the engine checks the weights folder
+# against the allowlist).
+#
+# For CPU-only machines install the CPU build of torch first, e.g.
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+TotalSegmentator==2.18.0    # Apache-2.0 code; Apache-2.0 weights for the allowlisted tasks only
+nnunetv2>=2.8,<2.9          # Apache-2.0, pulled in by TotalSegmentator
+torch>=2.4                  # BSD-3
+moosez==3.2.2               # Apache-2.0 code, CC BY 4.0 weights (peripheral bones, body composition)
+SimpleITK>=2.5
+nibabel>=5.3
+numpy>=1.26
+scipy>=1.11
+pydicom>=3.0

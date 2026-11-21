@@ -1,0 +1,2 @@
+recursive-include src/emgmirror/ctseg/resources *.json
+recursive-include src/emgmirror/ctseg/resources NOTICE
