@@ -103,6 +103,12 @@ def _choose_native(lm: LabelMap, lid: int, sn: surface.Surface | None, boundary,
             if sn is not None:
                 fe.cut_by_scan_edge = sn.cut_by_scan_edge
             cands.append((fe, ev(fe)))
+    if not any(r["passed"] for _, r in cands):  # last resort: bridge diagonal-only voxel contacts
+        fb = surface.flyingedges_one(lm, lid, p.surface, fix_topology=True)
+        if fb is not None:
+            if sn is not None:
+                fb.cut_by_scan_edge = sn.cut_by_scan_edge
+            cands.append((fb, ev(fb)))
     if all(vol_bad(r) or not r["passed"] for _, r in cands):
         raw = surface.surfacenets_all(lm, [lid], surface.SurfaceParams(smoothing_iterations=0)).get(lid)
         if raw is not None:
@@ -176,6 +182,7 @@ def _process_label(lid: int):
     s, r_nat, tried = _choose_native(lm, lid, sn.get(lid), boundary, p)
     rep = {"id": lid, "name": lab.name, "method": s.method, "methods_tried": tried, "thin": s.thin,
            "cut_by_scan_edge": s.cut_by_scan_edge, "split_vertices": s.split_vertices,
+           "bridged_voxels": s.bridged_voxels,
            "voxel_count": s.voxel_count, "voxel_volume_mm3": s.voxel_volume_mm3, "native": r_nat}
     tm = {"native": time.perf_counter() - tl}
     t = time.perf_counter()

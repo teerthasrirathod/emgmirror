@@ -66,6 +66,7 @@ class Surface:
     thin: bool = False
     split_vertices: int = 0  # vertices duplicated to make the surface manifold
     max_displacement_mm: float = 0.0
+    bridged_voxels: int = 0  # voxels added by well_composed() (fallback only)
     timings_s: dict = field(default_factory=dict)
 
 
@@ -353,10 +354,59 @@ def surfacenets_all(lm: LabelMap, ids, params: SurfaceParams = SurfaceParams()) 
     return out
 
 
-def flyingedges_one(lm: LabelMap, lid: int, params: SurfaceParams = SurfaceParams()) -> Surface | None:
-    """Fallback path for one label: discrete flying edges on its own mask + windowed sinc + box constraint."""
+def well_composed(mask: np.ndarray, max_rounds: int = 20) -> tuple[np.ndarray, int]:
+    """Add the fewest voxels that remove edge-only and corner-only contacts (2x2 diagonal patterns in any axis
+    plane, 2x2x2 blocks whose set voxels touch only at the centre corner). Such configurations make every
+    surface of the label non-manifold. Returns (new mask, number of voxels added)."""
+    m = np.pad(np.asarray(mask, bool), 1)
+    added = 0
+    for _ in range(max_rounds):
+        fix = np.zeros_like(m)
+        for a, b in ((0, 1), (0, 2), (1, 2)):
+            sl = [slice(None)] * 3
+
+            def sh(da, db):
+                s_ = list(sl)
+                s_[a] = slice(da, m.shape[a] - 1 + da)
+                s_[b] = slice(db, m.shape[b] - 1 + db)
+                return tuple(s_)
+            p00, p11, p01, p10 = m[sh(0, 0)], m[sh(1, 1)], m[sh(0, 1)], m[sh(1, 0)]
+            d1 = p00 & p11 & ~p01 & ~p10
+            d2 = p01 & p10 & ~p00 & ~p11
+            fix[sh(0, 1)] |= d1  # bridge each diagonal pair with one voxel
+            fix[sh(0, 0)] |= d2
+        c = [m[i:m.shape[0] - 1 + i, j:m.shape[1] - 1 + j, k:m.shape[2] - 1 + k]
+             for i in (0, 1) for j in (0, 1) for k in (0, 1)]
+        idx = {(i, j, k): n for n, (i, j, k) in enumerate((i, j, k) for i in (0, 1) for j in (0, 1) for k in (0, 1))}
+        for (i, j, k), n in idx.items():  # corner-only pairs: (i,j,k) and its opposite, nothing else set
+            if (i, j, k) > (1 - i, 1 - j, 1 - k):
+                continue
+            o = idx[(1 - i, 1 - j, 1 - k)]
+            others = np.zeros_like(c[0])
+            for q, cc in enumerate(c):
+                if q not in (n, o):
+                    others |= cc
+            bad = c[n] & c[o] & ~others
+            # bridge with the voxel next to (i,j,k) along the first axis
+            t = (1 - i, j, k)
+            fix[t[0]:m.shape[0] - 1 + t[0], t[1]:m.shape[1] - 1 + t[1], t[2]:m.shape[2] - 1 + t[2]] |= bad
+        new = fix & ~m
+        if not new.any():
+            break
+        added += int(new.sum())
+        m |= new
+    return m[1:-1, 1:-1, 1:-1], added
+
+
+def flyingedges_one(lm: LabelMap, lid: int, params: SurfaceParams = SurfaceParams(),
+                    fix_topology: bool = False) -> Surface | None:
+    """Fallback path for one label: discrete flying edges on its own mask + windowed sinc + box constraint.
+    ``fix_topology`` first bridges edge- and corner-only voxel contacts (:func:`well_composed`)."""
     t0 = time.perf_counter()
     mask = lm.array == lid
+    n_added = 0
+    if fix_topology:
+        mask, n_added = well_composed(mask)
     box = _bbox(mask)
     if box is None:
         return None
@@ -386,7 +436,11 @@ def flyingedges_one(lm: LabelMap, lid: int, params: SurfaceParams = SurfaceParam
     on_edge = any(mask[sl].any() for sl in (np.s_[0], np.s_[-1], np.s_[:, 0], np.s_[:, -1], np.s_[:, :, 0],
                                                 np.s_[:, :, -1]))
     disp = np.linalg.norm(Vs - V0, axis=1)
-    s = Surface(lid, mesh, "flyingedges", n, n * lm.voxel_volume_mm3, bool(on_edge), False, 0,
-                float(disp.max()) if len(disp) else 0.0)
+    s = Surface(lid, mesh, "flyingedges_bridged" if fix_topology else "flyingedges", n, n * lm.voxel_volume_mm3,
+                bool(on_edge), False, 0, float(disp.max()) if len(disp) else 0.0)
+    s.bridged_voxels = n_added
+    if fix_topology:  # volume change is still judged against the original label
+        s.voxel_count = int(np.count_nonzero(lm.array == lid))
+        s.voxel_volume_mm3 = s.voxel_count * lm.voxel_volume_mm3
     s.timings_s = {"flyingedges": time.perf_counter() - t0}
     return s

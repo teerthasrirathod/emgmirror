@@ -158,3 +158,16 @@ def test_old_and_new_qc_port_agree(vox):
     m = trimesh.creation.icosphere(3, 5.0)
     assert qc.mesh_qc(m)["self_intersections"] == old.mesh_qc(m)["self_intersections"] == 0
     assert qc.mesh_qc(m)["watertight"] and qc.mesh_qc(m, vox)["volume_vs_voxels_pct"] is not None
+
+
+def test_well_composed_bridges_diagonal_contacts():
+    m = np.zeros((5, 5, 5), bool)
+    m[1, 1, 1] = m[1, 2, 2] = True  # edge contact
+    m[3, 3, 3] = m[2, 2, 2] = True  # corner contact with m[1, 2, 2]? no: (2,2,2)-(3,3,3) corner-only
+    fixed, n = surface.well_composed(m)
+    assert n >= 2 and (fixed >= m).all()
+    again, n2 = surface.well_composed(fixed)
+    assert n2 == 0
+    arr = fixed.astype(np.uint16)
+    s = surface.surfacenets_all(_lm(arr), [1], surface.SurfaceParams(smoothing_iterations=0))[1]
+    assert s.mesh.is_watertight and s.split_vertices == 0
