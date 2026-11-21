@@ -44,7 +44,7 @@ const fs = require("fs"), path = require("path");
 const [STATIC, SCEN] = process.argv.slice(2);
 const sc = JSON.parse(fs.readFileSync(SCEN, "utf8"));
 const out = { errors: [] };
-const done = () => { console.log(JSON.stringify(out)); process.exit(0); };
+const done = () => { process.stdout.write(JSON.stringify(out) + "\n", () => process.exit(0)); };
 process.on("unhandledRejection", (e) => out.errors.push("unhandled: " + (e && e.message)));
 let BASE = sc.bases[0];
 const realFetch = globalThis.fetch;

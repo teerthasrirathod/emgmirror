@@ -1,0 +1,5990 @@
+{
+ "about": "Canonical label table for emgmirror.ctseg. Names follow TotalSegmentator. Colours and SNOMED CT codes from SlicerTotalSegmentator (Apache-2.0, see NOTICE). Ids are stable: never renumber.",
+ "labels": [
+  {
+   "id": 1,
+   "name": "spleen",
+   "display": "Spleen",
+   "rgb": [
+    157,
+    108,
+    162
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "78961009",
+     "CodeMeaning": "Spleen"
+    }
+   }
+  },
+  {
+   "id": 2,
+   "name": "kidney_right",
+   "display": "Kidney (right)",
+   "rgb": [
+    212,
+    126,
+    151
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "64033007",
+     "CodeMeaning": "Kidney"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 3,
+   "name": "kidney_left",
+   "display": "Kidney (left)",
+   "rgb": [
+    212,
+    126,
+    151
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "64033007",
+     "CodeMeaning": "Kidney"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 4,
+   "name": "gallbladder",
+   "display": "Gallbladder",
+   "rgb": [
+    139,
+    150,
+    98
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "28231008",
+     "CodeMeaning": "Gallbladder"
+    }
+   }
+  },
+  {
+   "id": 5,
+   "name": "liver",
+   "display": "Liver",
+   "rgb": [
+    221,
+    130,
+    101
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "10200004",
+     "CodeMeaning": "Liver"
+    }
+   }
+  },
+  {
+   "id": 6,
+   "name": "stomach",
+   "display": "Stomach",
+   "rgb": [
+    160,
+    139,
+    76
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "69695003",
+     "CodeMeaning": "Stomach"
+    }
+   }
+  },
+  {
+   "id": 7,
+   "name": "pancreas",
+   "display": "Pancreas",
+   "rgb": [
+    249,
+    180,
+    111
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "15776009",
+     "CodeMeaning": "Pancreas"
+    }
+   }
+  },
+  {
+   "id": 8,
+   "name": "adrenal_gland_right",
+   "display": "Adrenal gland (right)",
+   "rgb": [
+    199,
+    27,
+    27
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "23451007",
+     "CodeMeaning": "Adrenal gland"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 9,
+   "name": "adrenal_gland_left",
+   "display": "Adrenal gland (left)",
+   "rgb": [
+    199,
+    27,
+    27
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "23451007",
+     "CodeMeaning": "Adrenal gland"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 10,
+   "name": "lung_upper_lobe_left",
+   "display": "Lung upper lobe (left)",
+   "rgb": [
+    112,
+    162,
+    95
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "45653009",
+     "CodeMeaning": "Upper lobe of lung"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 11,
+   "name": "lung_lower_lobe_left",
+   "display": "Lung lower lobe (left)",
+   "rgb": [
+    242,
+    150,
+    232
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "90572001",
+     "CodeMeaning": "Lower lobe of lung"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 12,
+   "name": "lung_upper_lobe_right",
+   "display": "Lung upper lobe (right)",
+   "rgb": [
+    173,
+    69,
+    44
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "45653009",
+     "CodeMeaning": "Upper lobe of lung"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 13,
+   "name": "lung_middle_lobe_right",
+   "display": "Lung middle lobe (right)",
+   "rgb": [
+    202,
+    164,
+    140
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "72481006",
+     "CodeMeaning": "Middle lobe of right lung"
+    }
+   }
+  },
+  {
+   "id": 14,
+   "name": "lung_lower_lobe_right",
+   "display": "Lung lower lobe (right)",
+   "rgb": [
+    212,
+    191,
+    32
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "90572001",
+     "CodeMeaning": "Lower lobe of lung"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 15,
+   "name": "esophagus",
+   "display": "Esophagus",
+   "rgb": [
+    211,
+    171,
+    143
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "32849002",
+     "CodeMeaning": "Esophagus"
+    }
+   }
+  },
+  {
+   "id": 16,
+   "name": "trachea",
+   "display": "Trachea",
+   "rgb": [
+    182,
+    228,
+    255
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "44567001",
+     "CodeMeaning": "Trachea"
+    }
+   }
+  },
+  {
+   "id": 17,
+   "name": "thyroid_gland",
+   "display": "Thyroid gland",
+   "rgb": [
+    220,
+    160,
+    30
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "69748006",
+     "CodeMeaning": "Thyroid gland"
+    }
+   }
+  },
+  {
+   "id": 18,
+   "name": "small_bowel",
+   "display": "Small bowel",
+   "rgb": [
+    205,
+    167,
+    142
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "30315005",
+     "CodeMeaning": "Small Intestine"
+    }
+   }
+  },
+  {
+   "id": 19,
+   "name": "duodenum",
+   "display": "Duodenum",
+   "rgb": [
+    255,
+    253,
+    229
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "38848004",
+     "CodeMeaning": "Duodenum"
+    }
+   }
+  },
+  {
+   "id": 20,
+   "name": "colon",
+   "display": "Colon",
+   "rgb": [
+    204,
+    168,
+    143
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "71854001",
+     "CodeMeaning": "Colon"
+    }
+   }
+  },
+  {
+   "id": 21,
+   "name": "urinary_bladder",
+   "display": "Urinary bladder",
+   "rgb": [
+    222,
+    154,
+    132
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "89837001",
+     "CodeMeaning": "Urinary bladder"
+    }
+   }
+  },
+  {
+   "id": 22,
+   "name": "prostate",
+   "display": "Prostate",
+   "rgb": [
+    181,
+    145,
+    138
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "41216001",
+     "CodeMeaning": "Prostate"
+    }
+   }
+  },
+  {
+   "id": 23,
+   "name": "kidney_cyst_left",
+   "display": "Kidney cyst (left)",
+   "rgb": [
+    181,
+    152,
+    143
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "49755003",
+     "CodeMeaning": "Morphologically Altered Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "367643001",
+     "CodeMeaning": "Cyst"
+    },
+    "region": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "64033007",
+     "CodeMeaning": "Kidney"
+    }
+   }
+  },
+  {
+   "id": 24,
+   "name": "kidney_cyst_right",
+   "display": "Kidney cyst (right)",
+   "rgb": [
+    178,
+    147,
+    155
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "49755003",
+     "CodeMeaning": "Morphologically Altered Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "367643001",
+     "CodeMeaning": "Cyst"
+    },
+    "region": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "64033007",
+     "CodeMeaning": "Kidney"
+    }
+   }
+  },
+  {
+   "id": 25,
+   "name": "sacrum",
+   "display": "Sacrum",
+   "rgb": [
+    163,
+    140,
+    140
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "54735007",
+     "CodeMeaning": "Sacrum"
+    }
+   }
+  },
+  {
+   "id": 26,
+   "name": "vertebrae_S1",
+   "display": "Vertebrae S1",
+   "rgb": [
+    212,
+    208,
+    122
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "65985001",
+     "CodeMeaning": "S1 vertebra"
+    }
+   }
+  },
+  {
+   "id": 27,
+   "name": "vertebrae_L5",
+   "display": "Vertebrae L5",
+   "rgb": [
+    117,
+    78,
+    55
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "49668003",
+     "CodeMeaning": "L5 vertebra"
+    }
+   }
+  },
+  {
+   "id": 28,
+   "name": "vertebrae_L4",
+   "display": "Vertebrae L4",
+   "rgb": [
+    255,
+    255,
+    128
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "11994002",
+     "CodeMeaning": "L4 vertebra"
+    }
+   }
+  },
+  {
+   "id": 29,
+   "name": "vertebrae_L3",
+   "display": "Vertebrae L3",
+   "rgb": [
+    157,
+    126,
+    0
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "36470004",
+     "CodeMeaning": "L3 vertebra"
+    }
+   }
+  },
+  {
+   "id": 30,
+   "name": "vertebrae_L2",
+   "display": "Vertebrae L2",
+   "rgb": [
+    255,
+    144,
+    32
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "14293000",
+     "CodeMeaning": "L2 vertebra"
+    }
+   }
+  },
+  {
+   "id": 31,
+   "name": "vertebrae_L1",
+   "display": "Vertebrae L1",
+   "rgb": [
+    255,
+    255,
+    1
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "66794005",
+     "CodeMeaning": "L1 vertebra"
+    }
+   }
+  },
+  {
+   "id": 32,
+   "name": "vertebrae_T12",
+   "display": "Vertebrae T12",
+   "rgb": [
+    166,
+    89,
+    255
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "23215003",
+     "CodeMeaning": "T12 vertebra"
+    }
+   }
+  },
+  {
+   "id": 33,
+   "name": "vertebrae_T11",
+   "display": "Vertebrae T11",
+   "rgb": [
+    16,
+    164,
+    144
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "12989004",
+     "CodeMeaning": "T11 vertebra"
+    }
+   }
+  },
+  {
+   "id": 34,
+   "name": "vertebrae_T10",
+   "display": "Vertebrae T10",
+   "rgb": [
+    26,
+    97,
+    228
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7610001",
+     "CodeMeaning": "T10 vertebra"
+    }
+   }
+  },
+  {
+   "id": 35,
+   "name": "vertebrae_T9",
+   "display": "Vertebrae T9",
+   "rgb": [
+    96,
+    188,
+    62
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "82687006",
+     "CodeMeaning": "T9 vertebra"
+    }
+   }
+  },
+  {
+   "id": 36,
+   "name": "vertebrae_T8",
+   "display": "Vertebrae T8",
+   "rgb": [
+    164,
+    216,
+    199
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "11068009",
+     "CodeMeaning": "T8 vertebra"
+    }
+   }
+  },
+  {
+   "id": 37,
+   "name": "vertebrae_T7",
+   "display": "Vertebrae T7",
+   "rgb": [
+    109,
+    0,
+    145
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "62487009",
+     "CodeMeaning": "T7 vertebra"
+    }
+   }
+  },
+  {
+   "id": 38,
+   "name": "vertebrae_T6",
+   "display": "Vertebrae T6",
+   "rgb": [
+    88,
+    119,
+    255
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "45296009",
+     "CodeMeaning": "T6 vertebra"
+    }
+   }
+  },
+  {
+   "id": 39,
+   "name": "vertebrae_T5",
+   "display": "Vertebrae T5",
+   "rgb": [
+    8,
+    82,
+    73
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "56401006",
+     "CodeMeaning": "T5 vertebra"
+    }
+   }
+  },
+  {
+   "id": 40,
+   "name": "vertebrae_T4",
+   "display": "Vertebrae T4",
+   "rgb": [
+    73,
+    228,
+    202
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "73071006",
+     "CodeMeaning": "T4 vertebra"
+    }
+   }
+  },
+  {
+   "id": 41,
+   "name": "vertebrae_T3",
+   "display": "Vertebrae T3",
+   "rgb": [
+    30,
+    128,
+    188
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "1626008",
+     "CodeMeaning": "T3 vertebra"
+    }
+   }
+  },
+  {
+   "id": 42,
+   "name": "vertebrae_T2",
+   "display": "Vertebrae T2",
+   "rgb": [
+    141,
+    186,
+    216
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "53733008",
+     "CodeMeaning": "T2 vertebra"
+    }
+   }
+  },
+  {
+   "id": 43,
+   "name": "vertebrae_T1",
+   "display": "Vertebrae T1",
+   "rgb": [
+    0,
+    2,
+    145
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "64864005",
+     "CodeMeaning": "T1 vertebra"
+    }
+   }
+  },
+  {
+   "id": 44,
+   "name": "vertebrae_C7",
+   "display": "Vertebrae C7",
+   "rgb": [
+    255,
+    0,
+    0
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "87391001",
+     "CodeMeaning": "C7 vertebra"
+    }
+   }
+  },
+  {
+   "id": 45,
+   "name": "vertebrae_C6",
+   "display": "Vertebrae C6",
+   "rgb": [
+    253,
+    134,
+    125
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "36054005",
+     "CodeMeaning": "C6 vertebra"
+    }
+   }
+  },
+  {
+   "id": 46,
+   "name": "vertebrae_C5",
+   "display": "Vertebrae C5",
+   "rgb": [
+    118,
+    40,
+    9
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "36978003",
+     "CodeMeaning": "C5 vertebra"
+    }
+   }
+  },
+  {
+   "id": 47,
+   "name": "vertebrae_C4",
+   "display": "Vertebrae C4",
+   "rgb": [
+    250,
+    14,
+    116
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "5329002",
+     "CodeMeaning": "C4 vertebra"
+    }
+   }
+  },
+  {
+   "id": 48,
+   "name": "vertebrae_C3",
+   "display": "Vertebrae C3",
+   "rgb": [
+    167,
+    117,
+    152
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "113205007",
+     "CodeMeaning": "C3 vertebra"
+    }
+   }
+  },
+  {
+   "id": 49,
+   "name": "vertebrae_C2",
+   "display": "Vertebrae C2",
+   "rgb": [
+    193,
+    99,
+    36
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "39976000",
+     "CodeMeaning": "C2 vertebra"
+    }
+   }
+  },
+  {
+   "id": 50,
+   "name": "vertebrae_C1",
+   "display": "Vertebrae C1",
+   "rgb": [
+    255,
+    186,
+    107
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "14806007",
+     "CodeMeaning": "C1 vertebra"
+    }
+   }
+  },
+  {
+   "id": 51,
+   "name": "heart",
+   "display": "Heart",
+   "rgb": [
+    205,
+    111,
+    86
+   ],
+   "rgb_source": "fallback",
+   "kind": "heart",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "80891009",
+     "CodeMeaning": "Heart"
+    }
+   }
+  },
+  {
+   "id": 52,
+   "name": "aorta",
+   "display": "Aorta",
+   "rgb": [
+    224,
+    97,
+    76
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "15825003",
+     "CodeMeaning": "Aorta"
+    }
+   }
+  },
+  {
+   "id": 53,
+   "name": "pulmonary_vein",
+   "display": "Pulmonary vein",
+   "rgb": [
+    195,
+    45,
+    25
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "122972007",
+     "CodeMeaning": "Pulmonary vein"
+    }
+   }
+  },
+  {
+   "id": 54,
+   "name": "brachiocephalic_trunk",
+   "display": "Brachiocephalic trunk",
+   "rgb": [
+    196,
+    121,
+    79
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "12691009",
+     "CodeMeaning": "Brachiocephalic artery"
+    }
+   }
+  },
+  {
+   "id": 55,
+   "name": "subclavian_artery_right",
+   "display": "Subclavian artery (right)",
+   "rgb": [
+    216,
+    101,
+    89
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "29700009",
+     "CodeMeaning": "Subclavian artery"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 56,
+   "name": "subclavian_artery_left",
+   "display": "Subclavian artery (left)",
+   "rgb": [
+    216,
+    101,
+    69
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "29700009",
+     "CodeMeaning": "Subclavian artery"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 57,
+   "name": "common_carotid_artery_right",
+   "display": "Common carotid artery (right)",
+   "rgb": [
+    216,
+    101,
+    79
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "32062004",
+     "CodeMeaning": "Common carotid artery"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 58,
+   "name": "common_carotid_artery_left",
+   "display": "Common carotid artery (left)",
+   "rgb": [
+    216,
+    101,
+    69
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "32062004",
+     "CodeMeaning": "Common carotid artery"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 59,
+   "name": "brachiocephalic_vein_left",
+   "display": "Brachiocephalic vein (left)",
+   "rgb": [
+    0,
+    161,
+    196
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "8887007",
+     "CodeMeaning": "Brachiocephalic vein"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 60,
+   "name": "brachiocephalic_vein_right",
+   "display": "Brachiocephalic vein (right)",
+   "rgb": [
+    0,
+    151,
+    206
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "8887007",
+     "CodeMeaning": "Brachiocephalic vein"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 61,
+   "name": "atrial_appendage_left",
+   "display": "Atrial appendage (left)",
+   "rgb": [
+    0,
+    161,
+    196
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "68786006",
+     "CodeMeaning": "Auricular appendage"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 62,
+   "name": "superior_vena_cava",
+   "display": "Superior vena cava",
+   "rgb": [
+    0,
+    141,
+    226
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "48345005",
+     "CodeMeaning": "Superior vena cava"
+    }
+   }
+  },
+  {
+   "id": 63,
+   "name": "inferior_vena_cava",
+   "display": "Inferior vena cava",
+   "rgb": [
+    110,
+    165,
+    54
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "64131007",
+     "CodeMeaning": "Inferior vena cava"
+    }
+   }
+  },
+  {
+   "id": 64,
+   "name": "portal_vein_and_splenic_vein",
+   "display": "Portal vein and splenic vein",
+   "rgb": [
+    0,
+    151,
+    206
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "110765007",
+     "CodeMeaning": "Portal vein and splenic vein"
+    }
+   }
+  },
+  {
+   "id": 65,
+   "name": "iliac_artery_left",
+   "display": "Iliac artery (left)",
+   "rgb": [
+    217,
+    162,
+    48
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "73634005",
+     "CodeMeaning": "Common iliac artery"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 66,
+   "name": "iliac_artery_right",
+   "display": "Iliac artery (right)",
+   "rgb": [
+    217,
+    162,
+    48
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "73634005",
+     "CodeMeaning": "Common iliac artery"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 67,
+   "name": "iliac_vena_left",
+   "display": "Iliac vena (left)",
+   "rgb": [
+    197,
+    174,
+    37
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "46027005",
+     "CodeMeaning": "Common iliac vein"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 68,
+   "name": "iliac_vena_right",
+   "display": "Iliac vena (right)",
+   "rgb": [
+    197,
+    174,
+    37
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "46027005",
+     "CodeMeaning": "Common iliac vein"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 69,
+   "name": "humerus_left",
+   "display": "Humerus (left)",
+   "rgb": [
+    95,
+    229,
+    185
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "85050009",
+     "CodeMeaning": "Humerus"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 70,
+   "name": "humerus_right",
+   "display": "Humerus (right)",
+   "rgb": [
+    95,
+    229,
+    185
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "85050009",
+     "CodeMeaning": "Humerus"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 71,
+   "name": "scapula_left",
+   "display": "Scapula (left)",
+   "rgb": [
+    199,
+    204,
+    131
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "79601000",
+     "CodeMeaning": "Scapula"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 72,
+   "name": "scapula_right",
+   "display": "Scapula (right)",
+   "rgb": [
+    199,
+    204,
+    131
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "79601000",
+     "CodeMeaning": "Scapula"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 73,
+   "name": "clavicula_left",
+   "display": "Clavicula (left)",
+   "rgb": [
+    241,
+    188,
+    38
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "51299004",
+     "CodeMeaning": "Clavicle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 74,
+   "name": "clavicula_right",
+   "display": "Clavicula (right)",
+   "rgb": [
+    241,
+    188,
+    38
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "51299004",
+     "CodeMeaning": "Clavicle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 75,
+   "name": "femur_left",
+   "display": "Femur (left)",
+   "rgb": [
+    130,
+    222,
+    207
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "71341001",
+     "CodeMeaning": "Femur"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 76,
+   "name": "femur_right",
+   "display": "Femur (right)",
+   "rgb": [
+    130,
+    222,
+    207
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "71341001",
+     "CodeMeaning": "Femur"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 77,
+   "name": "hip_left",
+   "display": "Hip (left)",
+   "rgb": [
+    241,
+    214,
+    145
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "29836001",
+     "CodeMeaning": "Hip"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 78,
+   "name": "hip_right",
+   "display": "Hip (right)",
+   "rgb": [
+    241,
+    214,
+    145
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "29836001",
+     "CodeMeaning": "Hip"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 79,
+   "name": "spinal_cord",
+   "display": "Spinal cord",
+   "rgb": [
+    170,
+    142,
+    126
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "2748008",
+     "CodeMeaning": "Spinal cord"
+    }
+   }
+  },
+  {
+   "id": 80,
+   "name": "gluteus_maximus_left",
+   "display": "Gluteus maximus (left)",
+   "rgb": [
+    192,
+    104,
+    88
+   ],
+   "rgb_source": "slicer",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "181674001",
+     "CodeMeaning": "Gluteus maximus muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 81,
+   "name": "gluteus_maximus_right",
+   "display": "Gluteus maximus (right)",
+   "rgb": [
+    192,
+    104,
+    88
+   ],
+   "rgb_source": "slicer",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "181674001",
+     "CodeMeaning": "Gluteus maximus muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 82,
+   "name": "gluteus_medius_left",
+   "display": "Gluteus medius (left)",
+   "rgb": [
+    192,
+    104,
+    88
+   ],
+   "rgb_source": "slicer",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "78333006",
+     "CodeMeaning": "Gluteus medius muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 83,
+   "name": "gluteus_medius_right",
+   "display": "Gluteus medius (right)",
+   "rgb": [
+    192,
+    104,
+    88
+   ],
+   "rgb_source": "slicer",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "78333006",
+     "CodeMeaning": "Gluteus medius muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 84,
+   "name": "gluteus_minimus_left",
+   "display": "Gluteus minimus (left)",
+   "rgb": [
+    192,
+    104,
+    88
+   ],
+   "rgb_source": "slicer",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "75297007",
+     "CodeMeaning": "Gluteus minius muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 85,
+   "name": "gluteus_minimus_right",
+   "display": "Gluteus minimus (right)",
+   "rgb": [
+    192,
+    104,
+    88
+   ],
+   "rgb_source": "slicer",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "75297007",
+     "CodeMeaning": "Gluteus minius muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 86,
+   "name": "autochthon_left",
+   "display": "Autochthon (left)",
+   "rgb": [
+    192,
+    104,
+    88
+   ],
+   "rgb_source": "slicer",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "244849004",
+     "CodeMeaning": "Deep muscle of back"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 87,
+   "name": "autochthon_right",
+   "display": "Autochthon (right)",
+   "rgb": [
+    192,
+    104,
+    88
+   ],
+   "rgb_source": "slicer",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "244849004",
+     "CodeMeaning": "Deep muscle of back"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 88,
+   "name": "iliopsoas_left",
+   "display": "Iliopsoas (left)",
+   "rgb": [
+    192,
+    104,
+    88
+   ],
+   "rgb_source": "slicer",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "68455001",
+     "CodeMeaning": "Iliopsoas muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 89,
+   "name": "iliopsoas_right",
+   "display": "Iliopsoas (right)",
+   "rgb": [
+    192,
+    104,
+    88
+   ],
+   "rgb_source": "slicer",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "68455001",
+     "CodeMeaning": "Iliopsoas muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 90,
+   "name": "brain",
+   "display": "Brain",
+   "rgb": [
+    250,
+    250,
+    225
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "12738006",
+     "CodeMeaning": "Brain"
+    }
+   }
+  },
+  {
+   "id": 91,
+   "name": "skull",
+   "display": "Skull",
+   "rgb": [
+    238,
+    220,
+    143
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "89546000",
+     "CodeMeaning": "Skull"
+    }
+   }
+  },
+  {
+   "id": 92,
+   "name": "rib_left_1",
+   "display": "Rib left 1",
+   "rgb": [
+    0,
+    2,
+    145
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "48535007",
+     "CodeMeaning": "First rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 93,
+   "name": "rib_left_2",
+   "display": "Rib left 2",
+   "rgb": [
+    141,
+    186,
+    216
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "78247007",
+     "CodeMeaning": "Second rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 94,
+   "name": "rib_left_3",
+   "display": "Rib left 3",
+   "rgb": [
+    30,
+    128,
+    188
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "25888004",
+     "CodeMeaning": "Third rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 95,
+   "name": "rib_left_4",
+   "display": "Rib left 4",
+   "rgb": [
+    73,
+    228,
+    202
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "25523003",
+     "CodeMeaning": "Fourth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 96,
+   "name": "rib_left_5",
+   "display": "Rib left 5",
+   "rgb": [
+    8,
+    82,
+    73
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "15339008",
+     "CodeMeaning": "Fifth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 97,
+   "name": "rib_left_6",
+   "display": "Rib left 6",
+   "rgb": [
+    88,
+    119,
+    255
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "59558009",
+     "CodeMeaning": "Sixth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 98,
+   "name": "rib_left_7",
+   "display": "Rib left 7",
+   "rgb": [
+    109,
+    0,
+    145
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24915002",
+     "CodeMeaning": "Seventh rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 99,
+   "name": "rib_left_8",
+   "display": "Rib left 8",
+   "rgb": [
+    164,
+    216,
+    199
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "5953002",
+     "CodeMeaning": "Eighth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 100,
+   "name": "rib_left_9",
+   "display": "Rib left 9",
+   "rgb": [
+    96,
+    188,
+    62
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "22565002",
+     "CodeMeaning": "Ninth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 101,
+   "name": "rib_left_10",
+   "display": "Rib left 10",
+   "rgb": [
+    26,
+    97,
+    228
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "77644006",
+     "CodeMeaning": "Tenth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 102,
+   "name": "rib_left_11",
+   "display": "Rib left 11",
+   "rgb": [
+    16,
+    164,
+    144
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "58830002",
+     "CodeMeaning": "Eleventh rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 103,
+   "name": "rib_left_12",
+   "display": "Rib left 12",
+   "rgb": [
+    166,
+    89,
+    255
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "43993008",
+     "CodeMeaning": "Twelfth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 104,
+   "name": "rib_right_1",
+   "display": "Rib right 1",
+   "rgb": [
+    0,
+    2,
+    145
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "48535007",
+     "CodeMeaning": "First rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 105,
+   "name": "rib_right_2",
+   "display": "Rib right 2",
+   "rgb": [
+    141,
+    186,
+    216
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "78247007",
+     "CodeMeaning": "Second rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 106,
+   "name": "rib_right_3",
+   "display": "Rib right 3",
+   "rgb": [
+    30,
+    128,
+    188
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "25888004",
+     "CodeMeaning": "Third rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 107,
+   "name": "rib_right_4",
+   "display": "Rib right 4",
+   "rgb": [
+    73,
+    228,
+    202
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "25523003",
+     "CodeMeaning": "Fourth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 108,
+   "name": "rib_right_5",
+   "display": "Rib right 5",
+   "rgb": [
+    8,
+    82,
+    73
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "15339008",
+     "CodeMeaning": "Fifth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 109,
+   "name": "rib_right_6",
+   "display": "Rib right 6",
+   "rgb": [
+    88,
+    119,
+    255
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "59558009",
+     "CodeMeaning": "Sixth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 110,
+   "name": "rib_right_7",
+   "display": "Rib right 7",
+   "rgb": [
+    109,
+    0,
+    145
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24915002",
+     "CodeMeaning": "Seventh rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 111,
+   "name": "rib_right_8",
+   "display": "Rib right 8",
+   "rgb": [
+    164,
+    216,
+    199
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "5953002",
+     "CodeMeaning": "Eighth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 112,
+   "name": "rib_right_9",
+   "display": "Rib right 9",
+   "rgb": [
+    96,
+    188,
+    62
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "22565002",
+     "CodeMeaning": "Ninth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 113,
+   "name": "rib_right_10",
+   "display": "Rib right 10",
+   "rgb": [
+    26,
+    97,
+    228
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "77644006",
+     "CodeMeaning": "Tenth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 114,
+   "name": "rib_right_11",
+   "display": "Rib right 11",
+   "rgb": [
+    16,
+    164,
+    144
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "58830002",
+     "CodeMeaning": "Eleventh rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 115,
+   "name": "rib_right_12",
+   "display": "Rib right 12",
+   "rgb": [
+    166,
+    89,
+    255
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "43993008",
+     "CodeMeaning": "Twelfth rib"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 116,
+   "name": "sternum",
+   "display": "Sternum",
+   "rgb": [
+    226,
+    207,
+    157
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "56873002",
+     "CodeMeaning": "Sternum"
+    }
+   }
+  },
+  {
+   "id": 117,
+   "name": "costal_cartilages",
+   "display": "Costal cartilages",
+   "rgb": [
+    111,
+    184,
+    210
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "50016007",
+     "CodeMeaning": "Costal cartilage"
+    }
+   }
+  },
+  {
+   "id": 200,
+   "name": "lung_left",
+   "display": "Lung (left)",
+   "rgb": [
+    202,
+    144,
+    153
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "39607008",
+     "CodeMeaning": "Lung"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 201,
+   "name": "lung_right",
+   "display": "Lung (right)",
+   "rgb": [
+    196,
+    132,
+    134
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "39607008",
+     "CodeMeaning": "Lung"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 202,
+   "name": "vertebrae",
+   "display": "Vertebrae",
+   "rgb": [
+    255,
+    212,
+    159
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "51282000",
+     "CodeMeaning": "Vertebra"
+    }
+   }
+  },
+  {
+   "id": 203,
+   "name": "intervertebral_discs",
+   "display": "Intervertebral discs",
+   "rgb": [
+    238,
+    208,
+    157
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "360499006",
+     "CodeMeaning": "Intervertebral disc"
+    }
+   }
+  },
+  {
+   "id": 204,
+   "name": "body_trunc",
+   "display": "Body trunc",
+   "rgb": [
+    206,
+    132,
+    131
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "22943007",
+     "CodeMeaning": "Trunk"
+    }
+   }
+  },
+  {
+   "id": 205,
+   "name": "body_extremities",
+   "display": "Body extremities",
+   "rgb": [
+    193,
+    148,
+    132
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "66019005",
+     "CodeMeaning": "Limb"
+    }
+   }
+  },
+  {
+   "id": 206,
+   "name": "lung_airways",
+   "display": "Lung airways",
+   "rgb": [
+    178,
+    222,
+    248
+   ],
+   "rgb_source": "slicer",
+   "kind": "air",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "110726009",
+     "CodeMeaning": "Trachea and bronchus"
+    }
+   }
+  },
+  {
+   "id": 207,
+   "name": "lung_airways_wall",
+   "display": "Lung airways wall",
+   "rgb": [
+    130,
+    190,
+    220
+   ],
+   "rgb_source": "slicer",
+   "kind": "air",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "955009",
+     "CodeMeaning": "Bronchus"
+    }
+   }
+  },
+  {
+   "id": 208,
+   "name": "lung_arteries",
+   "display": "Lung arteries",
+   "rgb": [
+    0,
+    122,
+    171
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "81040000",
+     "CodeMeaning": "Pulmonary artery"
+    }
+   }
+  },
+  {
+   "id": 209,
+   "name": "lung_veins",
+   "display": "Lung veins",
+   "rgb": [
+    195,
+    45,
+    25
+   ],
+   "rgb_source": "slicer",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "122972007",
+     "CodeMeaning": "Pulmonary vein"
+    }
+   }
+  },
+  {
+   "id": 210,
+   "name": "mandible",
+   "display": "Mandible",
+   "rgb": [
+    255,
+    220,
+    180
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "91609006",
+     "CodeMeaning": "Mandible"
+    }
+   }
+  },
+  {
+   "id": 211,
+   "name": "teeth_lower",
+   "display": "Teeth lower",
+   "rgb": [
+    255,
+    255,
+    210
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "38199008",
+     "CodeMeaning": "Lower teeth"
+    }
+   }
+  },
+  {
+   "id": 212,
+   "name": "head",
+   "display": "Head",
+   "rgb": [
+    255,
+    218,
+    185
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "69536005",
+     "CodeMeaning": "Head"
+    }
+   }
+  },
+  {
+   "id": 213,
+   "name": "sinus_maxillary",
+   "display": "Sinus maxillary",
+   "rgb": [
+    180,
+    210,
+    230
+   ],
+   "rgb_source": "slicer",
+   "kind": "air",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "15924003",
+     "CodeMeaning": "Maxillary sinus"
+    }
+   }
+  },
+  {
+   "id": 214,
+   "name": "sinus_frontal",
+   "display": "Sinus frontal",
+   "rgb": [
+    170,
+    200,
+    220
+   ],
+   "rgb_source": "slicer",
+   "kind": "air",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "55060009",
+     "CodeMeaning": "Frontal sinus"
+    }
+   }
+  },
+  {
+   "id": 215,
+   "name": "teeth_upper",
+   "display": "Teeth upper",
+   "rgb": [
+    255,
+    250,
+    200
+   ],
+   "rgb_source": "slicer",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "38090009",
+     "CodeMeaning": "Upper teeth"
+    }
+   }
+  },
+  {
+   "id": 216,
+   "name": "larynx_air",
+   "display": "Larynx air",
+   "rgb": [
+    177,
+    232,
+    223
+   ],
+   "rgb_source": "fallback",
+   "kind": "air",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "91720002",
+     "CodeMeaning": "Body Substance"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "15158005",
+     "CodeMeaning": "Air"
+    },
+    "region": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "4596009",
+     "CodeMeaning": "Larynx"
+    }
+   }
+  },
+  {
+   "id": 217,
+   "name": "thyroid_cartilage",
+   "display": "Thyroid cartilage",
+   "rgb": [
+    179,
+    166,
+    148
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "52940008",
+     "CodeMeaning": "Thyroid cartilage"
+    }
+   }
+  },
+  {
+   "id": 218,
+   "name": "hyoid",
+   "display": "Hyoid",
+   "rgb": [
+    244,
+    205,
+    144
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "21387005",
+     "CodeMeaning": "Hyoid bone"
+    }
+   }
+  },
+  {
+   "id": 219,
+   "name": "cricoid_cartilage",
+   "display": "Cricoid cartilage",
+   "rgb": [
+    202,
+    167,
+    144
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "8600008",
+     "CodeMeaning": "Cricoid cartilage"
+    }
+   }
+  },
+  {
+   "id": 220,
+   "name": "zygomatic_arch_right",
+   "display": "Zygomatic arch (right)",
+   "rgb": [
+    248,
+    230,
+    147
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "51204001",
+     "CodeMeaning": "Zygomatic arch"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 221,
+   "name": "zygomatic_arch_left",
+   "display": "Zygomatic arch (left)",
+   "rgb": [
+    253,
+    221,
+    126
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "51204001",
+     "CodeMeaning": "Zygomatic arch"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 222,
+   "name": "styloid_process_right",
+   "display": "Styloid process (right)",
+   "rgb": [
+    254,
+    194,
+    148
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "279226000",
+     "CodeMeaning": "Styloid process of skull"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 223,
+   "name": "styloid_process_left",
+   "display": "Styloid process (left)",
+   "rgb": [
+    222,
+    229,
+    163
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "279226000",
+     "CodeMeaning": "Styloid process of skull"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 224,
+   "name": "internal_carotid_artery_right",
+   "display": "Internal carotid artery (right)",
+   "rgb": [
+    186,
+    49,
+    66
+   ],
+   "rgb_source": "fallback",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "86117002",
+     "CodeMeaning": "Internal carotid artery"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 225,
+   "name": "internal_carotid_artery_left",
+   "display": "Internal carotid artery (left)",
+   "rgb": [
+    214,
+    63,
+    47
+   ],
+   "rgb_source": "fallback",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "86117002",
+     "CodeMeaning": "Internal carotid artery"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 226,
+   "name": "internal_jugular_vein_right",
+   "display": "Internal jugular vein (right)",
+   "rgb": [
+    218,
+    40,
+    46
+   ],
+   "rgb_source": "fallback",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "12123001",
+     "CodeMeaning": "Internal jugular vein"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 227,
+   "name": "internal_jugular_vein_left",
+   "display": "Internal jugular vein (left)",
+   "rgb": [
+    220,
+    80,
+    64
+   ],
+   "rgb_source": "fallback",
+   "kind": "vessel",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "12123001",
+     "CodeMeaning": "Internal jugular vein"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 228,
+   "name": "sternocleidomastoid_right",
+   "display": "Sternocleidomastoid (right)",
+   "rgb": [
+    178,
+    109,
+    78
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "22823000",
+     "CodeMeaning": "Sternocleidomastoid muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 229,
+   "name": "sternocleidomastoid_left",
+   "display": "Sternocleidomastoid (left)",
+   "rgb": [
+    193,
+    93,
+    70
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "22823000",
+     "CodeMeaning": "Sternocleidomastoid muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 230,
+   "name": "superior_pharyngeal_constrictor",
+   "display": "Superior pharyngeal constrictor",
+   "rgb": [
+    194,
+    109,
+    68
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "82182001",
+     "CodeMeaning": "Superior pharyngeal constrictor muscle"
+    }
+   }
+  },
+  {
+   "id": 231,
+   "name": "middle_pharyngeal_constrictor",
+   "display": "Middle pharyngeal constrictor",
+   "rgb": [
+    183,
+    92,
+    77
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "66138004",
+     "CodeMeaning": "Middle pharyngeal constrictor muscle"
+    }
+   }
+  },
+  {
+   "id": 232,
+   "name": "inferior_pharyngeal_constrictor",
+   "display": "Inferior pharyngeal constrictor",
+   "rgb": [
+    209,
+    86,
+    73
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "80461005",
+     "CodeMeaning": "Inferior pharyngeal constrictor muscle"
+    }
+   }
+  },
+  {
+   "id": 233,
+   "name": "trapezius_right",
+   "display": "Trapezius (right)",
+   "rgb": [
+    183,
+    105,
+    82
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "31764008",
+     "CodeMeaning": "Trapezius muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 234,
+   "name": "trapezius_left",
+   "display": "Trapezius (left)",
+   "rgb": [
+    172,
+    120,
+    84
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "31764008",
+     "CodeMeaning": "Trapezius muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 235,
+   "name": "platysma_right",
+   "display": "Platysma (right)",
+   "rgb": [
+    173,
+    86,
+    104
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "18252004",
+     "CodeMeaning": "Platysma muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 236,
+   "name": "platysma_left",
+   "display": "Platysma (left)",
+   "rgb": [
+    191,
+    108,
+    102
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "18252004",
+     "CodeMeaning": "Platysma muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 237,
+   "name": "levator_scapulae_right",
+   "display": "Levator scapulae (right)",
+   "rgb": [
+    198,
+    105,
+    108
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "11327007",
+     "CodeMeaning": "Levator scapulae muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 238,
+   "name": "levator_scapulae_left",
+   "display": "Levator scapulae (left)",
+   "rgb": [
+    193,
+    94,
+    108
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "11327007",
+     "CodeMeaning": "Levator scapulae muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 239,
+   "name": "anterior_scalene_right",
+   "display": "Anterior scalene (right)",
+   "rgb": [
+    175,
+    106,
+    79
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "50755001",
+     "CodeMeaning": "Scalenus anterior muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 240,
+   "name": "anterior_scalene_left",
+   "display": "Anterior scalene (left)",
+   "rgb": [
+    204,
+    115,
+    79
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "50755001",
+     "CodeMeaning": "Scalenus anterior muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 241,
+   "name": "middle_scalene_right",
+   "display": "Middle scalene (right)",
+   "rgb": [
+    205,
+    91,
+    98
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "38630006",
+     "CodeMeaning": "Scalenus medius muscle "
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 242,
+   "name": "middle_scalene_left",
+   "display": "Middle scalene (left)",
+   "rgb": [
+    187,
+    101,
+    70
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "38630006",
+     "CodeMeaning": "Scalenus medius muscle "
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 243,
+   "name": "posterior_scalene_right",
+   "display": "Posterior scalene (right)",
+   "rgb": [
+    183,
+    114,
+    88
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "58162002",
+     "CodeMeaning": "Scalenus posterior muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 244,
+   "name": "posterior_scalene_left",
+   "display": "Posterior scalene (left)",
+   "rgb": [
+    208,
+    108,
+    77
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "58162002",
+     "CodeMeaning": "Scalenus posterior muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 245,
+   "name": "sterno_thyroid_right",
+   "display": "Sterno thyroid (right)",
+   "rgb": [
+    183,
+    99,
+    95
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "1087003",
+     "CodeMeaning": "Sternothyroid muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 246,
+   "name": "sterno_thyroid_left",
+   "display": "Sterno thyroid (left)",
+   "rgb": [
+    206,
+    107,
+    85
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "1087003",
+     "CodeMeaning": "Sternothyroid muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 247,
+   "name": "thyrohyoid_right",
+   "display": "Thyrohyoid (right)",
+   "rgb": [
+    196,
+    107,
+    94
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "113226007",
+     "CodeMeaning": "Thyrohyoid muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 248,
+   "name": "thyrohyoid_left",
+   "display": "Thyrohyoid (left)",
+   "rgb": [
+    203,
+    95,
+    102
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "113226007",
+     "CodeMeaning": "Thyrohyoid muscle"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 249,
+   "name": "prevertebral_right",
+   "display": "Prevertebral (right)",
+   "rgb": [
+    179,
+    118,
+    99
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "714472006",
+     "CodeMeaning": "Anterior vertebral muscle of neck"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 250,
+   "name": "prevertebral_left",
+   "display": "Prevertebral (left)",
+   "rgb": [
+    175,
+    89,
+    102
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "714472006",
+     "CodeMeaning": "Anterior vertebral muscle of neck"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 251,
+   "name": "eye_left",
+   "display": "Eye (left)",
+   "rgb": [
+    204,
+    162,
+    139
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "1290031003",
+     "CodeMeaning": "Left eye"
+    }
+   }
+  },
+  {
+   "id": 252,
+   "name": "eye_right",
+   "display": "Eye (right)",
+   "rgb": [
+    205,
+    154,
+    145
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "1290032005",
+     "CodeMeaning": "Right eye"
+    }
+   }
+  },
+  {
+   "id": 253,
+   "name": "eye_lens_left",
+   "display": "Eye lens (left)",
+   "rgb": [
+    186,
+    135,
+    135
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "88258005",
+     "CodeMeaning": "Lens of left eye"
+    }
+   }
+  },
+  {
+   "id": 254,
+   "name": "eye_lens_right",
+   "display": "Eye lens (right)",
+   "rgb": [
+    207,
+    155,
+    152
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "72345007",
+     "CodeMeaning": "Lens of right eye"
+    }
+   }
+  },
+  {
+   "id": 255,
+   "name": "optic_nerve_left",
+   "display": "Optic nerve (left)",
+   "rgb": [
+    198,
+    134,
+    149
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "18234004",
+     "CodeMeaning": "Optic nerve"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 256,
+   "name": "optic_nerve_right",
+   "display": "Optic nerve (right)",
+   "rgb": [
+    179,
+    149,
+    129
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "18234004",
+     "CodeMeaning": "Optic nerve"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 257,
+   "name": "parotid_gland_left",
+   "display": "Parotid gland (left)",
+   "rgb": [
+    205,
+    137,
+    153
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "45289007",
+     "CodeMeaning": "Parotid gland"
+    }
+   }
+  },
+  {
+   "id": 258,
+   "name": "parotid_gland_right",
+   "display": "Parotid gland (right)",
+   "rgb": [
+    195,
+    134,
+    140
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "45289007",
+     "CodeMeaning": "Parotid gland"
+    }
+   }
+  },
+  {
+   "id": 259,
+   "name": "submandibular_gland_right",
+   "display": "Submandibular gland (right)",
+   "rgb": [
+    193,
+    139,
+    144
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "54019009",
+     "CodeMeaning": "Submandibular gland"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 260,
+   "name": "submandibular_gland_left",
+   "display": "Submandibular gland (left)",
+   "rgb": [
+    177,
+    166,
+    141
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "54019009",
+     "CodeMeaning": "Submandibular gland"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 261,
+   "name": "nasopharynx",
+   "display": "Nasopharynx",
+   "rgb": [
+    186,
+    216,
+    255
+   ],
+   "rgb_source": "fallback",
+   "kind": "air",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "360955006",
+     "CodeMeaning": "Nasopharynx"
+    }
+   }
+  },
+  {
+   "id": 262,
+   "name": "oropharynx",
+   "display": "Oropharynx",
+   "rgb": [
+    164,
+    200,
+    229
+   ],
+   "rgb_source": "fallback",
+   "kind": "air",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "31389004",
+     "CodeMeaning": "Oropharynx"
+    }
+   }
+  },
+  {
+   "id": 263,
+   "name": "hypopharynx",
+   "display": "Hypopharynx",
+   "rgb": [
+    173,
+    202,
+    229
+   ],
+   "rgb_source": "fallback",
+   "kind": "air",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "81502006",
+     "CodeMeaning": "Hypopharynx"
+    }
+   }
+  },
+  {
+   "id": 264,
+   "name": "nasal_cavity_right",
+   "display": "Nasal cavity (right)",
+   "rgb": [
+    181,
+    220,
+    253
+   ],
+   "rgb_source": "fallback",
+   "kind": "air",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "279549004",
+     "CodeMeaning": "Nasal cavity"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 265,
+   "name": "nasal_cavity_left",
+   "display": "Nasal cavity (left)",
+   "rgb": [
+    174,
+    207,
+    240
+   ],
+   "rgb_source": "fallback",
+   "kind": "air",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "279549004",
+     "CodeMeaning": "Nasal cavity"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 266,
+   "name": "auditory_canal_right",
+   "display": "Auditory canal (right)",
+   "rgb": [
+    181,
+    149,
+    134
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "45124007",
+     "CodeMeaning": "Right external auditory canal"
+    }
+   }
+  },
+  {
+   "id": 267,
+   "name": "auditory_canal_left",
+   "display": "Auditory canal (left)",
+   "rgb": [
+    190,
+    148,
+    141
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "71471005",
+     "CodeMeaning": "Left external auditory canal"
+    }
+   }
+  },
+  {
+   "id": 268,
+   "name": "soft_palate",
+   "display": "Soft palate",
+   "rgb": [
+    171,
+    140,
+    152
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "49460000",
+     "CodeMeaning": "Soft palate"
+    }
+   }
+  },
+  {
+   "id": 269,
+   "name": "hard_palate",
+   "display": "Hard palate",
+   "rgb": [
+    199,
+    134,
+    122
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "90228003",
+     "CodeMeaning": "Hard palate"
+    }
+   }
+  },
+  {
+   "id": 270,
+   "name": "abdominal_cavity",
+   "display": "Abdominal cavity",
+   "rgb": [
+    255,
+    228,
+    196
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "52731004",
+     "CodeMeaning": "Abdominal cavity"
+    }
+   }
+  },
+  {
+   "id": 271,
+   "name": "thoracic_cavity",
+   "display": "Thoracic cavity",
+   "rgb": [
+    200,
+    220,
+    240
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "43799004",
+     "CodeMeaning": "Thoracic cavity"
+    }
+   }
+  },
+  {
+   "id": 272,
+   "name": "pericardium",
+   "display": "Pericardium",
+   "rgb": [
+    255,
+    200,
+    200
+   ],
+   "rgb_source": "slicer",
+   "kind": "heart",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "76848001",
+     "CodeMeaning": "Pericardium"
+    }
+   }
+  },
+  {
+   "id": 273,
+   "name": "mediastinum",
+   "display": "Mediastinum",
+   "rgb": [
+    220,
+    210,
+    230
+   ],
+   "rgb_source": "slicer",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "72410000",
+     "CodeMeaning": "Mediastinum"
+    }
+   }
+  },
+  {
+   "id": 274,
+   "name": "liver_segment_1",
+   "display": "Liver segment 1",
+   "rgb": [
+    183,
+    131,
+    144
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "71133005",
+     "CodeMeaning": "Caudate lobe of liver"
+    }
+   }
+  },
+  {
+   "id": 275,
+   "name": "liver_segment_2",
+   "display": "Liver segment 2",
+   "rgb": [
+    196,
+    131,
+    127
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "277956007",
+     "CodeMeaning": "Couinaud hepatic segment II"
+    }
+   }
+  },
+  {
+   "id": 276,
+   "name": "liver_segment_3",
+   "display": "Liver segment 3",
+   "rgb": [
+    182,
+    156,
+    144
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "277957003",
+     "CodeMeaning": "Couinaud hepatic segment III"
+    }
+   }
+  },
+  {
+   "id": 277,
+   "name": "liver_segment_4",
+   "display": "Liver segment 4",
+   "rgb": [
+    189,
+    136,
+    142
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "277958008",
+     "CodeMeaning": "Couinaud hepatic segment IV"
+    }
+   }
+  },
+  {
+   "id": 278,
+   "name": "liver_segment_5",
+   "display": "Liver segment 5",
+   "rgb": [
+    205,
+    137,
+    132
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "277959000",
+     "CodeMeaning": "Couinaud hepatic segment V"
+    }
+   }
+  },
+  {
+   "id": 279,
+   "name": "liver_segment_6",
+   "display": "Liver segment 6",
+   "rgb": [
+    200,
+    164,
+    146
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "277960005",
+     "CodeMeaning": "Couinaud hepatic segment VI"
+    }
+   }
+  },
+  {
+   "id": 280,
+   "name": "liver_segment_7",
+   "display": "Liver segment 7",
+   "rgb": [
+    196,
+    134,
+    120
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "277961009",
+     "CodeMeaning": "Couinaud hepatic segment VII"
+    }
+   }
+  },
+  {
+   "id": 281,
+   "name": "liver_segment_8",
+   "display": "Liver segment 8",
+   "rgb": [
+    192,
+    142,
+    158
+   ],
+   "rgb_source": "fallback",
+   "kind": "other",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "277962002",
+     "CodeMeaning": "Couinaud hepatic segment VIII"
+    }
+   }
+  },
+  {
+   "id": 282,
+   "name": "carpal_left",
+   "display": "Carpal (left)",
+   "rgb": [
+    240,
+    220,
+    156
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "83936004",
+     "CodeMeaning": "Carpus"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 283,
+   "name": "carpal_right",
+   "display": "Carpal (right)",
+   "rgb": [
+    247,
+    217,
+    132
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "83936004",
+     "CodeMeaning": "Carpus"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 284,
+   "name": "fibula_left",
+   "display": "Fibula (left)",
+   "rgb": [
+    230,
+    209,
+    144
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "87342007",
+     "CodeMeaning": "Fibula"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 285,
+   "name": "fibula_right",
+   "display": "Fibula (right)",
+   "rgb": [
+    255,
+    219,
+    125
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "87342007",
+     "CodeMeaning": "Fibula"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 286,
+   "name": "phalanges_hand_left",
+   "display": "Phalanges hand (left)",
+   "rgb": [
+    222,
+    199,
+    133
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "28641004",
+     "CodeMeaning": "Phalanx structure"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 287,
+   "name": "phalanges_hand_right",
+   "display": "Phalanges hand (right)",
+   "rgb": [
+    233,
+    230,
+    142
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "28641004",
+     "CodeMeaning": "Phalanx structure"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 288,
+   "name": "metacarpal_left",
+   "display": "Metacarpal (left)",
+   "rgb": [
+    221,
+    221,
+    140
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "36455000",
+     "CodeMeaning": "Metacarpal bones"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 289,
+   "name": "metacarpal_right",
+   "display": "Metacarpal (right)",
+   "rgb": [
+    239,
+    206,
+    140
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "36455000",
+     "CodeMeaning": "Metacarpal bones"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 290,
+   "name": "metatarsal_left",
+   "display": "Metatarsal (left)",
+   "rgb": [
+    229,
+    229,
+    156
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "53884002",
+     "CodeMeaning": "Metatarsal"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 291,
+   "name": "metatarsal_right",
+   "display": "Metatarsal (right)",
+   "rgb": [
+    228,
+    208,
+    137
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "53884002",
+     "CodeMeaning": "Metatarsal"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 292,
+   "name": "patella_left",
+   "display": "Patella (left)",
+   "rgb": [
+    243,
+    212,
+    144
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "64234005",
+     "CodeMeaning": "Patella"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 293,
+   "name": "patella_right",
+   "display": "Patella (right)",
+   "rgb": [
+    229,
+    229,
+    126
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "64234005",
+     "CodeMeaning": "Patella"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 294,
+   "name": "radius_left",
+   "display": "Radius (left)",
+   "rgb": [
+    229,
+    209,
+    134
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "62413002",
+     "CodeMeaning": "Radius"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 295,
+   "name": "radius_right",
+   "display": "Radius (right)",
+   "rgb": [
+    223,
+    202,
+    154
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "62413002",
+     "CodeMeaning": "Radius"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 296,
+   "name": "tarsal_left",
+   "display": "Tarsal (left)",
+   "rgb": [
+    232,
+    223,
+    138
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "108371006",
+     "CodeMeaning": "Tarsal bones"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 297,
+   "name": "tarsal_right",
+   "display": "Tarsal (right)",
+   "rgb": [
+    246,
+    232,
+    159
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "108371006",
+     "CodeMeaning": "Tarsal bones"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 298,
+   "name": "tibia_left",
+   "display": "Tibia (left)",
+   "rgb": [
+    221,
+    234,
+    129
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "12611008",
+     "CodeMeaning": "Tibia"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 299,
+   "name": "tibia_right",
+   "display": "Tibia (right)",
+   "rgb": [
+    235,
+    223,
+    141
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "12611008",
+     "CodeMeaning": "Tibia"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 300,
+   "name": "phalanges_feet_left",
+   "display": "Phalanges feet (left)",
+   "rgb": [
+    251,
+    203,
+    150
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "28641004",
+     "CodeMeaning": "Phalanx structure"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 301,
+   "name": "phalanges_feet_right",
+   "display": "Phalanges feet (right)",
+   "rgb": [
+    223,
+    209,
+    137
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "28641004",
+     "CodeMeaning": "Phalanx structure"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 302,
+   "name": "ulna_left",
+   "display": "Ulna (left)",
+   "rgb": [
+    237,
+    230,
+    159
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "23416004",
+     "CodeMeaning": "Ulna"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "7771000",
+     "CodeMeaning": "Left"
+    }
+   }
+  },
+  {
+   "id": 303,
+   "name": "ulna_right",
+   "display": "Ulna (right)",
+   "rgb": [
+    231,
+    205,
+    164
+   ],
+   "rgb_source": "fallback",
+   "kind": "bone",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "23416004",
+     "CodeMeaning": "Ulna"
+    },
+    "modifier": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "24028007",
+     "CodeMeaning": "Right"
+    }
+   }
+  },
+  {
+   "id": 304,
+   "name": "skeletal_muscle",
+   "display": "Skeletal muscle",
+   "rgb": [
+    185,
+    104,
+    99
+   ],
+   "rgb_source": "fallback",
+   "kind": "muscle",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "123037004",
+     "CodeMeaning": "Anatomical Structure"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "127954009",
+     "CodeMeaning": "Skeletal muscle"
+    }
+   }
+  },
+  {
+   "id": 305,
+   "name": "subcutaneous_fat",
+   "display": "Subcutaneous fat",
+   "rgb": [
+    247,
+    202,
+    58
+   ],
+   "rgb_source": "fallback",
+   "kind": "fat",
+   "snomed": {
+    "category": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "85756007",
+     "CodeMeaning": "Tissue"
+    },
+    "type": {
+     "CodingSchemeDesignator": "SCT",
+     "CodeValue": "67769002",
+     "CodeMeaning": "Subcutaneous fatty tissue"
+    }
+   }
+  },
+  {
+   "id": 306,
+   "name": "visceral_fat",
+   "display": "Visceral fat",
+   "rgb": [
+    233,
+    240,
+    88
+   ],
+   "rgb_source": "fallback",
+   "kind": "fat",
+   "snomed": null
+  }
+ ]
+}

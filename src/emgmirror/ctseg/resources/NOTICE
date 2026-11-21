@@ -1,0 +1,14 @@
+Third-party material in this folder
+
+label_table.json: colours and SNOMED CT codes are taken from SlicerTotalSegmentator
+(https://github.com/lassoan/SlicerTotalSegmentator), files
+TotalSegmentator/Resources/totalsegmentator_snomed_mapping.csv and
+TotalSegmentator/Resources/SegmentationCategoryTypeModifier-TotalSegmentator.term.json,
+Copyright (c) the SlicerTotalSegmentator authors, licensed under the Apache License 2.0.
+Structure names follow TotalSegmentator (https://github.com/wasserth/TotalSegmentator, Apache-2.0)
+and MOOSE (https://github.com/ENHANCE-PET/MOOSE, Apache-2.0 code).
+
+task_classes.json: class maps of TotalSegmentator tasks (Apache-2.0) and of the MOOSE models
+clin_ct_peripheral_bones and clin_ct_body_composition (weights CC BY 4.0).
+
+Model weights are not included in this repository.
