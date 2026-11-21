@@ -66,7 +66,14 @@ ALLOWED: dict[str, Allowed] = {a.source + ":" + a.task: a for a in [
             "workflow first runs clin_ct_fast_vertebrae (112) to crop the field of view"),
     Allowed("moose", "clin_ct_fast_vertebrae", "CC-BY-4.0", _MOOSE_URL, (112,), "only as body-composition crop"),
     Allowed("cads", "open", "CC-BY-SA-4.0", _CADS_URL, (), "must run with -license open"),
+    Allowed("nvidia", "nv-segment-ct", "NVIDIA-Open-Model-License", "https://huggingface.co/nvidia/NV-Segment-CT", (),
+            "pinned HF revision only; card says not for clinical use; not wired into S1"),
 ]}
+
+# Device build (docs/ct_platform/REGULATORY_PATH.md section 4): TotalSegmentator `total` only. MOOSE, CADS and
+# NVIDIA need written commercial/clinical terms first and stay in the research build.
+BUILDS = ("research", "device")
+DEVICE_ALLOWED = ("totalsegmentator:total",)
 
 NEVER = {
     "nninteractive": "CC BY-NC-SA 4.0 weights", "medsam2": "research and education only",
@@ -82,9 +89,15 @@ NEVER = {
 _DATASET_RE = re.compile(r"^Dataset(\d{3})_")
 
 
-def allowed(key: str) -> Allowed:
+def allowed(key: str, build: str = "research") -> Allowed:
     """Return the allowlist entry for ``source:task`` or raise :class:`LicenceError`."""
     k = key.strip().lower()
+    if build not in BUILDS:
+        raise LicenceError(f"unknown build '{build}'")
+    if build == "device" and k not in DEVICE_ALLOWED:
+        raise LicenceError(f"model '{key}' is not allowed in the device build (device build = "
+                           f"{', '.join(DEVICE_ALLOWED)} only; MOOSE, CADS and NVIDIA are research-only until "
+                           "their terms are confirmed in writing)")
     if k in ALLOWED:
         return ALLOWED[k]
     why = NEVER.get(k) or NEVER.get(k.split(":")[-1])
@@ -92,12 +105,12 @@ def allowed(key: str) -> Allowed:
                        + (f" ({why})" if why else "") + "; see emgmirror/ctseg/allowlist.py")
 
 
-def check_models(keys: Iterable[str]) -> list[Allowed]:
+def check_models(keys: Iterable[str], build: str = "research") -> list[Allowed]:
     """Check every configured model; collect all problems into one error."""
     out, bad = [], []
     for k in keys:
         try:
-            out.append(allowed(k))
+            out.append(allowed(k, build))
         except LicenceError as e:
             bad.append(str(e))
     if bad:
@@ -105,7 +118,7 @@ def check_models(keys: Iterable[str]) -> list[Allowed]:
     return out
 
 
-def check_config(cfg: Mapping) -> list[Allowed]:
+def check_config(cfg: Mapping, build: str | None = None) -> list[Allowed]:
     """Validate a config mapping (see :class:`emgmirror.ctseg.config.SegConfig`).
 
     Fails on any model outside the allowlist, on a licence key being configured (that is how
@@ -117,18 +130,22 @@ def check_config(cfg: Mapping) -> list[Allowed]:
     keys += [f"totalsegmentator:{t}" for t in cfg.get("extra_tasks", []) or []]
     keys += [f"moose:{m}" for m in cfg.get("moose_models", []) or []]
     keys += [str(k) for k in cfg.get("models", []) or []]
+    build = build or cfg.get("build") or "research"
+    if build == "device" and cfg.get("body"):
+        keys.append("totalsegmentator:body")
     cads = cfg.get("cads")
     if cads is not None and cads is not False:
         lic = str((cads or {}).get("license", "reference")).lower() if isinstance(cads, Mapping) else "reference"
         keys.append(f"cads:{lic}")
-    return check_models(keys)
+    return check_models(keys, build)
 
 
-def allowed_weight_ids() -> set[int]:
-    return {i for a in ALLOWED.values() for i in a.weight_ids}
+def allowed_weight_ids(build: str = "research") -> set[int]:
+    keys = DEVICE_ALLOWED if build == "device" else tuple(ALLOWED)
+    return {i for k in keys for i in ALLOWED[k].weight_ids}
 
 
-def check_weights_dir(path: Path | str | None) -> list[str]:
+def check_weights_dir(path: Path | str | None, build: str = "research") -> list[str]:
     """Fail if a weights folder holds an nnU-Net dataset that no allowlisted task uses.
 
     Returns the dataset folder names found (all allowed). A missing folder is fine (nothing installed)."""
@@ -137,7 +154,7 @@ def check_weights_dir(path: Path | str | None) -> list[str]:
     p = Path(path)
     if not p.is_dir():
         return []
-    ok = allowed_weight_ids()
+    ok = allowed_weight_ids(build)
     found, bad = [], []
     for d in sorted(p.rglob("Dataset*")):
         m = _DATASET_RE.match(d.name)
@@ -147,6 +164,6 @@ def check_weights_dir(path: Path | str | None) -> list[str]:
         if int(m.group(1)) not in ok:
             bad.append(str(d.relative_to(p)))
     if bad:
-        raise LicenceError("weights folder holds models that are not on the commercial-safe allowlist: "
+        raise LicenceError(f"weights folder holds models that are not allowed in the {build} build: "
                            + ", ".join(bad) + ". Remove them before deploying.")
     return found

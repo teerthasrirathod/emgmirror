@@ -169,5 +169,17 @@ def score_subject(labels_path: Path, labels_json: dict, seg_dir: Path, *, surfac
             b.CopyInformation(pred_img)
             m = overlap_metrics(a, b, max_points=max_points)
             row.update(msd_mm=m.get("msd_mm"), hd95_mm=m.get("hd95_mm"))
+        if name.endswith(("_left", "_right")) and nt:
+            base, side = name.rsplit("_", 1)
+            other = seg_dir / f"{base}_{'right' if side == 'left' else 'left'}.nii.gz"
+            if other.exists():
+                o_img = _read(other)
+                if o_img.GetSize() != pred_img.GetSize():
+                    o_img = sitk.Resample(o_img, pred_img, sitk.Transform(), sitk.sitkNearestNeighbor, 0)
+                same = inter
+                opposite = int(np.count_nonzero(tst & (sitk.GetArrayViewFromImage(o_img) > 0)))
+                if same or opposite:
+                    # correct side: the predicted label overlaps the reference structure of its own side more
+                    row["laterality_ok"] = same > opposite
         rows.append(row)
     return rows

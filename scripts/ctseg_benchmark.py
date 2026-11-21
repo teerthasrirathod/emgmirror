@@ -23,7 +23,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from emgmirror.ctseg import DISCLAIMER, benchmark as B
+from emgmirror.ctseg import DISCLAIMER, benchmark as B, device
 from emgmirror.ctseg.config import SegConfig
 from emgmirror.ctseg.engine import segment
 
@@ -39,6 +39,7 @@ def main() -> None:
     ap.add_argument("--n", type=int, default=15)
     ap.add_argument("--fetch", action="store_true")
     ap.add_argument("--profile", default="minimal")
+    ap.add_argument("--build", default="research", choices=("research", "device"))
     ap.add_argument("--fast", action="store_true")
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--resume", action="store_true", help="reuse engine outputs already in --runs-dir")
@@ -56,7 +57,8 @@ def main() -> None:
             meta_path.write_bytes(rz.zip.read(name))
     meta = B.read_meta(meta_path.read_text(encoding="utf-8"))
     subjects = B.pick_subjects(meta, a.n)
-    cfg = SegConfig(profile=a.profile, fast=a.fast, device=a.device, moose=a.profile != "minimal")
+    cfg = SegConfig(build=a.build, profile=a.profile, fast=a.fast, device=a.device,
+                    moose=(a.profile != "minimal") and a.build == "research")
 
     per_subject, rows = [], []
     for m in subjects:
@@ -107,8 +109,29 @@ def prov_software(runs: Path, per_subject) -> dict:
     return {}
 
 
+def _structure_rows(names, by, lat_by):
+    out = []
+    for name in names:
+        rs = by.get(name)
+        if not rs:
+            out.append(f"| {name} | 0 | – | – | – | – | – |")
+            continue
+        msd = [r["msd_mm"] for r in rs if r.get("msd_mm") is not None]
+        hd = [r["hd95_mm"] for r in rs if r.get("hd95_mm") is not None]
+        lat = lat_by.get(name, [])
+        lat_s = f"{sum(lat)}/{len(lat)}" if lat else "n/a"
+        out.append(f"| {name} | {len(rs)} | {_f(statistics.fmean(r['dice'] for r in rs))} | "
+                   f"{_f(min(r['dice'] for r in rs))} | {_f(statistics.fmean(msd) if msd else None, 2)} | "
+                   f"{_f(statistics.fmean(hd) if hd else None, 2)} | {lat_s} |")
+    return out
+
+
 def write_report(a, cfg: SegConfig, per_subject, rows, software) -> None:
     ref_rows = [r for r in rows if r["ref_voxels"] > 0]
+    lat_by: dict[str, list[bool]] = {}
+    for r in rows:
+        if "laterality_ok" in r:
+            lat_by.setdefault(r["structure"], []).append(bool(r["laterality_ok"]))
     by: dict[str, list[dict]] = {}
     for r in ref_rows:
         by.setdefault(r["structure"], []).append(r)
@@ -121,7 +144,7 @@ def write_report(a, cfg: SegConfig, per_subject, rows, software) -> None:
         "## Settings", "",
         f"- Data: TotalSegmentator dataset v3.0.0 (Zenodo record 6802613, CC BY 4.0), **test split only**, "
         f"{len(per_subject)} subjects picked one per study type (see table). Reference = the dataset's own masks.",
-        f"- Engine profile **`{cfg.profile}`**, fast = **{cfg.fast}**, device = **{cfg.device}**"
+        f"- Engine build **`{cfg.build}`**, profile **`{cfg.profile}`**, fast = **{cfg.fast}**, device = **{cfg.device}**"
         f" ({platform.processor() or platform.machine()}, no GPU). With `fast`, TotalSegmentator runs its 3 mm "
         "`total` model (task 297) and 3 mm `body` model (task 300); the result is resampled back to the CT grid.",
         f"- Software: " + ", ".join(f"{k} {v}" for k, v in software.items() if v),
@@ -135,7 +158,34 @@ def write_report(a, cfg: SegConfig, per_subject, rows, software) -> None:
         "- The v3 dataset's test split may not match the split used to train the v2.18 weights exactly; some "
         "subjects could have been seen in training, which would flatter the numbers.",
         "- Small structures and structures cut by the scan edge pull the mean down; the median is more robust.",
-        "", "## Summary", "",
+        "- Laterality: for every `*_left`/`*_right` structure the predicted label must overlap the reference "
+        "structure of its own side more than the opposite one (requirement: 100 %).",
+        "", "## Intended-use structures (device build)", "",
+        "First intended use (docs/ct_platform/REGULATORY_PATH.md section 2): adult CT bone models. In the minimal "
+        "profile `body` never overwrites bone (lower fusion rank), so these voxels are the same as the device build's "
+        "(`total` only, same weights). Proposed acceptance, to be fixed at the FDA Pre-Sub and measured on 150-300 "
+        "independent patients: bone MSD <= 1 mm, HD95 <= 2-3 mm, laterality 100 %. This small 3 mm CPU run is a "
+        "smoke benchmark, not that verification.", "",
+    ]
+    dev_all = []
+    for group, names in device.INTENDED_USE.items():
+        L += [f"**{group.replace('_', ' ')}**", "",
+              "| structure | n | mean Dice | min Dice | mean MSD (mm) | mean HD95 (mm) | laterality correct |",
+              "|---|---|---|---|---|---|---|"]
+        L += _structure_rows(names, by, lat_by)
+        L.append("")
+        dev_all += [r for n in names for r in by.get(n, [])]
+    dev_lat = [v for n in device.device_structures() for v in lat_by.get(n, [])]
+    dmsd = [r["msd_mm"] for r in dev_all if r.get("msd_mm") is not None]
+    dhd = [r["hd95_mm"] for r in dev_all if r.get("hd95_mm") is not None]
+    L += ["| intended-use total | structure-subject pairs | mean Dice | median Dice | mean MSD (mm) | "
+          "mean HD95 (mm) | laterality correct |", "|---|---|---|---|---|---|---|",
+          f"| all groups | {len(dev_all)} | {_f(statistics.fmean(r['dice'] for r in dev_all) if dev_all else None)} | "
+          f"{_f(statistics.median([r['dice'] for r in dev_all]) if dev_all else None)} | "
+          f"{_f(statistics.fmean(dmsd) if dmsd else None, 2)} | {_f(statistics.fmean(dhd) if dhd else None, 2)} | "
+          f"{sum(dev_lat)}/{len(dev_lat)} |", ""]
+    L += [
+        "## Summary (all structures)", "",
         f"| subjects | structures scored | mean Dice | median Dice | mean of per-subject mean Dice | "
         f"false-positive structures |", "|---|---|---|---|---|---|",
         f"| {len(per_subject)} | {len(ref_rows)} | {_f(statistics.fmean(all_dice) if all_dice else None)} | "
@@ -150,15 +200,12 @@ def write_report(a, cfg: SegConfig, per_subject, rows, software) -> None:
         L.append(f"| {s['subject']} | {s['study_type']} | {s['size']} | {s['spacing']} | {s['n_ref']} | "
                  f"{_f(s['mean_dice'])} | {_f(s['median_dice'])} | {s['seconds']:.0f} | {s['regions']} | "
                  f"{s['flags']} | {s['n_cut']} |")
-    L += ["", "## Per structure (subjects where the reference has the structure)", "",
-          "| structure | n | mean Dice | min Dice | mean MSD (mm) | mean HD95 (mm) |", "|---|---|---|---|---|---|"]
-    for name in sorted(by, key=lambda n: -statistics.fmean(r["dice"] for r in by[n])):
-        rs = by[name]
-        msd = [r["msd_mm"] for r in rs if r.get("msd_mm") is not None]
-        hd = [r["hd95_mm"] for r in rs if r.get("hd95_mm") is not None]
-        L.append(f"| {name} | {len(rs)} | {_f(statistics.fmean(r['dice'] for r in rs))} | "
-                 f"{_f(min(r['dice'] for r in rs))} | {_f(statistics.fmean(msd) if msd else None, 2)} | "
-                 f"{_f(statistics.fmean(hd) if hd else None, 2)} |")
+    dev_set = set(device.device_structures())
+    L += ["", "## Other structures (research build; subjects where the reference has the structure)", "",
+          "| structure | n | mean Dice | min Dice | mean MSD (mm) | mean HD95 (mm) | laterality correct |",
+          "|---|---|---|---|---|---|---|"]
+    L += _structure_rows(sorted((n for n in by if n not in dev_set),
+                                key=lambda n: -statistics.fmean(r["dice"] for r in by[n])), by, lat_by)
     if fp:
         L += ["", "## Predicted but absent from the reference", "",
               "| subject | structure | predicted voxels |", "|---|---|---|"]

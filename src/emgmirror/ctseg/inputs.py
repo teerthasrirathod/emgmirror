@@ -42,6 +42,7 @@ class ScanInfo:
     warnings: list[str] = field(default_factory=list)
     flags: list[str] = field(default_factory=list)
     source: str = ""  # "nifti" | "dicom"
+    series: dict | None = None  # DICOM: chosen series, why, and the alternatives (UID only as a hash)
 
     def to_dict(self) -> dict:
         d = dict(self.__dict__)
@@ -197,12 +198,14 @@ def load_dicom_folder(folder: Path | str, max_voxels: int, refuse_voxels: int) -
     if not series:
         raise InputRefused("no DICOM images found in the folder")
     try:
-        primary, _why = dicom.choose_primary(series)
+        primary, why = dicom.choose_primary(series)
     except ValueError as e:
         mr = [s for s in series if s.volumetric and s.modality.upper() == "MR" and s.slice_spacing]
         if not mr:
             raise InputRefused(str(e)) from None
         primary = min(mr, key=lambda s: s.pixel_spacing[0] * s.pixel_spacing[1] * s.slice_spacing)
+        why = f"no volumetric CT series; finest MR series {primary.number} chosen"
+    record = _series_record(series, primary, why)
     k = max(range(len(primary.stacks)), key=lambda j: len(primary.stacks[j]))
     idx = primary.stacks[k]
     if k in primary.tilted_stacks:
@@ -216,7 +219,8 @@ def load_dicom_folder(folder: Path | str, max_voxels: int, refuse_voxels: int) -
     if new_sp is None:
         img = dicom.load_series(primary, k)
         info = ScanInfo(tuple(img.GetSize()), tuple(img.GetSpacing()), tuple(img.GetOrigin()),
-                        tuple(img.GetDirection()), modality=modality, modality_source="dicom_tag", source="dicom")
+                        tuple(img.GetDirection()), modality=modality, modality_source="dicom_tag", source="dicom",
+                        series=record)
         return img, info
     first = dicom.load_series(_subset(primary, idx[:2] if len(idx) >= 2 else idx), 0)
     origin, direction = tuple(first.GetOrigin()), tuple(first.GetDirection())
@@ -230,10 +234,30 @@ def load_dicom_folder(folder: Path | str, max_voxels: int, refuse_voxels: int) -
     img = _resample_slabwise(slab, size, spacing, origin, direction, new_sp)
     info = ScanInfo(tuple(img.GetSize()), tuple(img.GetSpacing()), tuple(img.GetOrigin()), direction,
                     modality=modality, modality_source="dicom_tag", resampled=True, original_size=size,
-                    original_spacing=spacing, source="dicom")
+                    original_spacing=spacing, source="dicom", series=record)
     info.flags.append("resampled_input")
     info.warnings.append("the series was resampled to fit the memory cap; labels are on the resampled grid")
     return img, info
+
+
+def _series_record(series, primary, why: str) -> dict:
+    """What was chosen and why, for the wrong-series hazard (reviewed by the clinician; kept in provenance)."""
+    import hashlib
+
+    def one(s):
+        return {"number": s.number, "description": s.description, "kernel": s.kernel, "modality": s.modality,
+                "n_slices": s.n_slices, "slice_spacing_mm": s.slice_spacing,
+                "pixel_spacing_mm": list(s.pixel_spacing) if s.pixel_spacing else None,
+                "orientation": s.orientation, "volumetric": s.volumetric, "problems": list(s.problems)}
+
+    uid = ""
+    try:
+        import pydicom
+        uid = str(pydicom.dcmread(primary.files[0], stop_before_pixels=True).SeriesInstanceUID)
+    except Exception:  # noqa: BLE001 - the hash is informative only
+        pass
+    return {"chosen": {**one(primary), "uid_sha256": hashlib.sha256(uid.encode()).hexdigest()[:16] if uid else None},
+            "reason": why, "candidates": [one(s) for s in series if s is not primary]}
 
 
 def _subset(info, sub_idx):
@@ -272,6 +296,16 @@ def describe(img: sitk.Image, info: ScanInfo, *, modality: str = "auto", warn_sl
     if info.modality == "CT" and p01 > -200 and float(sample.min()) > -200:
         info.warnings.append("no air below -200 HU in the image: the field of view may be inside the body, or "
                              "values are not in HU")
+    sp = np.array(img.GetSpacing(), float)
+    extent = sp * np.array(img.GetSize())
+    if sp.min() < 0.2 or sp.max() > 10.0:
+        raise InputRefused(f"voxel spacing {' x '.join(f'{v:g}' for v in sp)} mm is implausible for a clinical CT/MR "
+                           "(expected 0.2-10 mm); the header scale is probably wrong")
+    if extent.max() > 2500.0:
+        raise InputRefused(f"the field of view is {extent.max() / 1000:.1f} m long; the header scale is probably wrong")
+    if extent[:2].min() < 40.0:
+        info.flags.append("implausible_scale")
+        info.warnings.append(f"in-plane field of view is only {extent[:2].min():.0f} mm; check the voxel spacing")
     info.slice_mm = float(max(img.GetSpacing()))
     if info.slice_mm > refuse_slice_mm:
         raise InputRefused(f"the coarsest voxel spacing is {info.slice_mm:.1f} mm; scans with slices thicker than "

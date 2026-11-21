@@ -23,6 +23,8 @@ def _parser() -> argparse.ArgumentParser:
     src.add_argument("--dicom", type=Path, help="folder of DICOM files (the primary series is chosen)")
     r.add_argument("--out", type=Path, required=True, help="output folder")
     r.add_argument("--config", type=Path, help="JSON file with SegConfig fields (command-line flags win)")
+    r.add_argument("--build", choices=("research", "device"), help="device: TotalSegmentator total only, pinned "
+                   "weights, intended-use structures only (docs/ct_platform/REGULATORY_PATH.md)")
     r.add_argument("--profile", choices=PROFILES)
     r.add_argument("--fast", action="store_true", default=None, help="3 mm TotalSegmentator models where available")
     r.add_argument("--device", choices=("cpu", "gpu", "mps"))
@@ -34,13 +36,14 @@ def _parser() -> argparse.ArgumentParser:
     c.add_argument("--config", type=Path)
     c.add_argument("--weights-dir", type=Path, help="TotalSegmentator weights folder to inspect")
     c.add_argument("--models", help="comma-separated source:task keys to check, e.g. totalsegmentator:face")
+    c.add_argument("--build", choices=("research", "device"))
     sub.add_parser("labels", help="print the canonical label table as JSON")
     return p
 
 
 def _config(a) -> SegConfig:
     d = json.loads(a.config.read_text()) if a.config else {}
-    for k in ("profile", "device", "modality"):
+    for k in ("build", "profile", "device", "modality"):
         if getattr(a, k, None):
             d[k] = getattr(a, k)
     if a.fast:
@@ -62,23 +65,27 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "check-licences":
         try:
-            cfg = SegConfig.from_file(a.config) if a.config else SegConfig()
+            d = json.loads(a.config.read_text()) if a.config else {}
+            if a.build:
+                d["build"] = a.build
+            cfg = SegConfig(**d)
             ok = allowlist.check_config(cfg.licence_view(cfg.tasks or []))
             if a.models:
-                ok += allowlist.check_models([m for m in a.models.split(",") if m])
-            found = allowlist.check_weights_dir(a.weights_dir or cfg.weights_dir)
+                ok += allowlist.check_models([m for m in a.models.split(",") if m], cfg.build)
+            found = allowlist.check_weights_dir(a.weights_dir or cfg.weights_dir, cfg.build)
         except allowlist.LicenceError as e:
             print(f"LICENCE CHECK FAILED: {e}", file=sys.stderr)
             return 2
         print(f"licence check passed: {len(ok)} configured model(s) allowlisted"
               + (f", {len(found)} weight folder(s) allowlisted" if found else ""))
         return 0
+    from .device import ModelIntegrityError
     from .engine import segment
     from .inputs import InputRefused
     try:
         res = segment(a.input or a.dicom, a.out, _config(a), dicom=a.dicom is not None,
                       progress=lambda m: print(f"[ctseg] {m}", flush=True))
-    except (InputRefused, allowlist.LicenceError) as e:
+    except (InputRefused, allowlist.LicenceError, ModelIntegrityError) as e:
         print(f"refused: {e}", file=sys.stderr)
         return 2
     n = len(res.labels_json["labels"])

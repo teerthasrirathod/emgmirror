@@ -27,13 +27,14 @@ class SegConfig:
     region). ``fast``: TotalSegmentator 3 mm models where they exist (``total``, ``body``); the subtasks have
     no fast model and run at their native resolution."""
 
-    profile: str = "standard"
+    build: str = "research"  # "research" | "device" (REGULATORY_PATH.md section 4)
+    profile: str | None = None  # default: "standard" (research), "minimal" (device)
     fast: bool = False
     device: str = "cpu"  # "cpu" | "gpu" | "mps"
     modality: str = "auto"  # "auto" | "ct" | "mr"
     tasks: list[str] | None = None
     extra_tasks: list[str] = field(default_factory=list)
-    moose: bool = True
+    moose: bool | None = None  # default: True (research), False (device; explicit True fails the licence check)
     moose_models: list[str] = field(default_factory=lambda: ["clin_ct_peripheral_bones", "clin_ct_body_composition"])
     cads: dict | None = None  # {"license": "open"}; CADS is not run in S1, only validated
     # Region detection: a region counts as present when its marker structures add up to this volume.
@@ -50,8 +51,16 @@ class SegConfig:
     keep_intermediate: bool = False
     totalseg_home: str | None = None  # TOTALSEG_HOME_DIR; default: <out>/.totalseg is NOT used, see runners
     weights_dir: str | None = None  # TOTALSEG_WEIGHTS_PATH, checked against the allowlist
+    weights_manifest: str | None = None  # device build: pinned weight hashes (default: resources/device_weights.json)
 
     def __post_init__(self) -> None:
+        if self.build not in ("research", "device"):
+            raise ValueError("build must be 'research' or 'device'")
+        device = self.build == "device"
+        if self.profile is None:
+            self.profile = "minimal" if device else "standard"
+        if self.moose is None:
+            self.moose = not device
         if self.profile not in PROFILES:
             raise ValueError(f"profile must be one of {PROFILES}, not '{self.profile}'")
         if self.modality not in ("auto", "ct", "mr"):
@@ -69,5 +78,7 @@ class SegConfig:
     def licence_view(self, planned_tasks: list[str] | None = None) -> dict:
         """The mapping :func:`emgmirror.ctseg.allowlist.check_config` validates."""
         tasks = list(planned_tasks if planned_tasks is not None else (self.tasks or []))
-        return {"tasks": tasks, "extra_tasks": self.extra_tasks,
+        if self.build == "device" and self.profile == "standard":
+            tasks.append("<region subtasks (profile 'standard')>")
+        return {"tasks": tasks, "extra_tasks": self.extra_tasks, "build": self.build,
                 "moose_models": self.moose_models if self.moose else [], "cads": self.cads}

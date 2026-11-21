@@ -14,6 +14,10 @@ Flags (strings in ``labels.json`` ``labels[].flags``):
 * ``thick_slices`` (every structure) and ``thin_structure_thick_slices`` (vessels, ribs, nerves, airway
   walls, muscles of the neck) when the coarsest spacing exceeds ``warn_slice_mm``.
 * ``mr_no_hu_check``: MR scan; HU checks were not applied.
+* ``laterality_suspect``: a ``*_left`` structure lies to the patient's right of its ``*_right`` partner, or
+  (without a partner) more than ``LATERALITY_TOL_MM`` to the right of the midline (spine, else other midline
+  structures, else the image centre). In DICOM LPS, +x points to the patient's left. Catches mirrored images
+  and header left/right flips; see :func:`laterality`.
 * ``multi_source``: more than one model contributed voxels; ``part_of:<parent>``: refinement of a parent.
 """
 
@@ -86,12 +90,67 @@ def hu_band(name: str, kind: str) -> tuple[float, float] | None:
     return HU_BANDS["soft"]
 
 
+LATERALITY_TOL_MM = 10.0
+_MIDLINE = [re.compile(r"^(vertebrae_.*|sacrum)$"), re.compile(r"^(sternum|trachea|esophagus|spinal_cord)$"),
+            re.compile(r"^body_trunc$")]
+
+
+def laterality(labels: sitk.Image, objs=None) -> dict:
+    """Left/right check on every ``*_left`` / ``*_right`` label present.
+
+    Returns {"midline_x_mm", "midline_from", "checked": n, "failed": [names], "centroids_x_mm": {...}}."""
+    lab = sitk.GetArrayViewFromImage(labels)
+    objs = objs if objs is not None else ndimage.find_objects(lab)
+    names = {lab_.id: lab_.name for lab_ in ontology.table().values()}
+
+    def centroid_x(cid: int) -> float | None:
+        if cid - 1 >= len(objs) or objs[cid - 1] is None:
+            return None
+        sl = objs[cid - 1]
+        c = ndimage.center_of_mass(lab[sl] == cid)
+        idx = [float(c[2] + sl[2].start), float(c[1] + sl[1].start), float(c[0] + sl[0].start)]
+        return float(labels.TransformContinuousIndexToPhysicalPoint(idx)[0])
+
+    present = {names.get(i + 1, f"label_{i + 1}"): i + 1 for i, s in enumerate(objs) if s is not None}
+    midline, source = None, "image_centre"
+    for pat in _MIDLINE:
+        ids = [cid for n, cid in present.items() if pat.match(n)]
+        if ids:
+            xs = [x for x in (centroid_x(i) for i in ids) if x is not None]
+            if xs:
+                midline, source = float(np.median(xs)), pat.pattern
+                break
+    if midline is None:
+        size = labels.GetSize()
+        midline = float(labels.TransformContinuousIndexToPhysicalPoint([(size[0] - 1) / 2, (size[1] - 1) / 2,
+                                                                        (size[2] - 1) / 2])[0])
+    cx, failed, checked = {}, [], 0
+    for n, cid in present.items():
+        if n.endswith(("_left", "_right")):
+            cx[n] = centroid_x(cid)
+    for n, x in cx.items():
+        if x is None:
+            continue
+        base, side = n.rsplit("_", 1)
+        other = cx.get(f"{base}_{'right' if side == 'left' else 'left'}")
+        checked += 1
+        sign = 1.0 if side == "left" else -1.0  # left: x larger than the right partner / midline
+        if other is not None:
+            ok = sign * (x - other) > 0
+        else:
+            ok = sign * (x - midline) > -LATERALITY_TOL_MM
+        if not ok:
+            failed.append(n)
+    return {"midline_x_mm": round(midline, 1), "midline_from": source, "checked": checked, "failed": sorted(failed),
+            "centroids_x_mm": {k: (round(v, 1) if v is not None else None) for k, v in sorted(cx.items())}}
+
+
 _FACES = ("x_min", "x_max", "y_min", "y_max", "z_min", "z_max")
 
 
 def structure_qc(labels: sitk.Image, image: sitk.Image, scan: ScanInfo, *, label_sources: dict[int, dict[str, int]],
                  part_of: dict[int, str], warn_slice_mm: float = 3.0, metal_hu: float = 3000.0,
-                 metal_margin_mm: float = 10.0) -> dict[int, dict]:
+                 metal_margin_mm: float = 10.0, summary: dict | None = None) -> dict[int, dict]:
     """Return {canonical id: {"name", "flags", "stats"}} for every label present."""
     lab = sitk.GetArrayViewFromImage(labels)
     n = int(lab.max()) + 1
@@ -122,6 +181,8 @@ def structure_qc(labels: sitk.Image, image: sitk.Image, scan: ScanInfo, *, label
         dil = ndimage.binary_dilation(m, structure=st)
         near_metal = set(np.unique(lab[box][dil]).tolist()) - {0}
     objs = ndimage.find_objects(lab)
+    lat = laterality(labels, objs)
+    lat_failed = set(lat["failed"])
     thick = scan.slice_mm > warn_slice_mm
     out: dict[int, dict] = {}
     for cid in np.flatnonzero(counts):
@@ -171,6 +232,8 @@ def structure_qc(labels: sitk.Image, image: sitk.Image, scan: ScanInfo, *, label
                 stats.update(components=1, largest_component_fraction=1.0)
         if cid in near_metal:
             flags.append("near_metal")
+        if name in lat_failed:
+            flags.append("laterality_suspect")
         if thick:
             flags.append("thick_slices")
             if _THIN.search(name):
@@ -182,4 +245,6 @@ def structure_qc(labels: sitk.Image, image: sitk.Image, scan: ScanInfo, *, label
         if cid in part_of:
             flags.append(f"part_of:{part_of[cid]}")
         out[cid] = {"name": name, "flags": flags, "stats": stats}
+    if summary is not None:
+        summary["laterality"] = lat
     return out

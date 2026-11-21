@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 import SimpleITK as sitk
 
-from . import CONTRACT_VERSION, DISCLAIMER, ENGINE_VERSION, allowlist, inputs, ontology, regions
+from . import CONTRACT_VERSION, DISCLAIMER, ENGINE_VERSION, allowlist, device, inputs, ontology, regions
 from .config import SegConfig
 from .fusion import fuse
 from .qc import structure_qc
@@ -77,9 +77,10 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
     out.mkdir(parents=True, exist_ok=True)
     input_path = Path(input_path)
 
-    # 0. licences first: nothing runs if the configuration itself is not commercial-safe
+    # 0. licences first: nothing runs if the configuration itself is not allowed in this build
+    is_device = cfg.build == "device"
     allowlist.check_config(cfg.licence_view())
-    allowlist.check_weights_dir(cfg.weights_dir)
+    allowlist.check_weights_dir(cfg.weights_dir, cfg.build)
 
     # 1. input
     t = time.time()
@@ -90,6 +91,12 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
     scan = inputs.describe(img, scan, modality=cfg.modality, warn_slice_mm=cfg.warn_slice_mm,
                            refuse_slice_mm=cfg.refuse_slice_mm, metal_hu=cfg.metal_hu, metal_min_ml=cfg.metal_min_ml)
     timings["input_s"] = round(time.time() - t, 2)
+    if is_device:
+        if scan.modality != "CT":
+            raise inputs.InputRefused("the device build accepts CT only (intended use excludes MR)")
+        if "implausible_scale" in scan.flags or "possibly_unrescaled_ct" in scan.flags:
+            raise inputs.InputRefused("the device build refuses scans whose scale or HU calibration looks wrong: "
+                                      + "; ".join(scan.warnings))
     say(f"input: {scan.modality}, {' x '.join(map(str, scan.size))} voxels, {scan.slice_mm:.2f} mm coarsest spacing")
 
     work = Path(tempfile.mkdtemp(prefix=".ctseg_work_", dir=out))
@@ -107,13 +114,24 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
         is_mr = scan.modality == "MR"
         base = "totalsegmentator:total_mr" if is_mr else "totalsegmentator:total"
         body = "totalsegmentator:body_mr" if is_mr else "totalsegmentator:body"
-        allowlist.check_models([base, body])
+        allowlist.check_models([base] if is_device else [base, body], cfg.build)
+
+        # model registry: verify pinned weights before running (device), fingerprint them (both builds)
+        wdir = device.weights_dir_default(cfg.weights_dir, cfg.totalseg_home)
+        ts_version = runner.versions().get("TotalSegmentator")
+        ds_ids = device.total_dataset_ids(cfg.fast) if not is_mr else []
+        if is_device:
+            allowlist.check_weights_dir(wdir, "device")
+            model_fp = device.verify(wdir, ds_ids, ts_version, device.load_manifest(cfg.weights_manifest))
+            model_fp["verified_against_manifest"] = True
+        else:
+            model_fp = {"verified_against_manifest": False, "note": "research build: weights not pinned"}
 
         results: list[ModelResult] = []
         runs: list[dict] = []
 
         def run(source: str, required: bool) -> ModelResult | None:
-            a = allowlist.allowed(source)
+            a = allowlist.allowed(source, cfg.build)
             say(f"running {source}")
             t0 = time.time()
             entry = {"source": source, "licence": a.licence, "licence_url": a.licence_url,
@@ -136,13 +154,16 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
         # 2. base model + body, then region detection
         t = time.time()
         r_base = run(base, required=True)
-        r_body = run(body, required=False)
+        r_body = None if is_device else run(body, required=False)
         voxel_ml = float(np.prod(img.GetSpacing())) / 1000.0
         vols = regions.volumes_ml(sitk.GetArrayViewFromImage(r_base.labels), r_base.classes, voxel_ml)
         if r_body is not None:
             vols.update(regions.volumes_ml(sitk.GetArrayViewFromImage(r_body.labels), r_body.classes, voxel_ml))
         plan = regions.make_plan(base, vols, cfg, scan.modality)
-        allowlist.check_models(plan.sources)  # region-selected models are checked too
+        if is_device:
+            plan.subtasks, plan.moose = [], []
+            plan.reasons = ["device build: TotalSegmentator total only"]
+        allowlist.check_models(plan.sources, cfg.build)  # region-selected models are checked too
         say(f"regions: {', '.join(plan.regions) or 'none'}; extra models: {', '.join(plan.sources) or 'none'}")
 
         # 3. subtasks and MOOSE
@@ -153,10 +174,27 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
         # 4. fusion + QC
         t = time.time()
         fused = fuse(results)
+        removed: list[str] = []
+        if is_device:  # only intended-use structures leave a device build
+            keep = np.zeros(65536, bool)
+            keep[[ontology.label(n).id for n in device.device_structures()]] = True
+            arr = sitk.GetArrayFromImage(fused.labels)
+            present = set(np.unique(arr).tolist()) - {0}
+            removed = sorted(ontology.by_id()[i].name for i in present if not keep[i])
+            arr[~keep[arr]] = 0
+            lab_img = sitk.GetImageFromArray(arr)
+            lab_img.CopyInformation(fused.labels)
+            fused.labels = lab_img
+        if not is_mr:
+            try:
+                model_fp.update(device.fingerprint(wdir, ds_ids, ts_version))
+            except OSError:
+                pass
         timings["fusion_s"] = round(time.time() - t, 2)
         t = time.time()
+        summary: dict = {}
         sq = structure_qc(fused.labels, img, scan, label_sources=fused.label_sources, part_of=fused.part_of,
-                          warn_slice_mm=cfg.warn_slice_mm, metal_hu=cfg.metal_hu)
+                          warn_slice_mm=cfg.warn_slice_mm, metal_hu=cfg.metal_hu, summary=summary)
         timings["qc_s"] = round(time.time() - t, 2)
 
         # 5. outputs
@@ -189,8 +227,25 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
                 "structures": {sq[c]["name"]: sq[c]["stats"] for c in sorted(sq)},
                 "fusion": {"discarded_voxels": fused.discarded,
                            "rule": "rank-based, see emgmirror/ctseg/fusion.py and docs/ct_platform/S1_segmentation.md"},
+                "build": cfg.build,
+                "laterality": summary.get("laterality"),
             },
         }
+        if scan.series:
+            labels_json["qc"]["series"] = scan.series
+        if is_device:
+            names = {e["name"]: e for e in entries}
+            labels_json["qc"]["device"] = {
+                "intended_use": device.INTENDED_USE_TEXT,
+                "structures": {g: [n for n in ns if n in names] for g, ns in device.INTENDED_USE.items()},
+                "cut_by_scan_edge": sorted(n for n, e in names.items() if "cut_by_scan_edge" in e["flags"]),
+                "laterality_failed": summary.get("laterality", {}).get("failed", []),
+                "removed_non_intended_use": removed,
+                "approval": {"status": "not_approved", "note": device.APPROVAL_NOTE},
+            }
+            if labels_json["qc"]["device"]["laterality_failed"]:
+                warnings.append("LATERALITY CHECK FAILED for " + ", ".join(labels_json["qc"]["device"]["laterality_failed"])
+                                + ": check for a mirrored image or a left/right header error before any use")
         (out / "labels.json").write_text(json.dumps(labels_json, indent=1))
 
         prov = {
@@ -205,6 +260,8 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
             "settings": cfg.to_dict(),
             "plan": plan.to_dict(),
             "models": runs,
+            "build": cfg.build,
+            "model_fingerprint": model_fp,
             "software": {"python": platform.python_version(), "emgmirror": _v("emgmirror"), "numpy": _v("numpy"),
                          "SimpleITK": _v("SimpleITK"), **runner.versions()},
             "privacy": {"totalsegmentator_send_usage_stats": False if usage_stats_disabled(cfg.totalseg_home)

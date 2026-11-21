@@ -5,7 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
+import pydicom
 import SimpleITK as sitk
+from pydicom.dataset import Dataset, FileMetaDataset
+from pydicom.uid import ExplicitVRLittleEndian, generate_uid
 
 from emgmirror.ctseg import ontology
 from emgmirror.ctseg.runners import ModelResult
@@ -86,3 +89,29 @@ class FakeRunner:
             grown[8:16, 20:40, 10:40] = True  # deliberately larger than the liver
             return self._map(source, {"liver_segment_1": grown & (z < 12), "liver_segment_2": grown & (z >= 12)}, image)
         return self._map(source, {}, image)
+
+
+def write_dicom(folder, hu, spacing, origin, *, number=3, description="phantom", step=1):
+    """One axial CT series; ``step`` keeps every n-th slice (a thicker reconstruction of the same volume)."""
+    uid = generate_uid()
+    folder.mkdir(parents=True, exist_ok=True)
+    for k, sl in list(enumerate(hu))[::step]:
+        meta = FileMetaDataset()
+        meta.MediaStorageSOPClassUID = pydicom.uid.CTImageStorage
+        meta.MediaStorageSOPInstanceUID = generate_uid()
+        meta.TransferSyntaxUID = ExplicitVRLittleEndian
+        ds = Dataset()
+        ds.file_meta = meta
+        ds.SOPClassUID, ds.SOPInstanceUID = meta.MediaStorageSOPClassUID, meta.MediaStorageSOPInstanceUID
+        ds.Modality, ds.SeriesInstanceUID, ds.SeriesNumber = "CT", uid, number
+        ds.SeriesDescription, ds.ConvolutionKernel = description, "B30f"
+        ds.Rows, ds.Columns = sl.shape
+        ds.PixelSpacing, ds.SliceThickness = [spacing[1], spacing[0]], spacing[2] * step
+        ds.ImageOrientationPatient = [1.0, 0, 0, 0, 1.0, 0]
+        ds.ImagePositionPatient = [origin[0], origin[1], origin[2] + k * spacing[2]]
+        ds.SamplesPerPixel, ds.PhotometricInterpretation = 1, "MONOCHROME2"
+        ds.BitsAllocated = ds.BitsStored = 16
+        ds.HighBit, ds.PixelRepresentation = 15, 1
+        ds.RescaleSlope, ds.RescaleIntercept = 1, 0
+        ds.PixelData = sl.astype(np.int16).tobytes()
+        ds.save_as(folder / f"s{number}_im{k:03d}", enforce_file_format=True)
