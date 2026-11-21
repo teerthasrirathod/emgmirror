@@ -30,6 +30,38 @@ Options: `--profile minimal|standard` (default `standard`), `--fast` (TotalSegme
 exist), `--modality auto|ct|mr`, `--tasks a,b` (explicit subtasks instead of region selection), `--no-moose`,
 `--config file.json` (any `SegConfig` field).
 
+## Builds: research and device
+
+Since 2026-11-22 the owner has chosen the medical-device route ([REGULATORY_PATH.md](REGULATORY_PATH.md)). The
+engine therefore has two builds:
+
+| | `--build research` (default) | `--build device` |
+|---|---|---|
+| Models | `total`/`total_mr`, `body`, region subtasks, MOOSE (allowlist) | TotalSegmentator `total` only; anything else fails the licence check |
+| Weights | not pinned (fingerprint recorded) | every weight file verified against `resources/device_weights.json` before running; the weights folder may hold only `total` datasets |
+| Input | CT or MR | CT only; scale or HU-calibration doubts are refused |
+| Output | every structure found | only the 36 intended-use bone labels (`device.INTENDED_USE`); `qc.device` lists cut and laterality-failed structures; status `not_approved` until clinician sign-off |
+
+Intended-use structures (first intended use, REGULATORY_PATH.md section 2):
+
+| Group | `total` labels |
+|---|---|
+| Pelvis / acetabulum | `hip_left`, `hip_right`, `sacrum` |
+| Spine | `vertebrae_C1`–`C7`, `vertebrae_T1`–`T12`, `vertebrae_L1`–`L5`, `vertebrae_S1` |
+| Shoulder girdle | `scapula_left`, `scapula_right`, `clavicula_left`, `clavicula_right` |
+| Proximal femur | `femur_left`, `femur_right` (TotalSegmentator labels the whole femur in view) |
+| Humerus | `humerus_left`, `humerus_right` |
+
+`total` has no separate acetabulum label: the acetabulum is part of `hip_*`. Design records:
+[device/S1_software_requirements.md](device/S1_software_requirements.md) (requirements traced to tests) and
+[device/SOUP_register.md](device/SOUP_register.md) (every package and weight with version, licence and hash).
+Re-pin the weights only as a controlled change: run `scripts/ctseg_pin_device_weights.py`, then regenerate the
+register with `scripts/ctseg_soup_register.py`.
+
+```bash
+TOTALSEG_WEIGHTS_PATH=/opt/weights/device python -m emgmirror.ctseg run --build device --input ct.nii.gz --out result/
+```
+
 ## Outputs (the shared contract S2 consumes)
 
 | File | Content |
@@ -105,6 +137,7 @@ Dice from the GPU benchmark can rank sources structure by structure.
 | Flag | Meaning |
 |---|---|
 | `cut_by_scan_edge` | Touches a face of the image; continues outside the scan. No volume check. |
+| `laterality_suspect` | A `*_left` structure lies to the patient's right of its `*_right` partner, or more than 10 mm right of the midline (mirrored image or left/right header error). |
 | `volume_out_of_range` | Complete structure outside a wide adult plausibility band (`qc.VOLUME_ML`). |
 | `hu_out_of_range` | Mean HU outside the band for its tissue class (bone, lung, air, fat, vessel, contrast-capable organ, soft tissue). CT only. |
 | `very_small` | Fewer than 10 voxels. |
@@ -116,7 +149,8 @@ Dice from the GPU benchmark can rank sources structure by structure.
 | `part_of:<parent>` | Refinement of a parent structure. |
 
 Scan-level flags in `qc.scan.flags`: `thick_slices`, `metal_present`, `resampled_input`, `mr_no_hu_checks`,
-`possibly_unrescaled_ct`.
+`possibly_unrescaled_ct`, `implausible_scale`, `direction_repaired`. `qc.laterality` holds the left/right check
+summary. For DICOM input, `qc.series` holds the chosen series, the reason, and the alternatives.
 
 ## Licences and privacy
 
