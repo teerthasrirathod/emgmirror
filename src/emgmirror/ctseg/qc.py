@@ -48,14 +48,16 @@ VOLUME_ML: dict[str, tuple[float, float]] = {
 HU_BANDS: dict[str, tuple[float, float]] = {
     "bone": (100, 1800), "cartilage": (-50, 600), "lung": (-1000, -350), "air": (-1024, 300),
     "fat": (-200, -20), "vessel": (-100, 800), "contrast_organ": (-950, 1200), "soft": (-150, 300),
+    "lung_internal": (-1000, 400),  # vessels / airway wall inside the lung: partial volume with air
 }
 _HU_SKIP = re.compile(r"^(body_.*|head|abdominal_cavity|thoracic_cavity|mediastinum|pericardium|skin)$")
 _CONTRAST = re.compile(r"^(kidney_.*|urinary_bladder|gallbladder|colon|small_bowel|duodenum|stomach|esophagus|"
                        r"kidney_cyst_.*)$")
 _LUNG = re.compile(r"^lung_(upper|middle|lower)_lobe_.*|^lung_(left|right)$")
+_LUNG_INTERNAL = re.compile(r"^lung_(arteries|veins|airways_wall)$")
 _AIR = re.compile(r"^(trachea|lung_airways|larynx_air|sinus_.*|nasal_cavity_.*|nasopharynx|oropharynx|"
                   r"hypopharynx|auditory_canal_.*)$")
-_CART = re.compile(r"^(costal_cartilages|thyroid_cartilage|cricoid_cartilage|intervertebral_discs|lung_airways_wall)$")
+_CART = re.compile(r"^(costal_cartilages|thyroid_cartilage|cricoid_cartilage|intervertebral_discs)$")
 _THIN = re.compile(r"(artery|arteries|vein|veins|vena|rib_|optic_nerve|airways_wall|scalene|platysma|"
                    r"thyro|constrictor|styloid|eye_lens|carotid|jugular)")
 _SOLID = re.compile(r"^(liver|spleen|kidney_(left|right)|pancreas|gallbladder|heart|brain|urinary_bladder|"
@@ -67,6 +69,8 @@ def hu_band(name: str, kind: str) -> tuple[float, float] | None:
         return None
     if _LUNG.match(name):
         return HU_BANDS["lung"]
+    if _LUNG_INTERNAL.match(name):
+        return HU_BANDS["lung_internal"]
     if _AIR.match(name):
         return HU_BANDS["air"]
     if _CART.match(name):

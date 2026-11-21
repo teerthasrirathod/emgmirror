@@ -70,13 +70,16 @@ def _term_colours(term: dict) -> dict:
 
 def _kind(name: str) -> str:
     n = name.lower()
-    if any(k in n for k in ("artery", "vein", "vena", "aorta", "trunk_brachio", "appendage", "sinus_sag")):
+    if any(k in n for k in ("artery", "arteries", "vein", "vena", "aorta", "brachiocephalic", "appendage")):
         return "vessel"
     if n.startswith("heart") or n == "pericardium":
         return "heart"
     if "fat" in n:
         return "fat"
-    if any(k in n for k in ("muscle", "gluteus", "autochthon", "iliopsoas", "scalene", "trapezius", "masseter")):
+    muscles = ("muscle", "gluteus", "autochthon", "iliopsoas", "scalene", "trapezius", "masseter", "levator",
+               "thyrohyoid", "sterno_thyroid", "prevertebral", "platysma", "constrictor", "sternocleidomastoid",
+               "temporalis", "pterygoid", "digastric", "tongue")
+    if any(k in n for k in muscles):  # before bones: "levator_scapulae" is not a scapula
         return "muscle"
     if any(k in n for k in ("airway", "larynx_air", "sinus_", "nasal", "pharynx")):
         return "air"

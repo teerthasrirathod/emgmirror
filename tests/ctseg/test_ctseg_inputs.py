@@ -116,3 +116,31 @@ def test_dicom_folder_matches_the_nifti_geometry(tmp_path, phantom):
     assert np.array_equal(sitk.GetArrayFromImage(out), hu)
     small, sinfo = I.load_dicom_folder(tmp_path / "dcm", max_voxels=30_000, refuse_voxels=10**9)
     assert sinfo.resampled and int(np.prod(small.GetSize())) <= 30_000
+
+
+def _nifti_with_affine(path, affine):
+    import nibabel as nib
+    data = np.full((20, 24, 16), -1000, np.int16)
+    data[5:15, 6:18, 4:12] = 40
+    nib.save(nib.Nifti1Image(data, affine), str(path))
+
+
+def test_slightly_non_orthonormal_header_is_repaired(tmp_path):
+    aff = np.diag([1.5, 1.5, 1.5, 1.0])
+    aff[0, 1] = 1.5 * 3e-4  # rounding noise like in the TotalSegmentator dataset
+    p = tmp_path / "tilt.nii.gz"
+    _nifti_with_affine(p, aff)
+    img, info = I.load_nifti(p, 10**8, 10**9)
+    assert "direction_repaired" in info.flags and info.resampled
+    D = np.array(img.GetDirection()).reshape(3, 3)
+    assert np.allclose(D.T @ D, np.eye(3), atol=1e-9)
+    assert img.GetSize() == (20, 24, 16) and img.GetPixel(10, 12, 8) == 40
+
+
+def test_sheared_header_is_refused(tmp_path):
+    aff = np.diag([1.5, 1.5, 1.5, 1.0])
+    aff[0, 2] = 0.5  # real shear (gantry tilt kept in the affine)
+    p = tmp_path / "shear.nii.gz"
+    _nifti_with_affine(p, aff)
+    with pytest.raises(I.InputRefused):
+        I.load_nifti(p, 10**8, 10**9)

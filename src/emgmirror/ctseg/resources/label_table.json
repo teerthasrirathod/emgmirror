@@ -1333,7 +1333,7 @@
     79
    ],
    "rgb_source": "slicer",
-   "kind": "other",
+   "kind": "vessel",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -3346,7 +3346,7 @@
     171
    ],
    "rgb_source": "slicer",
-   "kind": "other",
+   "kind": "vessel",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -3866,12 +3866,12 @@
    "name": "sternocleidomastoid_right",
    "display": "Sternocleidomastoid (right)",
    "rgb": [
-    176,
-    155,
-    130
+    178,
+    109,
+    78
    ],
    "rgb_source": "fallback",
-   "kind": "other",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -3895,12 +3895,12 @@
    "name": "sternocleidomastoid_left",
    "display": "Sternocleidomastoid (left)",
    "rgb": [
-    191,
-    139,
-    122
+    193,
+    93,
+    70
    ],
    "rgb_source": "fallback",
-   "kind": "other",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -3924,12 +3924,12 @@
    "name": "superior_pharyngeal_constrictor",
    "display": "Superior pharyngeal constrictor",
    "rgb": [
-    192,
-    155,
-    120
+    194,
+    109,
+    68
    ],
    "rgb_source": "fallback",
-   "kind": "other",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -3948,12 +3948,12 @@
    "name": "middle_pharyngeal_constrictor",
    "display": "Middle pharyngeal constrictor",
    "rgb": [
-    181,
-    138,
-    129
+    183,
+    92,
+    77
    ],
    "rgb_source": "fallback",
-   "kind": "other",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -3972,12 +3972,12 @@
    "name": "inferior_pharyngeal_constrictor",
    "display": "Inferior pharyngeal constrictor",
    "rgb": [
-    207,
-    132,
-    125
+    209,
+    86,
+    73
    ],
    "rgb_source": "fallback",
-   "kind": "other",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -4054,12 +4054,12 @@
    "name": "platysma_right",
    "display": "Platysma (right)",
    "rgb": [
-    171,
-    132,
-    156
+    173,
+    86,
+    104
    ],
    "rgb_source": "fallback",
-   "kind": "other",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -4083,12 +4083,12 @@
    "name": "platysma_left",
    "display": "Platysma (left)",
    "rgb": [
-    189,
-    154,
-    154
+    191,
+    108,
+    102
    ],
    "rgb_source": "fallback",
-   "kind": "other",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -4112,12 +4112,12 @@
    "name": "levator_scapulae_right",
    "display": "Levator scapulae (right)",
    "rgb": [
-    247,
-    215,
-    165
+    198,
+    105,
+    108
    ],
    "rgb_source": "fallback",
-   "kind": "bone",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -4141,12 +4141,12 @@
    "name": "levator_scapulae_left",
    "display": "Levator scapulae (left)",
    "rgb": [
-    242,
-    204,
-    165
+    193,
+    94,
+    108
    ],
    "rgb_source": "fallback",
-   "kind": "bone",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -4344,12 +4344,12 @@
    "name": "sterno_thyroid_right",
    "display": "Sterno thyroid (right)",
    "rgb": [
-    181,
-    145,
-    147
+    183,
+    99,
+    95
    ],
    "rgb_source": "fallback",
-   "kind": "other",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -4373,12 +4373,12 @@
    "name": "sterno_thyroid_left",
    "display": "Sterno thyroid (left)",
    "rgb": [
-    204,
-    153,
-    137
+    206,
+    107,
+    85
    ],
    "rgb_source": "fallback",
-   "kind": "other",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -4402,12 +4402,12 @@
    "name": "thyrohyoid_right",
    "display": "Thyrohyoid (right)",
    "rgb": [
-    245,
-    217,
-    151
+    196,
+    107,
+    94
    ],
    "rgb_source": "fallback",
-   "kind": "bone",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -4431,12 +4431,12 @@
    "name": "thyrohyoid_left",
    "display": "Thyrohyoid (left)",
    "rgb": [
-    252,
-    205,
-    159
+    203,
+    95,
+    102
    ],
    "rgb_source": "fallback",
-   "kind": "bone",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -4460,12 +4460,12 @@
    "name": "prevertebral_right",
    "display": "Prevertebral (right)",
    "rgb": [
-    228,
-    228,
-    156
+    179,
+    118,
+    99
    ],
    "rgb_source": "fallback",
-   "kind": "bone",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",
@@ -4489,12 +4489,12 @@
    "name": "prevertebral_left",
    "display": "Prevertebral (left)",
    "rgb": [
-    224,
-    199,
-    159
+    175,
+    89,
+    102
    ],
    "rgb_source": "fallback",
-   "kind": "bone",
+   "kind": "muscle",
    "snomed": {
     "category": {
      "CodingSchemeDesignator": "SCT",

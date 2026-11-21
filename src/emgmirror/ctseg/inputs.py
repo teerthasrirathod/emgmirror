@@ -116,6 +116,8 @@ def load_nifti(path: Path | str, max_voxels: int, refuse_voxels: int) -> tuple[s
     try:
         reader.ReadImageInformation()
     except RuntimeError as e:
+        if "orthonormal" in str(e):
+            return _load_nifti_repaired(path, max_voxels, refuse_voxels)
         raise InputRefused(f"cannot read '{path.name}' as an image ({str(e).splitlines()[0][:120]})") from None
     if reader.GetDimension() != 3 or reader.GetNumberOfComponents() != 1:
         raise InputRefused(f"expected a single-channel 3D image, got {reader.GetDimension()}D with "
@@ -144,6 +146,46 @@ def load_nifti(path: Path | str, max_voxels: int, refuse_voxels: int) -> tuple[s
     info.warnings.append(f"the scan ({' x '.join(map(str, size))} voxels) was resampled to "
                          f"{' x '.join(f'{s:.2f}' for s in new_sp)} mm before segmentation to fit the memory cap; "
                          "labels are on the resampled grid (image.nii.gz)")
+    return img, info
+
+
+def _load_nifti_repaired(path: Path, max_voxels: int, refuse_voxels: int,
+                         max_dev: float = 1e-2) -> tuple[sitk.Image, ScanInfo]:
+    """Read a NIfTI whose direction cosines are slightly non-orthonormal (ITK refuses those).
+
+    Rounding in the writer's affine is common (TotalSegmentator dataset files deviate by ~2e-4). The direction
+    is replaced by the nearest orthonormal matrix (polar decomposition); deviations above ``max_dev`` are
+    refused because the geometry is then genuinely sheared."""
+    import nibabel as nib
+
+    im = nib.load(str(path))
+    if len(im.shape) != 3:
+        raise InputRefused(f"expected a single-channel 3D image, got shape {im.shape}")
+    A = im.affine[:3, :3]
+    sp = np.linalg.norm(A, axis=0)
+    D = A / sp
+    dev = float(np.abs(D.T @ D - np.eye(3)).max())
+    if dev > max_dev:
+        raise InputRefused(f"the image axes are not perpendicular (deviation {dev:.3g}); sheared or tilted volumes "
+                           "are not supported")
+    size = tuple(int(v) for v in im.shape)
+    if _check_size(size, tuple(float(v) for v in sp), max_voxels, refuse_voxels) is not None:
+        raise InputRefused("the image is too large for the memory cap and its header needs repair; export a "
+                           "coarser reconstruction")
+    u, _, vt = np.linalg.svd(D)
+    D_ras = u @ vt
+    flip = np.diag([-1.0, -1.0, 1.0])  # RAS -> LPS
+    arr = np.asanyarray(im.dataobj)
+    arr = np.rint(arr).astype(np.int16) if np.issubdtype(arr.dtype, np.floating) else arr.astype(np.int16)
+    img = sitk.GetImageFromArray(np.ascontiguousarray(arr.transpose(2, 1, 0)))
+    img.SetSpacing(tuple(float(v) for v in sp))
+    img.SetOrigin(tuple(float(v) for v in flip @ im.affine[:3, 3]))
+    img.SetDirection(tuple(float(v) for v in (flip @ D_ras).ravel()))
+    info = ScanInfo(size, tuple(img.GetSpacing()), tuple(img.GetOrigin()), tuple(img.GetDirection()),
+                    source="nifti", resampled=True)
+    info.flags.append("direction_repaired")
+    info.warnings.append(f"the image header had slightly non-perpendicular axes (deviation {dev:.1e}); they were "
+                         "made exactly perpendicular, and labels are on the repaired grid (image.nii.gz)")
     return img, info
 
 

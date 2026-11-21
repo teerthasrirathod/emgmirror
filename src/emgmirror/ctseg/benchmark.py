@@ -118,6 +118,17 @@ def fetch_subject(rz: RemoteZip, image_id: str, dest: Path) -> Path:
     return d
 
 
+def _read(path: Path) -> sitk.Image:
+    """SimpleITK read with the engine's fallback for slightly non-orthonormal headers."""
+    try:
+        return sitk.ReadImage(str(path))
+    except RuntimeError as e:
+        if "orthonormal" not in str(e):
+            raise
+        from .inputs import _load_nifti_repaired
+        return _load_nifti_repaired(Path(path), 10**10, 10**10)[0]
+
+
 def score_subject(labels_path: Path, labels_json: dict, seg_dir: Path, *, surface: bool = True,
                   max_points: int = 20_000) -> list[dict]:
     """Per-structure Dice (+ surface distance) of the engine output against the reference masks."""
@@ -137,7 +148,9 @@ def score_subject(labels_path: Path, labels_json: dict, seg_dir: Path, *, surfac
         name = f.name[:-7]
         if name not in ontology.table():
             continue
-        ref_img = sitk.ReadImage(str(f))
+        ref_img = _read(f)
+        if ref_img.GetSize() != pred_img.GetSize():  # engine resampled an oversized input
+            ref_img = sitk.Resample(ref_img, pred_img, sitk.Transform(), sitk.sitkNearestNeighbor, 0)
         ref = sitk.GetArrayViewFromImage(ref_img) > 0
         ids = [ontology.label(name).id] + children.get(name, [])
         # lung lobes are scored on their own label only: lung_vessels voxels carved out of a lobe count as
