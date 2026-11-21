@@ -1,0 +1,40 @@
+{
+  "name": "ct-viewer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Web viewer for CT-to-3D results (research use only).",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "typecheck": "tsc -b",
+    "sample": "python3 tools/fetch_sample.py --subject s0024 --out ../../data/ct_sample/raw && python3 tools/build_sample.py ../../data/ct_sample/raw/s0024 public/sample && npm run sample:compress",
+    "sample:compress": "gltf-transform meshopt public/sample/combined_web_raw.glb public/sample/combined_web.glb && rm public/sample/combined_web_raw.glb",
+    "test": "playwright test",
+    "screenshots": "SCREENSHOTS=1 playwright test tests/screenshots.spec.ts"
+  },
+  "dependencies": {
+    "@niivue/niivue": "^1.0.0-rc.235",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
+    "@react-three/postprocessing": "^2.19.1",
+    "fflate": "^0.8.3",
+    "meshoptimizer": "^1.3.0",
+    "postprocessing": "^6.39.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "^4.5.1",
+    "@playwright/test": "^1.63.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@types/three": "^0.187.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}
