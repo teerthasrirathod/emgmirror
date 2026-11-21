@@ -71,6 +71,8 @@ CONFIGS = [
      dict(passband=0.05, smoothing_iterations=30, constraint_voxels=1.0)),
     ("SurfaceNets + windowed sinc pb 0.1 / 50 it, clamp 1.0 voxel",
      dict(passband=0.1, smoothing_iterations=50, constraint_voxels=1.0)),
+    ("SurfaceNets + windowed sinc pb 0.1 / 50 it, clamp 0.45 voxel, all labels smoothed as one shared mesh",
+     dict(shared_smoothing=True)),
     ("**default**: SurfaceNets + windowed sinc pb 0.1 / 50 it, clamp 0.45 voxel", dict()),
     ("**pipeline output** (default + fallbacks: flying edges / voxel boundary)", "pipeline"),
     ("old `ct/mesh.py`: marching cubes + Taubin 20", None),

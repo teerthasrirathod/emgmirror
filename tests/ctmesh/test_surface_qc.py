@@ -82,12 +82,20 @@ def test_diagonal_voxels_are_split_into_a_manifold():
         assert qc.self_intersections(m) == 0
 
 
-def test_touching_labels_share_their_interface(oblique):
+def test_touching_labels_meet_without_gap_or_overlap(oblique):
+    """Touching labels come from one SurfaceNets run, so their interface starts from identical vertices; after
+    per-label smoothing (clamped at 0.45 voxel per axis) the two sides stay within 0.9 voxel of each other."""
     lm = oblique.labelmap
     s = surface.surfacenets_all(lm, [5, 6])
+    raw = surface.surfacenets_all(lm, [5, 6], surface.SurfaceParams(smoothing_iterations=0))
     a, b = s[5].mesh, s[6].mesh
-    common = set(map(tuple, np.round(a.vertices, 6))) & set(map(tuple, np.round(b.vertices, 6)))
-    assert len(common) > 20  # the shared face between the two blocks uses the same vertices
+    assert len(raw[5].mesh.vertices) == len(a.vertices)  # same vertices, only moved
+    on_iface = qc.distance_to_surface(raw[5].mesh.vertices, raw[6].mesh.vertices, raw[6].mesh.faces) < 1e-6
+    assert on_iface.sum() > 20
+    d_ab = qc.distance_to_surface(a.vertices[on_iface], b.vertices, b.faces)
+    assert d_ab.max() <= 2 * 0.45 * np.linalg.norm(lm.spacing)
+    vox = sum(np.count_nonzero(lm.array == i) for i in (5, 6)) * lm.voxel_volume_mm3
+    assert abs(a.volume + b.volume - vox) / vox < 0.05  # no net overlap or gap
 
 
 def test_scan_edge_is_capped_and_flagged():

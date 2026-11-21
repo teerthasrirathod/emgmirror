@@ -8,14 +8,17 @@ Primary path (all labels at once):
    (docs/ct_platform/results/S2_mesh.md, ``scripts/ctmesh_tune.py``). Unsmoothed SurfaceNets output is the
    exact voxel boundary, with vertices *shared* between touching labels (coincident duplicates are merged on the
    voxel-corner lattice).
-2. Windowed-sinc smoothing (``vtkWindowedSincPolyDataFilter``, pass band 0.1, 50 iterations, non-shrinking) of
-   that shared quad mesh, so neighbouring labels keep one common interface, then a box constraint: no vertex
-   moves more than ``constraint_voxels`` (0.45) voxel along any grid axis from its voxel-boundary position. Below
-   half a voxel the two faces of a one-voxel-thick feature cannot cross, which removed every self-intersection
-   seen with a 1-voxel limit. Each quad is then split along its shorter diagonal.
-3. Per label: the faces bordering that label, oriented outward. Where two voxels of the label touch only along
+2. Per label: the quads bordering that label, oriented outward. Where two voxels of the label touch only along
    an edge or at a corner the boundary is non-manifold; such corners are split so each 6-connected piece gets
    its own vertex (the convention marching cubes uses), giving a closed 2-manifold.
+3. Windowed-sinc smoothing (``vtkWindowedSincPolyDataFilter``, pass band 0.1, 50 iterations, non-shrinking) of
+   each label's own surface, then a box constraint: no vertex moves more than ``constraint_voxels`` (0.45) voxel
+   along any grid axis from its voxel-boundary position. Below half a voxel the two faces of a one-voxel-thick
+   feature cannot cross. Each quad is then split along its shorter diagonal. Touching labels start from the
+   same interface vertices (one SurfaceNets run), so after smoothing their sides stay within 0.9 voxel of each
+   other. Smoothing all labels as one shared mesh (``shared_smoothing=True``) keeps interfaces identical but
+   pins the surface along every curve where three labels meet: on 108 structures of a public CT the median
+   dihedral angle was 11.2 deg shared vs 8.3 deg per label, median volume change 0.98 % vs 0.13 %, same HD95.
 
 Fallback (one label at a time): ``vtkDiscreteFlyingEdges3D`` + windowed-sinc smoothing with the same box
 constraint. Used for thin labels (no voxel deeper than ``thin_depth_voxels`` from the background) when it
@@ -49,6 +52,7 @@ class SurfaceParams:
     fallback_iterations: int = 30
     fallback_passband: float = 0.1
     split_nudge_voxels: float = 0.05  # how far split copies of a pinched vertex are pulled apart
+    shared_smoothing: bool = False  # smooth all labels as one mesh (rougher at multi-label junctions; see doc)
 
 
 @dataclass
@@ -147,6 +151,14 @@ def windowed_sinc(V: np.ndarray, F: np.ndarray, iterations: int, passband: float
     return out
 
 
+def _split_quads(V: np.ndarray, Q: np.ndarray) -> np.ndarray:
+    """Split each quad along its shorter diagonal (decided on the final, smoothed positions)."""
+    d02 = np.linalg.norm(V[Q[:, 0]] - V[Q[:, 2]], axis=1)
+    d13 = np.linalg.norm(V[Q[:, 1]] - V[Q[:, 3]], axis=1)
+    a = (d02 <= d13)[:, None]
+    return np.vstack([np.where(a, Q[:, [0, 1, 2]], Q[:, [0, 1, 3]]), np.where(a, Q[:, [0, 2, 3]], Q[:, [1, 2, 3]])])
+
+
 def _clamp(V0: np.ndarray, V1: np.ndarray, spacing, c: float) -> np.ndarray:
     lim = c * np.asarray(spacing, float)
     return V0 + np.clip(V1 - V0, -lim, lim)
@@ -185,8 +197,8 @@ def _manifold_split(f: np.ndarray, idx_half: np.ndarray, V_smooth: np.ndarray, c
     """Split pinched corners of one label's voxel-boundary faces (see module doc). ``idx_half`` holds the raw
     (unsmoothed) vertex positions in crop index units (x, y, z), which sit at voxel corners (half-integers).
     Returns (V, F, n_split) with V in the smoothed vtk-world frame."""
-    T = idx_half[f]  # (n, 3, 3) xyz
-    same = np.isclose(T[:, 0], T[:, 1]) & np.isclose(T[:, 0], T[:, 2])  # axis on which the face is flat
+    T = idx_half[f]  # (n, k, 3) xyz, k = 3 or 4
+    same = np.all(np.isclose(T, T[:, :1]), axis=1)  # axis on which the face is flat
     ax = np.argmax(same, axis=1)
     lo, hi = T.min(1), T.max(1)
     centre = (lo + hi) / 2
@@ -195,7 +207,7 @@ def _manifold_split(f: np.ndarray, idx_half: np.ndarray, V_smooth: np.ndarray, c
     owner = centre.copy()
     owner[np.arange(len(f)), ax] -= 0.5 * sign  # outward normal → owning voxel is behind the face
     owner = np.rint(owner).astype(np.int64)  # (n, 3) xyz voxel index in crop
-    corner = np.rint(T + 0.5).astype(np.int64)  # (n, 3, 3) corner k: voxels k-1 .. k
+    corner = np.rint(T + 0.5).astype(np.int64)  # (n, k, 3) corner c: voxels c-1 .. c
     mask = crop == lid
     nz, ny, nx = mask.shape
     pat = np.zeros(corner.shape[:2], np.int64)
@@ -208,7 +220,7 @@ def _manifold_split(f: np.ndarray, idx_half: np.ndarray, V_smooth: np.ndarray, c
         val = np.zeros(x.shape, bool)
         val[ok] = mask[z[ok], y[ok], x[ok]]
         pat |= val.astype(np.int64) << b
-    ob = owner[:, None, :] - (corner - 1)  # (n, 3, 3) offset of owner within each corner's block, in {0,1}
+    ob = owner[:, None, :] - (corner - 1)  # (n, k, 3) offset of owner within each corner's block, in {0,1}
     obit = ob[..., 0] + 2 * ob[..., 1] + 4 * ob[..., 2]
     rep = _LUT[pat, obit].astype(np.int64)
     if (rep < 0).any():  # owner not found in its own block: inconsistent input, leave untouched
@@ -216,7 +228,7 @@ def _manifold_split(f: np.ndarray, idx_half: np.ndarray, V_smooth: np.ndarray, c
     key = f * 8 + rep
     uk, inv = np.unique(key.ravel(), return_inverse=True)
     old = uk // 8
-    newF = inv.reshape(-1, 3)
+    newF = inv.reshape(f.shape)
     V = V_smooth[old].copy()
     counts = np.bincount(old)
     multi = counts[old] > 1
@@ -307,18 +319,10 @@ def surfacenets_all(lm: LabelMap, ids, params: SurfaceParams = SurfaceParams()) 
         V0s = V1[first]
     else:
         V0s = V0
-    if params.smoothing_iterations > 0:
-        Vs = windowed_sinc(V0s, F, params.smoothing_iterations, params.passband, non_manifold=True)
-        Vs = _clamp(V0, Vs, spacing, params.constraint_voxels)
-    else:
-        Vs = V0s  # (the built-in smoother applies its own constraint)
-    # split each quad along its shorter diagonal *after* smoothing (both labels of an interface share the split)
-    d02 = np.linalg.norm(Vs[F[:, 0]] - Vs[F[:, 2]], axis=1)
-    d13 = np.linalg.norm(Vs[F[:, 1]] - Vs[F[:, 3]], axis=1)
-    a = d02 <= d13
-    F = np.vstack([np.where(a[:, None], F[:, [0, 1, 2]], F[:, [0, 1, 3]]),
-                   np.where(a[:, None], F[:, [0, 2, 3]], F[:, [1, 2, 3]])])
-    sc = np.vstack([sc, sc])
+    shared = params.shared_smoothing and params.smoothing_iterations > 0
+    if shared:  # smooth the whole multi-label mesh at once (kept for comparison, see module doc)
+        V0s = _clamp(V0, windowed_sinc(V0s, F, params.smoothing_iterations, params.passband, non_manifold=True),
+                     spacing, params.constraint_voxels)
     t_smooth = time.perf_counter() - t
 
     M = lm.index_to_lps
@@ -326,14 +330,25 @@ def surfacenets_all(lm: LabelMap, ids, params: SurfaceParams = SurfaceParams()) 
     counts = np.bincount(crop.ravel(), minlength=max(present) + 1)
     for lid in present:
         t = time.perf_counter()
-        f = _label_faces(F, sc, lid)
-        V, f2, n_split = _manifold_split(f, idx_half, Vs, crop, lid, spacing, params.split_nudge_voxels)
-        mesh = _finish(V, f2, M, lo_xyz, spacing)
-        disp = np.abs(Vs[np.unique(f)] - V0[np.unique(f)])
+        q = _label_faces(F, sc, lid)  # quads, oriented outward
+        V, q2, n_split = _manifold_split(q, idx_half, V0s, crop, lid, spacing, params.split_nudge_voxels)
+        Vr = V.copy()  # positions before per-label smoothing (voxel corners, or shared-smoothed)
+        if params.smoothing_iterations > 0 and not shared:
+            used = np.unique(q2)
+            loc = np.full(len(V), -1)
+            loc[used] = np.arange(len(used))
+            Vl = windowed_sinc(V[used], loc[q2], params.smoothing_iterations, params.passband, non_manifold=False)
+            V = V.copy()
+            V[used] = _clamp(Vr[used], Vl, spacing, params.constraint_voxels)
+        tri = _split_quads(V, q2)
+        mesh = _finish(V, tri, M, lo_xyz, spacing)
+        u = np.unique(q2)
+        disp = np.linalg.norm(V[u] - V0[np.minimum(u, len(V0) - 1)], axis=1) if not n_split else \
+            np.linalg.norm(V[u] - Vr[u], axis=1)
         s = Surface(lid, mesh, "surfacenets", int(counts[lid]), int(counts[lid]) * lm.voxel_volume_mm3,
-                    lid in on_edge, False, n_split, float(np.linalg.norm(disp, axis=1).max()) if len(disp) else 0.0)
+                    lid in on_edge, False, n_split, float(disp.max()) if len(disp) else 0.0)
         s.timings_s = {"surfacenets_shared": t_sn, "smoothing_shared": t_smooth,
-                       "extract": time.perf_counter() - t}
+                       "label": time.perf_counter() - t}
         out[lid] = s
     return out
 
