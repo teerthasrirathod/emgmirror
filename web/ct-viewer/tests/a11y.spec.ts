@@ -55,6 +55,9 @@ test('keyboard: skip link, tabs, buttons and dialog', async ({ page }) => {
   await page.keyboard.press('Tab')
   await expect(page.getByRole('link', { name: 'Skip to the viewer' })).toBeFocused()
   await page.keyboard.press('Tab')
+  // the approval status comes first: it is the most important fact on the page
+  await expect(page.getByTestId('approval-status')).toBeFocused()
+  await page.keyboard.press('Tab')
   await expect(page.getByRole('tab', { name: '3D model' })).toBeFocused()
   await page.keyboard.press('Tab')
   await page.keyboard.press('Enter')

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type * as THREE from 'three'
+import * as THREE from 'three'
 import { join, loadManifest, normalise, type Manifest, type Structure } from './lib/manifest'
 import { loadVolume, type VolumeResult } from './lib/volume'
 import { preset, WINDOW_PRESETS, type WindowState } from './lib/windows'
@@ -12,6 +12,13 @@ import Downloads from './ui/Downloads'
 import { FileLinks, StructureFacts } from './ui/Facts'
 import { COPY } from './ui/copy'
 import { defaultOpacity } from './lib/appearance'
+import { LABEL_STATUS } from './lib/build'
+import { modelHash } from './lib/hash'
+import { builtAssets, offlineUrls, registerSW, saveOffline } from './lib/offline'
+import { isApproved, loadRecord, saveRecord, versionOf, type AuditEvent, type Edit, type ReviewRecord, type Reviewer } from './review/review'
+import ReviewPanel from './review/ReviewPanel'
+import StatusBar from './ui/StatusBar'
+import OrientationMarkers from './ui/OrientationMarkers'
 
 const ModelView = lazy(() => import('./model/ModelView'))
 const SliceView = lazy(() => import('./slices/SliceView'))
@@ -69,6 +76,32 @@ export default function App() {
   const [showDownloads, setShowDownloads] = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
   const [announce, setAnnounce] = useState('')
+  // device groundwork: reference mode, review/approval, offline
+  const [reference, setReference] = useState(() => new URLSearchParams(location.search).get('mode') === 'reference')
+  const [record, setRecord] = useState<ReviewRecord | null>(null)
+  const [version, setVersion] = useState<{ editsHash: string; versionHash: string } | null>(null)
+  const [reviewer, setReviewerState] = useState<Reviewer | null>(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem('ctv-reviewer') ?? 'null')
+    } catch {
+      return null
+    }
+  })
+  const [reviewOpen, setReviewOpen] = useState(false)
+  const [tool, setTool] = useState<'view' | 'erase'>('view')
+  const [radiusMm, setRadiusMm] = useState(8)
+  const [online, setOnline] = useState(navigator.onLine)
+  const offlineKey = `ctv-offline:${base}`
+  const [savedAt, setSavedAt] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(offlineKey)
+    } catch {
+      return null
+    }
+  })
+  const [saveState, setSaveState] = useState<string | null>(null)
+  const orientRef = useRef<HTMLDivElement>(null)
+  const orientRef2 = useRef<HTMLDivElement>(null)
   const systemDark = useMedia('(prefers-color-scheme: dark)')
   const [themePref, setThemePref] = useState<'system' | 'light' | 'dark'>(() => {
     try {
@@ -84,8 +117,8 @@ export default function App() {
   const lowPower = narrow || coarse
 
   useEffect(() => {
-    document.documentElement.dataset.theme = dark ? 'dark' : 'light'
-  }, [dark])
+    document.documentElement.dataset.theme = dark || reference ? 'dark' : 'light'
+  }, [dark, reference])
 
   // manifest first, then the model; the CT preview loads in a worker alongside
   useEffect(() => {
@@ -100,6 +133,46 @@ export default function App() {
       .catch((e) => setError(String(e?.message ?? e)))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [base])
+
+  useEffect(() => {
+    void registerSW()
+    const on = () => setOnline(navigator.onLine)
+    window.addEventListener('online', on)
+    window.addEventListener('offline', on)
+    return () => {
+      window.removeEventListener('online', on)
+      window.removeEventListener('offline', on)
+    }
+  }, [])
+
+  useEffect(() => {
+    const u = new URL(location.href)
+    if (reference) u.searchParams.set('mode', 'reference')
+    else u.searchParams.delete('mode')
+    history.replaceState(null, '', u)
+    if (reference) {
+      setTool('view')
+      setReviewOpen(false)
+      setShowDownloads(false)
+    }
+  }, [reference])
+
+  // version of the result as delivered, then the review record for it
+  useEffect(() => {
+    if (!manifest) return
+    modelHash(join(base, 'manifest.json'), join(base, manifest.combined.web))
+      .then((h) => setRecord(loadRecord(h)))
+      .catch(() => setRecord(null))
+  }, [manifest, base])
+
+  useEffect(() => {
+    if (!record) return
+    let live = true
+    versionOf(record.modelHash, record.edits).then((v) => live && setVersion(v))
+    return () => {
+      live = false
+    }
+  }, [record])
 
   // the CT preview (for the slice on the cut) starts only once the model is on
   // screen, so it never competes with the model for bandwidth
@@ -156,7 +229,82 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  const visibleList = useMemo(() => states.map((s) => s.visible), [states])
+  const excluded = useMemo(() => new Set((record?.edits ?? []).filter((e) => e.kind === 'exclude').map((e) => e.structure)), [record])
+  const effStates = useMemo(() => states.map((st, i) => (excluded.has(structures[i]?.id) ? { ...st, visible: false } : st)), [states, excluded, structures])
+  const unitScale = manifest?.units === 'mm' ? 1 : 0.001
+  const erasures = useMemo(
+    () =>
+      (record?.edits ?? [])
+        .filter((e): e is Extract<Edit, { kind: 'erase' }> => e.kind === 'erase')
+        .map((e) => ({ index: structures.findIndex((x) => x.id === e.structure), center: new THREE.Vector3(...e.center), radius: e.radiusMm * unitScale }))
+        .filter((e) => e.index >= 0),
+    [record, structures, unitScale],
+  )
+  const approved = !!record && isApproved(record, version?.versionHash ?? null)
+  const canEdit = !!reviewer && !reference && !!record
+
+  /** Change the record, recompute its version and log it; an old approval lapses. */
+  const commit = useCallback(
+    async (change: (r: ReviewRecord) => ReviewRecord, action: AuditEvent['action'], detail: string) => {
+      if (!record) return
+      const next = change(record)
+      const v = await versionOf(next.modelHash, next.edits)
+      const time = new Date().toISOString()
+      const user = reviewer?.name ?? 'unknown'
+      const audit = [...next.audit, { time, user, action, detail, versionHash: v.versionHash }]
+      if (record.approval && next.approval && next.approval.versionHash !== v.versionHash && action !== 'revoke')
+        audit.push({ time, user, action: 'invalidate', detail: 'models changed after approval', versionHash: v.versionHash })
+      const saved = { ...next, audit }
+      saveRecord(saved)
+      setRecord(saved)
+    },
+    [record, reviewer],
+  )
+  const nameOf = (id: string) => structures.find((x) => x.id === id)?.name ?? id
+  const addEdit = (e: Edit) =>
+    commit((r) => ({ ...r, edits: [...r.edits, e] }), 'edit', e.kind === 'exclude' ? COPY.editExclude(nameOf(e.structure)) : COPY.editErase(nameOf(e.structure), e.radiusMm))
+  const setReviewer = (r: Reviewer | null) => {
+    setReviewerState(r)
+    if (!r) setTool('view')
+    try {
+      if (r) sessionStorage.setItem('ctv-reviewer', JSON.stringify(r))
+      else sessionStorage.removeItem('ctv-reviewer')
+    } catch {
+      /* storage unavailable */
+    }
+  }
+  const onErase = useCallback(
+    (index: number, p: THREE.Vector3) => {
+      const s = structures[index]
+      if (!s || !canEdit) return
+      void addEdit({ kind: 'erase', structure: s.id, center: [p.x, p.y, p.z], radiusMm })
+      setAnnounce(COPY.editErase(s.name, radiusMm))
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [structures, canEdit, radiusMm, commit],
+  )
+  const doSaveOffline = async () => {
+    if (!manifest) return
+    const v = manifest.volumes ?? {}
+    const files = ['manifest.json', manifest.combined.web, v.ct ?? 'ct.nii.gz', v.labels ?? 'labels.nii.gz', ...(v.ct_preview ? [v.ct_preview] : [])].map((f) => join(base, f))
+    setSaveState(COPY.savingOffline(0, files.length))
+    try {
+      const urls = [...new Set([...offlineUrls(files), ...(await builtAssets())])]
+      const r = await saveOffline(urls, (d, t) => setSaveState(COPY.savingOffline(d, t)))
+      if (r.failed.length) throw new Error(`${r.failed.length} files failed`)
+      setSavedAt(r.time)
+      try {
+        localStorage.setItem(offlineKey, r.time)
+      } catch {
+        /* storage unavailable */
+      }
+      setSaveState(COPY.savedOffline)
+    } catch (err) {
+      setSaveState(COPY.saveFailed((err as Error).message))
+    }
+  }
+
+  const visibleList = useMemo(() => effStates.map((s) => s.visible), [effStates])
   const hovered = hover.index >= 0 ? structures[hover.index] : null
   const sel = selected >= 0 ? structures[selected] : null
   const ctUrl = manifest ? join(base, manifest.volumes?.ct ?? 'ct.nii.gz') : ''
@@ -190,16 +338,22 @@ export default function App() {
   )
 
   return (
-    <div className={`app ${panelOpen ? 'panel-open' : ''}`}>
+    <div className={`app ${panelOpen ? 'panel-open' : ''} ${reference ? 'reference' : ''} ${reviewOpen ? 'review-open' : ''}`}>
       <a className="skip" href="#main">
         {COPY.skip}
       </a>
+      <StatusBar
+        study={manifest?.study ?? null}
+        versionHash={version?.versionHash ?? null}
+        approval={record?.approval ?? null}
+        approved={approved}
+        reference={reference}
+        offline={{ online, savedAt }}
+        onOpenReview={reference ? undefined : () => setReviewOpen(true)}
+      />
       <header className="topbar">
         <div className="brand">
           <span className="brand-name">{COPY.product}</span>
-          <span className="badge-ruo" title={COPY.ruoLong}>
-            {COPY.ruoShort}
-          </span>
         </div>
         <nav className="tabs" role="tablist" aria-label={COPY.viewsLabel}>
           <button role="tab" aria-selected={tab === 'model'} aria-controls="main" onClick={() => setTab('model')}>
@@ -221,20 +375,41 @@ export default function App() {
           <button className="ghost panel-toggle" aria-expanded={panelOpen} aria-controls="sidebar" onClick={() => setPanelOpen((v) => !v)}>
             {COPY.structures}
           </button>
-          <button className="ghost" onClick={() => setShowDownloads(true)} disabled={!manifest}>
-            {COPY.downloads}
+          {!reference && (
+            <button className="ghost" onClick={() => setReviewOpen((v) => !v)} aria-expanded={reviewOpen} disabled={!record}>
+              {COPY.review}
+            </button>
+          )}
+          {!reference && (
+            <button className="ghost" onClick={() => setShowDownloads(true)} disabled={!manifest}>
+              {COPY.downloads}
+            </button>
+          )}
+          <button className="ghost" aria-pressed={reference} onClick={() => setReference((v) => !v)}>
+            {reference ? COPY.exitReference : COPY.referenceMode}
           </button>
-          <button className="ghost icon" onClick={setTheme} aria-label={dark ? COPY.toLight : COPY.toDark} title={dark ? COPY.toLight : COPY.toDark}>
+          {!reference && <button className="ghost icon" onClick={setTheme} aria-label={dark ? COPY.toLight : COPY.toDark} title={dark ? COPY.toLight : COPY.toDark}>
             {dark ? '☀' : '☾'}
-          </button>
+          </button>}
         </div>
       </header>
+      {reference && (
+        <div className="ref-bar" role="region" aria-label={COPY.referenceMode}>
+          <span>{COPY.referenceIntro}</span>
+          <button onClick={doSaveOffline} disabled={!manifest || !!saveState?.startsWith('Saving')}>
+            {COPY.saveOffline}
+          </button>
+          {saveState && <span role="status">{saveState}</span>}
+        </div>
+      )}
 
       <aside id="sidebar" className="sidebar" aria-label={COPY.structures}>
         {structures.length > 0 && (
           <StructureList
             structures={structures}
-            states={states}
+            states={effStates}
+            excluded={excluded}
+            readOnly={reference}
             selected={selected}
             onToggle={(i) => setStates((p) => p.map((s, k) => (k === i ? { ...s, visible: !s.visible } : s)))}
             onOpacity={(i, o) => setStates((p) => p.map((s, k) => (k === i ? { ...s, opacity: o } : s)))}
@@ -328,7 +503,7 @@ export default function App() {
                 <ModelView
                   glbUrl={join(base, manifest.combined.web)}
                   structures={structures}
-                  states={states}
+                  states={effStates}
                   volume={volume}
                   lpsToGltf={manifest.lps_to_gltf}
                   clip={clip}
@@ -337,7 +512,7 @@ export default function App() {
                   isolated={isolated}
                   selected={selected}
                   preset={viewPreset}
-                  dark={dark}
+                  dark={dark || reference}
                   reducedMotion={reducedMotion}
                   lowPower={lowPower}
                   onLoaded={onLoaded}
@@ -345,16 +520,22 @@ export default function App() {
                   onHover={(index, x, y) => setHover({ index, x, y })}
                   onPick={onPick}
                   onBounds={setBounds}
+                  tool={canEdit ? tool : 'view'}
+                  onErase={onErase}
+                  erasures={erasures}
+                  hoverEnabled={!reference}
+                  orientEl={orientRef}
                 />
               </Suspense>
             )}
+            <OrientationMarkers ref={orientRef} />
             {!modelReady && !error && (
               <div className="loading" role="status">
                 <span className="spinner" aria-hidden="true" />
                 {COPY.loadingModel}
               </div>
             )}
-            {hovered && hover.index !== selected && (
+            {hovered && hover.index !== selected && !reference && (
               <div className="tooltip" style={{ left: hover.x + 14, top: hover.y + 14 }} role="tooltip">
                 <StructureFacts s={hovered} compact />
               </div>
@@ -375,7 +556,18 @@ export default function App() {
                   <button onClick={() => setIsolated((c) => (c === selected ? -1 : selected))} aria-pressed={isolated === selected}>
                     {isolated === selected ? COPY.showAll : COPY.isolate}
                   </button>
-                  <FileLinks s={sel} base={base} />
+                  {canEdit && (
+                    <button
+                      onClick={() => {
+                        const i = record!.edits.findIndex((e) => e.kind === 'exclude' && e.structure === sel.id)
+                        if (i >= 0) void commit((r) => ({ ...r, edits: r.edits.filter((_, k) => k !== i) }), 'undo', COPY.editExclude(sel.name))
+                        else void addEdit({ kind: 'exclude', structure: sel.id, reason: 'reviewer' })
+                      }}
+                    >
+                      {excluded.has(sel.id) ? COPY.include : COPY.exclude}
+                    </button>
+                  )}
+                  {!reference && <FileLinks s={sel} base={base} />}
                 </div>
               </div>
             )}
@@ -449,9 +641,10 @@ export default function App() {
             )}
             {sliceMode === 'oblique' && (fullVolume || volume) && bounds && manifest && (
               <Suspense fallback={null}>
-                <ObliqueView volume={(fullVolume || volume)!} lpsToGltf={manifest.lps_to_gltf} bounds={bounds} state={oblique} window={win} onWindow={setWin} />
+                <ObliqueView volume={(fullVolume || volume)!} lpsToGltf={manifest.lps_to_gltf} bounds={bounds} state={oblique} window={win} onWindow={setWin} orientEl={orientRef2} />
               </Suspense>
             )}
+            {sliceMode === 'oblique' && <OrientationMarkers ref={orientRef2} />}
             {sliceStatus.loading && sliceMode !== 'oblique' && (
               <div className="loading" role="status">
                 <span className="spinner" aria-hidden="true" />
@@ -470,7 +663,13 @@ export default function App() {
 
       <footer className="notice">
         <p>
-          <strong>{COPY.ruoShort}.</strong> {COPY.notice}
+          {LABEL_STATUS === 'research' ? (
+            <>
+              <strong>{COPY.ruoShort}.</strong> {COPY.notice}
+            </>
+          ) : (
+            COPY.noticeInvestigational
+          )}
         </p>
         <p className="meta">
           {manifest?.source?.dataset ? COPY.sourceLine(manifest.source.dataset, manifest.source.subject ?? '') : null}
@@ -479,7 +678,40 @@ export default function App() {
       </footer>
 
       {showDownloads && manifest && (
-        <Downloads manifest={manifest} structures={structures} base={base} onClose={() => setShowDownloads(false)} />
+        <Downloads manifest={manifest} structures={structures} base={base} approved={approved} onClose={() => setShowDownloads(false)} />
+      )}
+      {reviewOpen && record && !reference && (
+        <ReviewPanel
+          record={record}
+          structures={structures}
+          versionHash={version?.versionHash ?? null}
+          approved={approved}
+          reviewer={reviewer}
+          onReviewer={setReviewer}
+          slicesSeen={slicesOpened}
+          tool={tool}
+          onTool={(t) => {
+            setTool(t)
+            if (t === 'erase') setTab('model')
+          }}
+          radiusMm={radiusMm}
+          onRadius={setRadiusMm}
+          onRemoveEdit={(i) => {
+            const e = record.edits[i]
+            void commit((r) => ({ ...r, edits: r.edits.filter((_, k) => k !== i) }), 'undo', e.kind === 'exclude' ? COPY.editExclude(nameOf(e.structure)) : COPY.editErase(nameOf(e.structure), e.radiusMm))
+          }}
+          onApprove={() => {
+            if (!reviewer || !version) return
+            const approval = { user: reviewer.name, role: reviewer.role, time: new Date().toISOString(), modelHash: record.modelHash, editsHash: version.editsHash, versionHash: version.versionHash }
+            void commit((r) => ({ ...r, approval }), 'approve', `${record.edits.length} corrections`)
+            setAnnounce(COPY.approvedLong(approval))
+          }}
+          onRevoke={() => void commit((r) => ({ ...r, approval: null }), 'revoke', 'approval withdrawn')}
+          onClose={() => {
+            setReviewOpen(false)
+            setTool('view')
+          }}
+        />
       )}
       <div className="sr-only" aria-live="polite">
         {announce}

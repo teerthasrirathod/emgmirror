@@ -59,3 +59,43 @@ for (const scheme of ['light', 'dark'] as const) {
     })
   })
 }
+
+test.describe('device groundwork', () => {
+  test.use({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, colorScheme: 'light' })
+  test('review panel', async ({ page }) => {
+    await openViewer(page)
+    await page.getByRole('button', { name: 'Review', exact: true }).click()
+    await page.getByLabel('Your name').fill('A. Reviewer')
+    await page.getByLabel('Your role').selectOption({ index: 1 })
+    await page.getByRole('button', { name: 'Start review' }).click()
+    await page.getByRole('tab', { name: 'CT slices' }).click()
+    await page.getByRole('tab', { name: '3D model' }).click()
+    await page.getByRole('button', { name: 'Erase surface' }).click()
+    const b = (await page.getByTestId('model-canvas').boundingBox())!
+    await page.mouse.click(b.x + b.width * 0.42, b.y + b.height * 0.45)
+    await settle(page, 1500)
+    await shot(page, 'device_review_not_approved')
+    await page.getByLabel(/I have compared every structure/).check()
+    await page.getByRole('button', { name: /Approve version/ }).click()
+    await settle(page, 1000)
+    await shot(page, 'device_review_approved')
+  })
+  test('reference mode desktop', async ({ page }) => {
+    await page.goto('./?mode=reference')
+    await page.waitForFunction(() => (window as unknown as { __ctv?: unknown }).__ctv, null, { timeout: 60_000 })
+    await page.getByRole('button', { name: 'Plane', exact: true }).click()
+    await page.getByLabel('Orientation').selectOption('coronal')
+    await settle(page, 3000)
+    await shot(page, 'device_reference_desktop')
+  })
+})
+
+test.describe('device groundwork phone', () => {
+  test.use({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })
+  test('reference mode phone', async ({ page }) => {
+    await page.goto('./?mode=reference')
+    await page.waitForFunction(() => (window as unknown as { __ctv?: unknown }).__ctv, null, { timeout: 60_000 })
+    await settle(page, 2500)
+    await shot(page, 'device_reference_phone')
+  })
+})

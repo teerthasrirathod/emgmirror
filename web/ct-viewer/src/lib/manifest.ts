@@ -24,6 +24,14 @@ export interface StructureEntry {
   qc?: QC
 }
 
+/** De-identified study identifiers (proposed S2 key `study`). */
+export interface StudyInfo {
+  study_date?: string | null
+  series_description?: string | null
+  /** hash of the source CT (hex), shown shortened */
+  study_hash?: string | null
+}
+
 export interface Manifest {
   version: number
   units: string
@@ -33,6 +41,7 @@ export interface Manifest {
   combined: { web: string; print?: string }
   volumes?: { ct?: string; labels?: string; ct_preview?: string }
   source?: Record<string, string>
+  study?: StudyInfo
 }
 
 /** One structure as the viewer uses it. */

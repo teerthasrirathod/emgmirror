@@ -17,6 +17,7 @@ which `npm run sample` does for you.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import pathlib
 import re
@@ -284,6 +285,13 @@ def main() -> None:
             "doi": "10.5281/zenodo.6802613",
             "subject": src.name,
             "mesher": "sample builder (marching cubes + quadric decimation), not the S2 mesher",
+        },
+        # De-identified study identifiers shown on screen at all times (proposed for S2).
+        # The public dataset has no study date or series text.
+        "study": {
+            "study_date": None,
+            "series_description": f"TotalSegmentator {src.name} (public dataset)",
+            "study_hash": hashlib.sha256((out / "ct.nii.gz").read_bytes()).hexdigest(),
         },
         "structures": structures,
         "combined": {"web": "combined_web.glb", "print": "combined_print.glb"},

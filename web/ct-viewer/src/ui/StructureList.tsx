@@ -12,6 +12,8 @@ interface Props {
   onSetMany: (idx: number[], visible: boolean) => void
   onSelect: (i: number) => void
   onIsolate: (i: number) => void
+  excluded: Set<string>
+  readOnly: boolean
 }
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
@@ -73,18 +75,20 @@ export default function StructureList(p: Props) {
                         aria-label={COPY.toggleItem(s.name, !!st?.visible)}
                         title={st?.visible ? COPY.hide : COPY.show}
                         onClick={() => p.onToggle(i)}
+                        disabled={p.excluded.has(s.id)}
                       >
                         <span className="swatch" style={{ background: `rgb(${s.rgb.join(',')})` }} aria-hidden="true" />
                       </button>
                       <button className="name" onClick={() => p.onSelect(i)} onDoubleClick={() => p.onIsolate(i)} title={COPY.isolateItem(s.name)}>
                         {s.name}
+                        {p.excluded.has(s.id) && <span className="tag-excluded">{COPY.excludedTag}</span>}
                         {s.qc.cut_by_scan_edge && (
                           <span className="dot-warn" title={COPY.qcExplain.Cut}>
                             <span className="sr-only">{COPY.qcExplain.Cut}</span>
                           </span>
                         )}
                       </button>
-                      <input
+                      {!p.readOnly && <input
                         className="opacity"
                         type="range"
                         min={0.05}
@@ -94,7 +98,7 @@ export default function StructureList(p: Props) {
                         aria-label={`${COPY.opacity}: ${s.name}`}
                         aria-valuetext={`${Math.round((st?.opacity ?? 1) * 100)}%`}
                         onChange={(e) => p.onOpacity(i, parseFloat(e.target.value))}
-                      />
+                      />}
                     </li>
                   )
                 })}

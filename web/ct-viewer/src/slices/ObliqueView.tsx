@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import type { VolumeResult } from '../lib/volume'
 import type { WindowState } from '../lib/windows'
 import { planeBasis, type ClipAxis } from '../model/clip'
+import { writeEdgeLabels } from '../lib/orientation'
 
 export interface ObliqueState {
   axis: ClipAxis
@@ -19,6 +20,7 @@ interface Props {
   state: ObliqueState
   window: WindowState
   onWindow: (w: WindowState) => void
+  orientEl?: React.RefObject<HTMLDivElement | null>
 }
 
 function worldToTex(v: VolumeResult, lpsToGltf: number[][]): THREE.Matrix4 {
@@ -31,7 +33,7 @@ function worldToTex(v: VolumeResult, lpsToGltf: number[][]): THREE.Matrix4 {
     .multiply(voxToWorld.invert())
 }
 
-function Plane({ volume, lpsToGltf, bounds, state, window: win }: Props) {
+function Plane({ volume, lpsToGltf, bounds, state, window: win, orientEl }: Props) {
   const { camera, size, invalidate } = useThree()
   const tex = useMemo(() => {
     const t = new THREE.Data3DTexture(volume.half, volume.dims[0], volume.dims[1], volume.dims[2])
@@ -105,8 +107,10 @@ void main(){
     cam.top = half / Math.min(1, aspect); cam.bottom = -half / Math.min(1, aspect)
     cam.near = 0.001; cam.far = ext * 3
     cam.updateProjectionMatrix()
+    cam.updateMatrixWorld()
+    if (orientEl) writeEdgeLabels(orientEl.current, cam.quaternion)
     invalidate()
-  }, [state, bounds, camera, size, invalidate])
+  }, [state, bounds, camera, size, invalidate, orientEl])
 
   return (
     <mesh ref={mesh} material={mat}>

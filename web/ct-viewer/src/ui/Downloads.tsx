@@ -3,7 +3,7 @@ import { join, type Manifest, type Structure } from '../lib/manifest'
 import { FileLinks } from './Facts'
 import { COPY } from './copy'
 
-export default function Downloads({ manifest, structures, base, onClose }: { manifest: Manifest; structures: Structure[]; base: string; onClose: () => void }) {
+export default function Downloads({ manifest, structures, base, approved, onClose }: { manifest: Manifest; structures: Structure[]; base: string; approved: boolean; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null)
   useEffect(() => {
     const d = ref.current
@@ -18,6 +18,7 @@ export default function Downloads({ manifest, structures, base, onClose }: { man
         </button>
       </div>
       <p>{COPY.dlIntro}</p>
+      <p className={approved ? 'ok-text' : 'warn-text'}>{approved ? COPY.dlApproved : COPY.dlNotApproved}</p>
       <h3>{COPY.dlWhole}</h3>
       <ul className="dl-whole">
         <li>

@@ -105,7 +105,7 @@ On a phone the old viewer opens on a long structure list; the 3D view is several
 ## 6. Tests
 
 ```
-cd web/ct-viewer && npm run build && npx playwright test tests/smoke.spec.ts tests/a11y.spec.ts
+cd web/ct-viewer && npm run build && npx playwright test tests/smoke.spec.ts tests/a11y.spec.ts tests/device.spec.ts
 
   ✓   1 a11y › text contrast meets WCAG AA (light)
   ✓   2 a11y › text contrast meets WCAG AA (dark)
@@ -122,12 +122,44 @@ model ready in 928 ms
   ✓  12 smoke › CT slices: MPR, window presets, volume and oblique
   ✓  13 smoke › downloads use normal links that resolve
   ✓  14 smoke › phone (390 px) › usable at 390 px
-  14 passed (1.7m)
+  ✓  15 device › labelling banner and study identifiers are always shown
+  ✓  16 device › missing study identifiers are flagged (wrong-patient hazard)
+  ✓  17 device › models open as not approved; approval needs reviewer, slices and attestation
+  ✓  18 device › any edit invalidates the approval and changes the version
+  ✓  19 device › stale result › a changed result is not shown as approved
+  ✓  20 device › orientation markers follow the camera (wrong-side hazard)
+  ✓  21 device › reference mode: read-only, large targets, no hover-only controls
+  ✓  22 device › reference mode works offline once saved
+  22 passed (2.6m)
 ```
+
+`npm run screenshots` (7 passed) regenerates every image in this file.
 
 Python suite (`pytest -q` at the repo root): 506 passed, 4 skipped, 2 failed. The two failures (`test_acq_monitor_server.py::test_live_check_cues_markers_and_latency`, `test_viewer_js.py::test_csv_export_writes_missing_values_as_numbers`) fail the same way on the base commit without these changes; nothing in `src/` was modified.
 
-## 7. Known limits and next steps
+## 7. Device groundwork (follow-up, 2026-11-22)
+
+Added after the owner's decision to pursue a regulated device ([REGULATORY_PATH.md](../REGULATORY_PATH.md) §2 and §4). The use specification and the hazard list are in [device/S3_use_specification.md](../device/S3_use_specification.md).
+
+| Request | What the viewer does now |
+|---|---|
+| Clinician sign-off | Every result opens **Not approved**. The Review panel takes a reviewer's name and role, requires the CT slices to have been opened and an explicit attestation, then approves the current **result version** = SHA-256 of the delivered manifest + web model + the list of corrections. Approval stores user, role, time, model hash, edits hash and version hash. Any change produces a new version, so the approval lapses at once ("invalidate" in the history); undoing back to the approved version restores it. |
+| Editing | *Erase surface*: click a structure to remove the surface within a chosen radius (2–25 mm), recomputed from the original surface so undo is exact. *Exclude from model*: removes a whole structure. Every edit is listed with Undo and logged. |
+| Records | Kept in this browser (localStorage, keyed by the model hash) and downloadable as JSON with the full history. A device needs a server-side, append-only audit trail and real sign-in; both are listed as open items. |
+| Labelling | A persistent banner set at build time: "Research use only. Not for clinical use." (default) or "Investigational device: for use only in an approved clinical investigation." (`VITE_LABEL_STATUS=investigational`). Not switchable from the URL. No clinical claims in either. |
+| Reference mode | `?mode=reference` or the header button: read-only (no edit, approval or download controls), black/white/yellow high-contrast palette, controls ≥ 48 px, no hover-only information (tap opens the info card), red **NOT APPROVED** bar when the version is not approved. *Save for offline use* caches the app (every built file, from a build-time asset list), the model and the CT through a service worker; the page then reloads and works with the network off. |
+| Orientation | L/R/A/P/S/I letters on all four edges of the 3D and oblique views, from the camera every frame; NiiVue's orientation letters on the slices. |
+| Study identifiers | Study date, series description, study ID (hash of the source CT) and result version on every screen; a red "Study details missing" message when the result has none. The manifest key `study` is proposed for S2; the sample has no real date (public data). |
+
+| Not approved, after a correction | Approved |
+|---|---|
+| ![](img/S3_device_review_not_approved.jpg) | ![](img/S3_device_review_approved.jpg) |
+
+| Reference mode, desktop | Reference mode, phone | Investigational build banner |
+|---|---|---|
+| ![](img/S3_device_reference_desktop.jpg) | ![](img/S3_device_reference_phone.jpg) | ![](img/S3_device_investigational_build.jpg) |
+
+## 8. Known limits and next steps
 
 - WebGL only. NiiVue is used through its WebGL2 build; WebGPU can be switched on later.
 - Depth peeling costs N extra passes over translucent structures; 4 layers is plenty for this sample, but very dense translucent scenes may need 6.
@@ -135,3 +167,5 @@ Python suite (`pytest -q` at the repo root): 506 passed, 4 skipped, 2 failed. Th
 - GTAO is computed from the opaque depth, so translucent organs do not cast occlusion.
 - Measured only with software WebGL; real-device timing is still to do (section 3).
 - The sample mesher is a stand-in; quality of the shapes is S2's job.
+- On a phone in reference mode the label, identifier and NOT APPROVED bars take about half the screen; a compact form is needed before phones are used as reference screens.
+- Device groundwork gaps (sign-in, server audit trail, export of corrected meshes, usability evaluation) are listed in the use specification, section 6.

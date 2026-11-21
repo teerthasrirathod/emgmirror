@@ -45,6 +45,7 @@ interface Item {
   front: THREE.Mesh
   cap: THREE.Mesh
   box: THREE.Box3
+  origIndex: THREE.BufferAttribute
   visible: boolean
   opacity: number
 }
@@ -229,6 +230,11 @@ void main(){
       if (!src) return
       const geom = src.geometry as THREE.BufferGeometry
       if (!geom.attributes.normal) geom.computeVertexNormals()
+      if (!geom.index) {
+        const n = geom.attributes.position.count
+        geom.setIndex(new THREE.BufferAttribute(Uint32Array.from({ length: n }, (_, i) => i), 1))
+      }
+      const origIndex = (geom.index as THREE.BufferAttribute).clone()
       geom.computeBoundingBox()
       geom.computeBoundingSphere()
       const surface = surfaceMaterial(s.material, s.rgb)
@@ -267,6 +273,7 @@ void main(){
         front,
         cap,
         box,
+        origIndex,
         visible: true,
         opacity: defaultOpacity(s.material, s.id),
       })
@@ -510,6 +517,54 @@ void main(){
     this.outputMat.uniforms.tColor.value = this.rtMain.texture
     this.quad.material = this.outputMat
     this.quad.render(r)
+  }
+
+  /**
+   * Apply erase edits: drop every triangle whose centre lies inside any erase
+   * sphere (world metres). Always recomputed from the original surface, so undo
+   * is exact.
+   */
+  setErasures(erasures: { index: number; center: THREE.Vector3; radius: number }[]) {
+    const inv = new THREE.Matrix4()
+    const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3()
+    for (const it of this.items) {
+      const mine = erasures.filter((e) => e.index === it.index)
+      const geom = it.mesh.geometry as THREE.BufferGeometry
+      if (mine.length === 0) {
+        if (geom.index !== it.origIndex && geom.index?.count !== it.origIndex.count) geom.setIndex(it.origIndex.clone())
+        continue
+      }
+      inv.copy(it.mesh.matrixWorld).invert()
+      const scale = it.mesh.matrixWorld.getMaxScaleOnAxis()
+      const spheres = mine.map((e) => ({ c: e.center.clone().applyMatrix4(inv), r2: (e.radius / scale) ** 2 }))
+      const pos = geom.attributes.position as THREE.BufferAttribute
+      const src = it.origIndex
+      const keep: number[] = []
+      for (let t = 0; t < src.count; t += 3) {
+        const i0 = src.getX(t), i1 = src.getX(t + 1), i2 = src.getX(t + 2)
+        a.fromBufferAttribute(pos, i0)
+        b.fromBufferAttribute(pos, i1)
+        c.fromBufferAttribute(pos, i2)
+        a.add(b).add(c).multiplyScalar(1 / 3)
+        if (!spheres.some((sp) => a.distanceToSquared(sp.c) <= sp.r2)) keep.push(i0, i1, i2)
+      }
+      geom.setIndex(new THREE.BufferAttribute(Uint32Array.from(keep), 1))
+    }
+  }
+
+  /** World position on a structure's surface under a canvas pixel (honours the cut). */
+  surfacePoint(index: number, x: number, y: number): THREE.Vector3 | null {
+    const it = this.items.find((i) => i.index === index)
+    if (!it) return null
+    const ndc = new THREE.Vector2((x / this.size.x) * 2 - 1, -(y / this.size.y) * 2 + 1)
+    const ray = new THREE.Raycaster()
+    ray.setFromCamera(ndc, this.camera)
+    const prevSide = (it.mesh.material as THREE.Material).side
+    ;(it.mesh.material as THREE.Material).side = THREE.DoubleSide
+    const hits = ray.intersectObject(it.mesh, false)
+    ;(it.mesh.material as THREE.Material).side = prevSide
+    const hit = hits.find((h) => this.planes.every((p) => p.distanceToPoint(h.point) >= -1e-6))
+    return hit ? hit.point.clone() : null
   }
 
   /** GPU pick: index of the structure under a canvas pixel, or -1. */

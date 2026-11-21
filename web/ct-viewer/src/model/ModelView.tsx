@@ -9,6 +9,7 @@ import type { Structure } from '../lib/manifest'
 import type { VolumeResult } from '../lib/volume'
 import { ModelEngine, type ClipRegion } from './engine'
 import { clipRegion, type ClipState } from './clip'
+import { writeEdgeLabels } from '../lib/orientation'
 
 export type ViewPreset = 'anterior' | 'posterior' | 'left' | 'right' | 'superior' | 'inferior'
 
@@ -37,6 +38,12 @@ export interface ModelViewProps {
   onHover: (index: number, x: number, y: number) => void
   onPick: (index: number) => void
   onBounds: (b: THREE.Box3) => void
+  /** 'erase': a click removes surface within eraseRadiusMm of the clicked point */
+  tool: 'view' | 'erase'
+  onErase: (index: number, point: THREE.Vector3) => void
+  erasures: { index: number; center: THREE.Vector3; radius: number }[]
+  hoverEnabled: boolean
+  orientEl: React.RefObject<HTMLDivElement | null>
 }
 
 MeshoptDecoder.useWorkers?.(Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 2) - 1)))
@@ -135,6 +142,12 @@ function Scene(props: ModelViewProps) {
   }, [engine, props.states, props.isolated, props.selected, invalidate])
 
   useEffect(() => {
+    if (!engine) return
+    engine.setErasures(props.erasures)
+    invalidate()
+  }, [engine, props.erasures, invalidate])
+
+  useEffect(() => {
     if (!engine || !props.volume) return
     engine.setVolume(props.volume, props.lpsToGltf)
     invalidate()
@@ -209,6 +222,7 @@ function Scene(props: ModelViewProps) {
     }
     if (!engine) return
     engine.render()
+    writeEdgeLabels(propsRef.current.orientEl.current, camera.quaternion)
     const pr = pendingReady.current
     if (pr) {
       // report "ready" only once the first full frame has been drawn
@@ -260,7 +274,7 @@ function Scene(props: ModelViewProps) {
       return engine.pick((ev.clientX - rect.left) * dpr, (ev.clientY - rect.top) * dpr)
     }
     const onMove = (ev: PointerEvent) => {
-      if (ev.pointerType !== 'mouse' || ev.buttons) return
+      if (ev.pointerType !== 'mouse' || ev.buttons || !propsRef.current.hoverEnabled) return
       last = ev
       if (raf) return
       raf = requestAnimationFrame(() => {
@@ -273,7 +287,7 @@ function Scene(props: ModelViewProps) {
           engine.rebuild()
           invalidate()
         }
-        el.style.cursor = idx >= 0 ? 'pointer' : 'grab'
+        el.style.cursor = idx >= 0 ? (propsRef.current.tool === 'erase' ? 'crosshair' : 'pointer') : 'grab'
         propsRef.current.onHover(idx, last.clientX - rect.left, last.clientY - rect.top)
       })
     }
@@ -289,7 +303,17 @@ function Scene(props: ModelViewProps) {
     const onUp = (ev: PointerEvent) => {
       if (!down) return
       const moved = Math.hypot(ev.clientX - down.x, ev.clientY - down.y)
-      if (moved < 6 && performance.now() - down.t < 600) propsRef.current.onPick(pickAt(ev))
+      if (moved < 6 && performance.now() - down.t < 600) {
+        const idx = pickAt(ev)
+        if (propsRef.current.tool === 'erase') {
+          if (idx >= 0) {
+            const rect = el.getBoundingClientRect()
+            const dpr = gl.getPixelRatio()
+            const p = engine.surfacePoint(idx, (ev.clientX - rect.left) * dpr, (ev.clientY - rect.top) * dpr)
+            if (p) propsRef.current.onErase(idx, p)
+          }
+        } else propsRef.current.onPick(idx)
+      }
       down = null
     }
     el.addEventListener('pointermove', onMove)

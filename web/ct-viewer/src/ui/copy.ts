@@ -2,7 +2,9 @@
 // Rules: plain words; research and education only; no diagnostic, treatment
 // or surgical-planning claims; no claims about where data is processed.
 import type { WindowState } from '../lib/windows'
+import type { Approval } from '../review/review'
 
+const when = (iso: string) => new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 const fmt1 = (n: number) => n.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 })
 
 export const COPY = {
@@ -11,6 +13,8 @@ export const COPY = {
   ruoLong: 'For research and education only. Not for diagnosis, treatment or surgical planning.',
   notice:
     'Not for diagnosis, treatment or surgical planning. The 3D shapes are generated automatically from a CT scan and can contain errors. Measurements are approximate.',
+  noticeInvestigational:
+    'The 3D shapes are generated automatically from a CT scan and can contain errors. Use them only with the CT images. Measurements are approximate.',
   sourceLine: (dataset: string, subject: string) => `Sample data: ${dataset}${subject ? `, case ${subject}` : ''}.`,
   loadedIn: (ms: number, tris: number) => `Model ready in ${(ms / 1000).toFixed(1)} s · ${Math.round(tris / 1000)}k triangles.`,
   skip: 'Skip to the viewer',
@@ -87,6 +91,80 @@ export const COPY = {
   startFrom: 'Start from',
   sliceHint: 'Drag to adjust contrast, scroll to move through slices, right-drag to move the image.',
   obliqueHint: 'Drag to adjust contrast. Use Tilt and Turn to angle the slice.',
+
+  // labelling (build-time, see lib/build.ts)
+  label: {
+    research: 'Research use only. Not for clinical use.',
+    investigational: 'Investigational device: for use only in an approved clinical investigation.',
+  } as Record<string, string>,
+  // study identifiers and version
+  idLabel: 'Study and result identifiers',
+  studyDate: 'Study date',
+  series: 'Series',
+  studyId: 'Study ID',
+  version: 'Result version',
+  notRecorded: 'not recorded',
+  studyMissing: 'Study details missing. Check the patient and study before use.',
+  notApproved: 'Not approved',
+  notApprovedLong: 'Not approved: no clinician has approved this version of the models. Open the review.',
+  approvedShort: (a: Approval) => `Approved · ${a.user} · ${when(a.time)}`,
+  approvedLong: (a: Approval) => `Approved by ${a.user} (${a.role}) on ${when(a.time)} for version ${a.versionHash.slice(0, 12)}.`,
+  approvalInvalid: (a: Approval) =>
+    `The approval by ${a.user} on ${when(a.time)} was for version ${a.versionHash.slice(0, 12)}. The models have changed since, so it no longer applies.`,
+  refNotApproved: 'NOT APPROVED. No clinician has approved this version of the models.',
+  online: 'Online',
+  offlineNow: 'Offline',
+  savedAt: (iso: string) => `saved for offline use ${when(iso)}`,
+  orientTitle: 'Patient orientation: L left, R right, A anterior, P posterior, S superior, I inferior',
+  // reference mode
+  referenceMode: 'Reference mode',
+  exitReference: 'Leave reference mode',
+  referenceIntro: 'Read-only view. Editing, approval and downloads are switched off.',
+  saveOffline: 'Save for offline use',
+  savingOffline: (d: number, t: number) => `Saving… ${d} of ${t}`,
+  savedOffline: 'Saved for offline use',
+  saveFailed: (msg: string) => `Could not save for offline use: ${msg}`,
+  // review
+  review: 'Review',
+  reviewTitle: 'Review and approval',
+  reviewIntro:
+    'The models are generated automatically and start as “Not approved”. Compare them with the CT slices, correct them, then approve this exact version. Any later change removes the approval.',
+  stepReviewer: '1. Reviewer',
+  yourName: 'Your name',
+  yourRole: 'Your role',
+  choose: 'Choose…',
+  startReview: 'Start review',
+  signedInAs: (n: string, r: string) => `Reviewing as ${n} (${r}).`,
+  change: 'Change',
+  identityNote: 'This build records the name you type. A clinical build will use your organisation’s sign-in.',
+  stepCompare: '2. Compare with the CT',
+  slicesSeen: 'You have opened the CT slices in this review.',
+  slicesNotSeen: 'Open the “CT slices” tab and compare each structure with the images.',
+  stepEdit: '3. Correct the models',
+  eraseTool: 'Erase surface',
+  eraseSize: 'Eraser size',
+  eraseHint: 'Click a structure in the 3D view to erase the surface around that point.',
+  excludeHint: 'To remove a whole structure, select it and choose “Exclude from model”.',
+  noEdits: 'No corrections yet.',
+  editExclude: (n: string) => `Excluded ${n}`,
+  editErase: (n: string, r: number) => `Erased a ${r} mm area of ${n}`,
+  removeEdit: (d: string) => `Undo: ${d}`,
+  undo: 'Undo',
+  stepApprove: '4. Approve',
+  attest: 'I have compared every structure shown with the CT images and accept the corrections listed above.',
+  approve: (v: string) => `Approve version ${v}`,
+  revoke: 'Withdraw approval',
+  needReviewer: 'Enter your name and role.',
+  needSlices: 'Open the CT slices to compare.',
+  needAttest: 'Confirm the comparison.',
+  needVersion: 'Wait for the version check to finish.',
+  stepRecord: '5. Record',
+  exportRecord: 'Download review record (JSON)',
+  auditLog: (n: number) => `History (${n})`,
+  storageNote: 'The review record is kept in this browser only. Download it to keep a copy.',
+  exclude: 'Exclude from model',
+  include: 'Put back in model',
+  excludedTag: 'Excluded',
   // structure list
   search: 'Find a structure',
   searchPlaceholder: 'e.g. liver, rib 4',
@@ -103,6 +181,8 @@ export const COPY = {
   dlTitle: 'Download the model',
   dlIntro:
     'STL and 3MF files are for 3D printing (millimetres). GLB files open in most 3D viewers. Check every file before printing: automatic models can contain errors.',
+  dlNotApproved: 'Not approved. These files are the automatic models, without any review corrections.',
+  dlApproved: 'This version is approved. These files are the automatic models; review corrections are not yet applied to downloads.',
   dlWhole: 'Whole model',
   dlWeb: 'Web model (GLB, compressed)',
   dlPrint: 'Print model (GLB, all structures)',

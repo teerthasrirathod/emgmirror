@@ -18,6 +18,17 @@ npm run dev         # http://localhost:5173/
 and network access to zenodo.org.
 
 Open another result folder with `?result=<url-or-path>/` (it must contain `manifest.json`).
+Add `&mode=reference` for the read-only reference mode.
+
+## Labelling (build-time)
+
+```bash
+npm run build                                         # "Research use only. Not for clinical use." (default)
+VITE_LABEL_STATUS=investigational npm run build       # "Investigational device: for use only in an approved clinical investigation."
+```
+
+The label cannot be changed from the URL. Use-related hazards and the reviewer workflow are described in
+[docs/ct_platform/device/S3_use_specification.md](../../docs/ct_platform/device/S3_use_specification.md).
 
 ## Build and test
 
@@ -38,6 +49,7 @@ The viewer also reads these optional keys, proposed for S2:
 | `structures[].display.system` | `skeleton`, `organs`, `vessels`, `muscles`, `other` | guessed from the id |
 | `structures[].display.material` | `bone`, `artery`, `vein`, `organ`, `muscle` | guessed from the id |
 | `volumes.ct_preview` | a ≤256-voxel copy of the CT for the slice inside the 3D view | `ct.nii.gz`, downsampled in a worker |
+| `study.{study_date, series_description, study_hash}` | de-identified identifiers shown on every screen | a red "Study details missing" message |
 
 Mesh nodes in `combined_web.glb` are matched to structures by node or mesh name (= `id`).
 
@@ -52,6 +64,9 @@ Mesh nodes in `combined_web.glb` are matched to structures by node or mesh name 
 | `src/slices/ObliqueView.tsx` | oblique slice (NiiVue 1.0 has no oblique 2D view) |
 | `src/lib/niftiWorker.ts` | NIfTI fetch + gunzip + half-float conversion in a worker |
 | `src/ui/copy.ts` | all interface text |
+| `src/review/` | review, edit and approval records bound to the result version hash |
+| `src/ui/StatusBar.tsx` | label banner, study identifiers, version, approval status, offline state |
+| `public/sw.js`, `src/lib/offline.ts` | offline cache for reference mode |
 | `tools/` | sample download (HTTP range reads of the Zenodo zip), sample builder, old-viewer comparison |
 
 ## Licences
