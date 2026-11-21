@@ -143,8 +143,8 @@ def mesh_qc(mesh: trimesh.Trimesh, voxel_volume_mm3: float | None = None, raw: t
 
 def voxel_boundary(mask: np.ndarray, index_to_lps: np.ndarray, offset_zyx=(0, 0, 0)) -> tuple[np.ndarray, np.ndarray]:
     """Exact boundary of a boolean [z, y, x] mask: one quad (two triangles) per face between a True voxel and a
-    False one (outside the array counts as False). Returns (V, F) in LPS mm. ``offset_zyx`` is the index of
-    ``mask[0, 0, 0]`` in the full grid. The surface is outward oriented."""
+    False one (outside the array counts as False). Returns (V, F) in LPS mm (vertices merged; orientation not
+    guaranteed, so use it for unsigned distances only). ``offset_zyx`` is the index of ``mask[0, 0, 0]`` in the full grid."""
     m = np.pad(np.asarray(mask, bool), 1)
     Vs, Fs, nv = [], [], 0
     for ax in range(3):
@@ -172,14 +172,23 @@ def voxel_boundary(mask: np.ndarray, index_to_lps: np.ndarray, offset_zyx=(0, 0,
             nv += len(Q)
     if not Vs:
         return np.zeros((0, 3)), np.zeros((0, 3), np.int64)
-    V = np.vstack(Vs) @ index_to_lps[:3, :3].T + index_to_lps[:3, 3]
-    F = np.vstack(Fs)
-    m_ = trimesh.Trimesh(V, F, process=False)
-    m_.merge_vertices()
-    if m_.volume < 0:
-        m_.invert()
-    m_.fix_normals(multibody=True)
-    return np.asarray(m_.vertices), np.asarray(m_.faces)
+    Vi = np.vstack(Vs)
+    _, first, inv = np.unique(np.rint(Vi * 2).astype(np.int64), axis=0, return_index=True, return_inverse=True)
+    V = Vi[first] @ index_to_lps[:3, :3].T + index_to_lps[:3, 3]
+    return V, inv.ravel()[np.vstack(Fs)]
+
+
+def label_boundary(labels: np.ndarray, lid: int, index_to_lps: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Voxel boundary of one label of a [z, y, x] label map, computed on its bounding box only."""
+    mask = labels == lid
+    lo, hi = [], []
+    for ax in range(3):
+        idx = np.flatnonzero(mask.any(axis=tuple(a for a in range(3) if a != ax)))
+        if not idx.size:
+            return np.zeros((0, 3)), np.zeros((0, 3), np.int64)
+        lo.append(idx[0])
+        hi.append(idx[-1] + 1)
+    return voxel_boundary(mask[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]], index_to_lps, lo)
 
 
 def _polydata(V: np.ndarray, F: np.ndarray) -> vtk.vtkPolyData:

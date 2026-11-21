@@ -38,7 +38,7 @@ from .contract import LabelMap
 class SurfaceParams:
     smoothing_iterations: int = 50  # windowed-sinc iterations (0 = keep the voxel boundary)
     passband: float = 0.1  # windowed-sinc pass band (lower = smoother)
-    constraint_voxels: float = 1.0  # max displacement per grid axis, in voxels (box constraint)
+    constraint_voxels: float = 0.45  # max displacement per grid axis, in voxels (< 0.5: faces can't cross)
     sn_smoothing_iterations: int = 0  # VTK's built-in SurfaceNets smoother (0 = off, see module doc)
     sn_constraint_distance_mm: float | None = None  # only used when sn_smoothing_iterations > 0
     thin_depth_voxels: float = 1.0  # max distance-to-background (voxels) at or below which a label is "thin"
@@ -271,6 +271,13 @@ def surfacenets_all(lm: LabelMap, ids, params: SurfaceParams = SurfaceParams()) 
     if not len(F):
         return {}
     sc = ns.vtk_to_numpy(sn.GetOutput().GetCellData().GetScalars()).astype(np.int64).reshape(-1, 2)
+    # SurfaceNets can emit several coincident points per cell; unsmoothed points sit exactly on the voxel-corner
+    # lattice, so merge them by lattice key to get one shared vertex per corner.
+    key = np.rint(V0 / spacing * 2).astype(np.int64)
+    _, first, inv = np.unique(key, axis=0, return_index=True, return_inverse=True)
+    V0, F = V0[first], inv.ravel()[F]
+    keep = (F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])
+    F, sc = F[keep], sc[keep]
     t_sn = time.perf_counter() - t0
     idx_half = V0 / spacing
 
