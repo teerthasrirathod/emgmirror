@@ -21,7 +21,7 @@ import trimesh
 from . import __version__
 
 DEPENDENCIES = ("numpy", "scipy", "vtk", "trimesh", "manifold3d", "meshoptimizer", "highdicom", "pydicom",
-                "SimpleITK")
+                "SimpleITK", "lxml")
 
 
 def software_versions() -> dict:
