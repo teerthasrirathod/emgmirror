@@ -34,3 +34,9 @@ data/dataset/
 
 # multimodal sessions (video, pose, analysis): personal data, never committed
 data/multimodal/
+
+# CT viewer sample data (downloaded, see web/ct-viewer/README.md)
+data/ct_sample/
+
+# CT platform result write-ups are documentation, not run output
+!docs/ct_platform/results/
