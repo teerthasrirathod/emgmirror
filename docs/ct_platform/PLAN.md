@@ -1,14 +1,15 @@
 # CT-to-3D platform: plan for a hosted, any-body-part service
 
-Research use, not for diagnosis or surgical planning.
+Research use, not for diagnosis or surgical planning (until licensed; see [REGULATORY_PATH.md](REGULATORY_PATH.md)).
 
-Status: plan of 2026-11-21. Owner decisions recorded below; build starts with S1–S3.
+Status: plan of 2026-11-22. Owner decisions recorded below; build starts with S1–S3.
 
-**Owner decisions (2026-11-21)**
-- **Commercial:** yes, the service may be commercial. Only commercial-safe weights are allowed (section 3).
-- **Wording:** a copywriting pass chooses the public wording. It must avoid medical-device claims (section 2.1); clinical analysis stays a later, regulated product.
+**Owner decisions**
+- **Goal (2026-11-21):** a regulated **medical device** that doctors use before surgery (planning) and during surgery (reference display), give feedback on, and that grows toward surgical use. The route, stages and first intended use are in [REGULATORY_PATH.md](REGULATORY_PATH.md), which overrides the "research only" recommendation in section 2.1 below. Until a licence or a permitted clinical investigation exists, outputs stay labelled research use, and the engineering follows device design controls from now on.
+- **Commercial:** yes, the service may be commercial. Only commercial-safe weights are allowed (section 3). For the device build, only TotalSegmentator's Apache `total` task until MOOSE, NVIDIA and CADS terms are confirmed in writing.
+- **Wording:** a copywriting pass chooses the public wording. It must make no clinical claims before licensing.
 - **Tiers:** browser by default, de-identified upload as opt-in, now. Migrate later as needed.
-- **Cloud:** Google Cloud account with about 28,000 in credits (currency to confirm). Use it for GPU inference and rendering-heavy work.
+- **Cloud:** Google Cloud account with ₹30,000 in credits, expiring 13 January 2027. Use them for GPU inference and rendering-heavy work, starting with S1/S2 benchmarks and the S4 GPU worker, before they expire. At the estimated $0.20–0.60 per full scan that is very roughly 600–1,700 scans (to be re-measured).
 - **Location:** the platform lives inside the `emgmirror` repo for now.
 - **Data controller:** the owner.
 - **Where work runs:** development runs in Claude Code cloud sessions and GPU jobs on Google Cloud, not on the 2-core laptop. Only public datasets are used there; the owner's own CT never leaves the laptop.
@@ -39,7 +40,7 @@ Where they disagree, **critique.md wins**, and this plan follows it.
    - EU: MDR Rule 11, class IIa/IIb.
 
    A disclaimer does not change this: regulators judge every claim the site makes.
-   **Recommendation:** launch phase 1 as **research and education only**, with no clinical wording anywhere. Keep "post-diagnosis analysis" as the phase-3 regulated product (section 7).
+   **Superseded (2026-11-21):** the owner chose the medical-device route. See [REGULATORY_PATH.md](REGULATORY_PATH.md). The rule that still holds: no clinical claims anywhere until a licence or a permitted clinical investigation covers them.
 2. **Commercial or not.** This decides which model weights are legal on the service. The recommended stack (section 3) is commercial-safe. Strictly non-commercial use would also allow nnInteractive and the licensed TotalSegmentator tasks (hands, feet, muscle/fat, high-res heart), but they would have to be removed later if you go commercial.
 3. **Where the scan is processed.**
    **Recommendation:** two tiers.
