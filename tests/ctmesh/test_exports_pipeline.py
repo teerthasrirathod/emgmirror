@@ -44,7 +44,7 @@ def test_repair_drops_folded_fin():
 def test_manifest_follows_the_s3_contract(pipeline_out, oblique):
     out, man = pipeline_out
     disk = json.loads((out / "manifest.json").read_text())
-    assert disk == json.loads(json.dumps(man))
+    assert disk == json.loads(json.dumps({k: v for k, v in man.items() if k != "_run_log"}))
     assert man["version"] == 1 and man["units"] == "m" and man["axes"] == "glTF (+Y up, from patient LPS)"
     assert np.allclose(man["lps_to_gltf"], LPS_TO_GLTF)
     assert man["combined"]["web"] == "combined_web.glb" and man["combined"]["print"] == "combined_print.glb"
@@ -73,6 +73,8 @@ def test_marker_lands_in_the_right_place_in_every_export(pipeline_out, oblique):
     assert np.linalg.norm(stl.center_mass - c_lps) < 0.4
     assert (out / s["files"]["stl"]).read_bytes()[:80].decode("ascii").startswith(DISCLAIMER)
     # 3MF: mm, LPS
+    import zipfile
+    assert DISCLAIMER in zipfile.ZipFile(out / s["files"]["3mf"]).read("3D/3dmodel.model").decode()
     tm = trimesh.load(out / s["files"]["3mf"], force="mesh")
     assert np.linalg.norm(tm.center_mass - c_lps) < 0.4
     # GLBs: metres, glTF axes

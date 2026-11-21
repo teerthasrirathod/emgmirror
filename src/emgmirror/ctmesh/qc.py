@@ -253,6 +253,7 @@ class GateLimits:
     hd95_voxels: float = 1.0  # HD95 against the label's voxel boundary, in units of voxel_mm
     web_hd95_voxels: float = 1.5  # web LOD: display geometry, looser distance limit
     volume_warn_pct: float = 5.0  # |volume change| above this is flagged (reported, not a failure)
+    volume_fallback_pct: float = 10.0  # above this the pipeline tries the fallback surfaces (see pipeline)
 
 
 def voxel_mm(spacing) -> float:

@@ -3,12 +3,16 @@
 Primary path (all labels at once):
 
 1. ``vtkSurfaceNets3D`` (VTK >= 9.5) on the cropped multi-label map, padded with background so labels cut by
-   the scan edge are closed (and flagged). Its own smoother is off by default: with it on, every setting we tried
-   either left visible terraces or shrank thin structures by 10-50 % (docs/ct_platform/results/S2_mesh.md).
-   Unsmoothed SurfaceNets output is the exact voxel boundary, with vertices *shared* between touching labels.
-2. Windowed-sinc smoothing (``vtkWindowedSincPolyDataFilter``, non-shrinking) of that shared mesh, so
-   neighbouring labels keep one common interface, then a box constraint: no vertex moves more than
-   ``constraint_voxels`` voxel along any grid axis from its voxel-boundary position.
+   the scan edge are closed (and flagged), output as quads. Its own smoother is off by default: with it on,
+   every setting we tried either left visible terraces or shrank thin structures by 10-70 %
+   (docs/ct_platform/results/S2_mesh.md, ``scripts/ctmesh_tune.py``). Unsmoothed SurfaceNets output is the
+   exact voxel boundary, with vertices *shared* between touching labels (coincident duplicates are merged on the
+   voxel-corner lattice).
+2. Windowed-sinc smoothing (``vtkWindowedSincPolyDataFilter``, pass band 0.1, 50 iterations, non-shrinking) of
+   that shared quad mesh, so neighbouring labels keep one common interface, then a box constraint: no vertex
+   moves more than ``constraint_voxels`` (0.45) voxel along any grid axis from its voxel-boundary position. Below
+   half a voxel the two faces of a one-voxel-thick feature cannot cross, which removed every self-intersection
+   seen with a 1-voxel limit. Each quad is then split along its shorter diagonal.
 3. Per label: the faces bordering that label, oriented outward. Where two voxels of the label touch only along
    an edge or at a corner the boundary is non-manifold; such corners are split so each 6-connected piece gets
    its own vertex (the convention marching cubes uses), giving a closed 2-manifold.
@@ -85,12 +89,33 @@ def _vtk_image(arr_zyx: np.ndarray, spacing) -> vtk.vtkImageData:
     return img
 
 
-def _poly_arrays(pd: vtk.vtkPolyData):
+def _poly_arrays(pd: vtk.vtkPolyData, n: int = 3):
     if pd.GetNumberOfPoints() == 0 or pd.GetNumberOfCells() == 0:
-        return np.zeros((0, 3)), np.zeros((0, 3), np.int64)
+        return np.zeros((0, 3)), np.zeros((0, n), np.int64)
     pts = ns.vtk_to_numpy(pd.GetPoints().GetData()).astype(np.float64)
-    polys = ns.vtk_to_numpy(pd.GetPolys().GetConnectivityArray()).astype(np.int64).reshape(-1, 3)
+    polys = ns.vtk_to_numpy(pd.GetPolys().GetConnectivityArray()).astype(np.int64).reshape(-1, n)
     return pts, polys
+
+
+def _sn_quads(crop: np.ndarray, spacing, present, iterations: int = 0, constraint_mm: float | None = None):
+    """vtkSurfaceNets3D as quads (topology independent of smoothing). Returns (points, quads, two-label scalars
+    per quad)."""
+    sn = vtk.vtkSurfaceNets3D()
+    sn.SetInputData(_vtk_image(crop, spacing))
+    for k, v in enumerate(present):
+        sn.SetValue(k, v)
+    sn.SetBackgroundLabel(0)
+    sn.SetOutputMeshTypeToQuads()
+    sn.SetNumberOfIterations(int(iterations))
+    if iterations and constraint_mm is not None:
+        sn.SetAutomaticSmoothingConstraints(False)
+        sn.SetConstraintDistance(float(constraint_mm))
+    sn.Update()
+    V, Q = _poly_arrays(sn.GetOutput(), 4)
+    if not len(Q):
+        return V, np.zeros((0, 4), np.int64), np.zeros((0, 2), np.int64)
+    sc = ns.vtk_to_numpy(sn.GetOutput().GetCellData().GetScalars()).astype(np.int64).reshape(-1, 2)
+    return V, Q, sc
 
 
 def _to_poly(V, F) -> vtk.vtkPolyData:
@@ -99,7 +124,7 @@ def _to_poly(V, F) -> vtk.vtkPolyData:
     p.SetData(ns.numpy_to_vtk(np.ascontiguousarray(V, np.float64), deep=True))
     pd.SetPoints(p)
     ca = vtk.vtkCellArray()
-    ca.SetData(3, ns.numpy_to_vtkIdTypeArray(np.ascontiguousarray(F, np.int64).ravel(), deep=True))
+    ca.SetData(F.shape[1], ns.numpy_to_vtkIdTypeArray(np.ascontiguousarray(F, np.int64).ravel(), deep=True))
     pd.SetPolys(ca)
     return pd
 
@@ -258,42 +283,25 @@ def surfacenets_all(lm: LabelMap, ids, params: SurfaceParams = SurfaceParams()) 
     present = [i for i in ids if (crop == i).any()]
     spacing = np.asarray(lm.spacing, float)
 
-    sn = vtk.vtkSurfaceNets3D()
-    sn.SetInputData(_vtk_image(crop, spacing))
-    for k, v in enumerate(present):
-        sn.SetValue(k, v)
-    sn.SetBackgroundLabel(0)
-    sn.SetOutputMeshTypeToTriangles()
-    sn.SetNumberOfIterations(0)
-    sn.Update()
-    V0, F = _poly_arrays(sn.GetOutput())
+    V0, F, sc = _sn_quads(crop, spacing, present)  # F: quads until smoothing is done
     if not len(F):
         return {}
-    sc = ns.vtk_to_numpy(sn.GetOutput().GetCellData().GetScalars()).astype(np.int64).reshape(-1, 2)
     # SurfaceNets can emit several coincident points per cell; unsmoothed points sit exactly on the voxel-corner
     # lattice, so merge them by lattice key to get one shared vertex per corner.
     key = np.rint(V0 / spacing * 2).astype(np.int64)
     _, first, inv = np.unique(key, axis=0, return_index=True, return_inverse=True)
     F_raw = F
     V0, F = V0[first], inv.ravel()[F]
-    keep = (F[:, 0] != F[:, 1]) & (F[:, 1] != F[:, 2]) & (F[:, 0] != F[:, 2])
+    srt = np.sort(F, axis=1)
+    keep = (srt[:, 1:] != srt[:, :-1]).all(axis=1)  # drop quads that collapsed in the merge
     F, sc = F[keep], sc[keep]
     t_sn = time.perf_counter() - t0
     idx_half = V0 / spacing
 
     t = time.perf_counter()
     if params.sn_smoothing_iterations > 0:  # optional: VTK's own constrained smoother, for comparison
-        sn2 = vtk.vtkSurfaceNets3D()
-        sn2.SetInputData(_vtk_image(crop, spacing))
-        for k, v in enumerate(present):
-            sn2.SetValue(k, v)
-        sn2.SetOutputMeshTypeToTriangles()
-        sn2.SetNumberOfIterations(params.sn_smoothing_iterations)
-        if params.sn_constraint_distance_mm is not None:
-            sn2.SetAutomaticSmoothingConstraints(False)
-            sn2.SetConstraintDistance(params.sn_constraint_distance_mm)
-        sn2.Update()
-        V1, F1 = _poly_arrays(sn2.GetOutput())
+        V1, F1, _ = _sn_quads(crop, spacing, present, params.sn_smoothing_iterations,
+                              params.sn_constraint_distance_mm)
         if F1.shape != F_raw.shape or not np.array_equal(F1, F_raw):  # same point order as the first run
             raise RuntimeError("SurfaceNets smoothing changed the topology")
         V0s = V1[first]
@@ -304,6 +312,13 @@ def surfacenets_all(lm: LabelMap, ids, params: SurfaceParams = SurfaceParams()) 
         Vs = _clamp(V0, Vs, spacing, params.constraint_voxels)
     else:
         Vs = V0s  # (the built-in smoother applies its own constraint)
+    # split each quad along its shorter diagonal *after* smoothing (both labels of an interface share the split)
+    d02 = np.linalg.norm(Vs[F[:, 0]] - Vs[F[:, 2]], axis=1)
+    d13 = np.linalg.norm(Vs[F[:, 1]] - Vs[F[:, 3]], axis=1)
+    a = d02 <= d13
+    F = np.vstack([np.where(a[:, None], F[:, [0, 1, 2]], F[:, [0, 1, 3]]),
+                   np.where(a[:, None], F[:, [0, 2, 3]], F[:, [1, 2, 3]])])
+    sc = np.vstack([sc, sc])
     t_smooth = time.perf_counter() - t
 
     M = lm.index_to_lps

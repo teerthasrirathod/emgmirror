@@ -12,7 +12,8 @@ Output folder::
     combined_print.glb       print LOD, float32
     combined_print.3mf       print LOD, one coloured object per structure (mm)
     structures/<id>_<name>.{glb,stl,3mf}   print LOD per structure
-    qc.json                  full per-structure QC (every LOD, method, timings)
+    qc.json                  full per-structure QC (every LOD, method)
+    run_log.json             timings and worker count (the only run-specific file)
 
 Research use, not for diagnosis or surgical planning.
 """
@@ -32,7 +33,7 @@ import trimesh
 
 from . import DISCLAIMER, __version__
 from . import decimate as dec
-from . import export, gltf, qc, surface
+from . import export, gltf, provenance, qc, surface
 from .contract import LabelMap, load_labelmap, save_labelmap, snomed_triplet
 from .geometry import AXES_NOTE, LPS_TO_GLTF
 
@@ -78,24 +79,43 @@ def evaluate(mesh: trimesh.Trimesh, boundary, voxel_volume_mm3: float, spacing, 
 
 
 def _choose_native(lm: LabelMap, lid: int, sn: surface.Surface | None, boundary, p: PipelineParams) -> tuple:
-    """Pick the native surface: SurfaceNets unless it fails the gate or the label is thin, in which case flying
-    edges is tried too and the passing (then lower-HD95) candidate wins."""
+    """Pick the native surface.
+
+    SurfaceNets is kept unless it fails the gate, the label is thin, or its volume change exceeds
+    ``limits.volume_fallback_pct``; then flying edges is tried too, and for a volume problem also the exact
+    (unsmoothed) voxel boundary, which tiny fragments of one or two voxels need. Ranking: passes the gate, then
+    volume within ``volume_fallback_pct``, then fewer issues, then lower HD95 (SurfaceNets wins ties)."""
+    lim = p.limits
+
+    def ev(s):
+        return evaluate(s.mesh, boundary, s.voxel_volume_mm3, lm.spacing, lim)
+
+    def vol_bad(r):
+        return r["volume_change_pct"] is None or abs(r["volume_change_pct"]) > lim.volume_fallback_pct
+
     cands = []
     if sn is not None:
-        cands.append((sn, evaluate(sn.mesh, boundary, sn.voxel_volume_mm3, lm.spacing, p.limits)))
+        cands.append((sn, ev(sn)))
     thin = surface.label_depth_voxels(_crop(lm.array == lid)) <= p.surface.thin_depth_voxels
-    if not cands or not cands[0][1]["passed"] or thin:
+    if not cands or not cands[0][1]["passed"] or thin or vol_bad(cands[0][1]):
         fe = surface.flyingedges_one(lm, lid, p.surface)
         if fe is not None:
             if sn is not None:
                 fe.cut_by_scan_edge = sn.cut_by_scan_edge
-            cands.append((fe, evaluate(fe.mesh, boundary, fe.voxel_volume_mm3, lm.spacing, p.limits)))
+            cands.append((fe, ev(fe)))
+    if all(vol_bad(r) or not r["passed"] for _, r in cands):
+        raw = surface.surfacenets_all(lm, [lid], surface.SurfaceParams(smoothing_iterations=0)).get(lid)
+        if raw is not None:
+            raw.method = "voxel_boundary"
+            cands.append((raw, ev(raw)))
     for s, _ in cands:
         s.thin = thin
 
     def rank(c):
         r = c[1]
-        return (not r["passed"], len(r["issues"]), r["hd95_mm"] if r["hd95_mm"] is not None else 1e9)
+        dv = abs(r["volume_change_pct"]) if vol_bad(r) and r["volume_change_pct"] is not None else 0.0
+        return (not r["passed"], vol_bad(r), round(dv, 1), len(r["issues"]),
+                r["hd95_mm"] if r["hd95_mm"] is not None else 1e9)
     best = min(cands, key=rank)
     return best[0], best[1], [c[0].method for c in cands]
 
@@ -142,6 +162,11 @@ def _structure_extras(lab, r_print: dict, s: surface.Surface) -> dict:
 _G: dict = {}
 
 
+def _init_worker(g: dict) -> None:
+    global _G
+    _G = g
+
+
 def _process_label(lid: int):
     """Native surface choice, both LODs and their QC for one label (runs in a worker process)."""
     lm, sn, p = _G["lm"], _G["sn"], _G["p"]
@@ -151,13 +176,14 @@ def _process_label(lid: int):
     s, r_nat, tried = _choose_native(lm, lid, sn.get(lid), boundary, p)
     rep = {"id": lid, "name": lab.name, "method": s.method, "methods_tried": tried, "thin": s.thin,
            "cut_by_scan_edge": s.cut_by_scan_edge, "split_vertices": s.split_vertices,
-           "voxel_count": s.voxel_count, "voxel_volume_mm3": s.voxel_volume_mm3, "native": r_nat,
-           "timings_s": {"native": time.perf_counter() - tl}}
+           "voxel_count": s.voxel_count, "voxel_volume_mm3": s.voxel_volume_mm3, "native": r_nat}
+    tm = {"native": time.perf_counter() - tl}
     t = time.perf_counter()
     mp_, rp = _lod(s.mesh, r_nat, p.print_lod, p.print_lod.max_faces, boundary, s.voxel_volume_mm3, lm, p, False)
     mw, rw = _lod(s.mesh, r_nat, p.web_lod, _G["web_budget"][lid], boundary, s.voxel_volume_mm3, lm, p, True)
     rep["print"], rep["web"] = rp, rw
-    rep["timings_s"]["lods"] = time.perf_counter() - t
+    tm["lods"] = time.perf_counter() - t
+    rep["_timings_s"] = tm
     return s, (mp_, mw), rep
 
 
@@ -198,8 +224,9 @@ def run(labels_nii: str | Path, out_dir: str | Path, labels_json: str | Path | N
     _G = {"lm": lm, "sn": sn, "p": p, "web_budget": web_budget}
     natives, lods, reports = {}, {}, {}
     workers = max(1, min(p.workers or os.cpu_count() or 1, len(todo)))
-    if workers > 1 and "fork" in multiprocessing.get_all_start_methods():
-        with multiprocessing.get_context("fork").Pool(workers) as pool:
+    if workers > 1:
+        # spawn, not fork: VTK keeps worker threads, and forking a threaded process can deadlock
+        with multiprocessing.get_context("spawn").Pool(workers, initializer=_init_worker, initargs=(_G,)) as pool:
             results = pool.imap(_process_label, todo, chunksize=1)
             for lid, res in zip(todo, results):
                 natives[lid], lods[lid], reports[lid] = res
@@ -253,13 +280,25 @@ def run(labels_nii: str | Path, out_dir: str | Path, labels_json: str | Path | N
     timings["export_meshes"] = time.perf_counter() - t
 
     save_labelmap(lm, out)
+    in_hash = {"labels.nii.gz": provenance.sha256_file(out / "labels.nii.gz"),
+               "labels.json": provenance.sha256_file(out / "labels.json")}
     seg_info = None
     if p.dicom_seg and todo:
         t = time.perf_counter()
-        seg_info = export.write_dicom_seg(out / "segmentation.seg.dcm", lm, todo, source_images)
+        seg_info = export.write_dicom_seg(out / "segmentation.seg.dcm", lm, todo, source_images,
+                                          seed=in_hash["labels.nii.gz"])
         timings["dicom_seg"] = time.perf_counter() - t
-    timings["total"] = time.perf_counter() - t0
 
+    # hazard self-checks: laterality of left/right pairs, units/axes of the written GLBs
+    lat = laterality_check(lm, {lid: lods[lid][0] for lid in todo})
+    for st in structures:
+        st["qc"]["laterality"] = lat.get(st["id"], "not_applicable")
+    units = {name: glb_units_check(out / name, {lm.label(lid).name: lods[lid][i] for lid in todo})
+             for i, name in ((0, "combined_print.glb"), (1, "combined_web.glb"))}
+
+    params_json = _params_json(p)
+    files = sorted(str(f.relative_to(out)) for f in out.rglob("*") if f.is_file()
+                   and f.name not in ("manifest.json", "run_log.json"))
     manifest = {
         "version": 1, "units": "m", "axes": AXES_NOTE, "lps_to_gltf": LPS_TO_GLTF.tolist(),
         "disclaimer": DISCLAIMER, "generator": f"emgmirror.ctmesh {__version__}",
@@ -276,15 +315,82 @@ def run(labels_nii: str | Path, out_dir: str | Path, labels_json: str | Path | N
             "volume_change_pct": "print mesh volume vs voxel count x voxel volume",
             "dicom_seg_references": seg_info["references"] if seg_info else None},
         "skipped_absent_ids": skipped,
+        "self_checks": {"laterality_inconsistent": sorted(lm.label(i).name for i, v in lat.items()
+                                                          if v == "inconsistent"),
+                        "glb_units": units},
         "summary": {"structures": len(structures), "passed": sum(s_["qc"]["passed"] for s_ in structures),
                     "triangles_web": sum(s_["qc"]["triangles"]["web"] for s_ in structures),
-                    "triangles_print": sum(s_["qc"]["triangles"]["print"] for s_ in structures),
-                    "runtime_s": timings},
+                    "triangles_print": sum(s_["qc"]["triangles"]["print"] for s_ in structures)},
+        "provenance": {
+            "software": provenance.software_versions(),
+            "input_sha256": in_hash,
+            "source_models": sorted({lab.source_model for lab in lm.labels if lab.id in todo}),
+            "parameters": params_json, "parameters_sha256": provenance.json_sha256(params_json),
+            "dicom_timestamp": export.fixed_datetime().isoformat(),
+            "mesh_sha256": {lm.label(lid).name: {"print": provenance.mesh_sha256(lods[lid][0]),
+                                                 "web": provenance.mesh_sha256(lods[lid][1])} for lid in todo},
+            "file_sha256": {f: provenance.sha256_file(out / f) for f in files}},
     }
-    (out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
-    (out / "qc.json").write_text(json.dumps({"params": _params_json(p), "structures": list(reports.values())},
+    timings["total"] = time.perf_counter() - t0
+    run_log = {"timings_s": timings, "per_structure_timings_s": {r["name"]: r.pop("_timings_s") for r in
+                                                                  reports.values()}}
+    (out / "qc.json").write_text(json.dumps({"params": params_json, "structures": list(reports.values())},
                                             indent=1, default=float), encoding="utf-8")
+    manifest["provenance"]["file_sha256"]["qc.json"] = provenance.sha256_file(out / "qc.json")
+    (out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
+    (out / "run_log.json").write_text(json.dumps(run_log, indent=1), encoding="utf-8")
+    manifest["_run_log"] = run_log  # in-memory only, not written to manifest.json
     return manifest
+
+
+_SIDE = {"left": "Left", "right": "Right"}
+
+
+def _side(lab) -> str | None:
+    sn = snomed_triplet(lab.snomed)
+    if sn and sn["modifier"] and sn["modifier"]["meaning"] in ("Left", "Right"):
+        return sn["modifier"]["meaning"].lower()
+    toks = re.split(r"[_\s]+", lab.name.lower())
+    for t in ("left", "right"):
+        if t in toks:
+            return t
+    return None
+
+
+def laterality_check(lm: LabelMap, meshes: dict) -> dict:
+    """For every left/right pair (same name with left/right swapped) the left one must lie at larger LPS x
+    (x points to the patient's left). Returns {id: "consistent" | "inconsistent"} for paired labels."""
+    by_name = {lm.label(i).name.lower(): i for i in meshes}
+    out = {}
+    for name, lid in by_name.items():
+        if _side(lm.label(lid)) != "left":
+            continue
+        partner = re.sub(r"(^|_)left($|_)", r"\1right\2", name)
+        rid = by_name.get(partner)
+        if rid is None or not len(meshes[lid].faces) or not len(meshes[rid].faces):
+            continue
+        ok = meshes[lid].center_mass[0] > meshes[rid].center_mass[0]
+        out[lid] = out[rid] = "consistent" if ok else "inconsistent"
+    return out
+
+
+def glb_units_check(path: Path, meshes_lps: dict) -> dict:
+    """Read a written GLB back and confirm each node equals LPS_TO_GLTF applied to the LPS-mm mesh (catches a
+    mm/m or axis error). Tolerance: 0.1 mm plus the web quantisation step."""
+    _, nodes = gltf.read_glb(path)
+    worst = 0.0
+    for n in nodes:
+        m = meshes_lps.get(n["name"])
+        if m is None:
+            continue
+        exp_lo, exp_hi = np.sort(np.stack([apply_lps(m.bounds[0]), apply_lps(m.bounds[1])]), axis=0)
+        lo, hi = n["positions_gltf"].min(0), n["positions_gltf"].max(0)
+        worst = max(worst, float(np.abs(lo - exp_lo).max()), float(np.abs(hi - exp_hi).max()))
+    return {"max_bbox_error_mm": round(worst * 1000.0, 6), "ok": worst * 1000.0 < 0.1}
+
+
+def apply_lps(p) -> np.ndarray:
+    return (LPS_TO_GLTF @ np.r_[np.asarray(p, float), 1.0])[:3]
 
 
 def _params_json(p: PipelineParams) -> dict:
@@ -306,5 +412,5 @@ def main(argv=None) -> int:
     m = run(a.labels, a.out, a.labels_json, a.ids, pp)
     s = m["summary"]
     print(f"{s['passed']}/{s['structures']} structures passed QC; {s['triangles_web']} web / "
-          f"{s['triangles_print']} print triangles; {s['runtime_s']['total']:.1f} s. {DISCLAIMER}")
+          f"{s['triangles_print']} print triangles; {m['_run_log']['timings_s']['total']:.1f} s. {DISCLAIMER}")
     return 0 if s["passed"] == s["structures"] else 1

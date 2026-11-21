@@ -72,6 +72,7 @@ CONFIGS = [
     ("SurfaceNets + windowed sinc pb 0.1 / 50 it, clamp 1.0 voxel",
      dict(passband=0.1, smoothing_iterations=50, constraint_voxels=1.0)),
     ("**default**: SurfaceNets + windowed sinc pb 0.1 / 50 it, clamp 0.45 voxel", dict()),
+    ("**pipeline output** (default + fallbacks: flying edges / voxel boundary)", "pipeline"),
     ("old `ct/mesh.py`: marching cubes + Taubin 20", None),
 ]
 
@@ -87,6 +88,15 @@ def main():
             t = time.perf_counter()
             if kw is None:
                 ms = {lid: old_pipeline(lm, lid) for lid in (1, 2)}
+            elif kw == "pipeline":
+                from emgmirror.ctmesh.pipeline import PipelineParams, _choose_native
+                s = surface.surfacenets_all(lm, [1, 2])
+                ms, used = {}, []
+                for lid in (1, 2):
+                    best, _, _ = _choose_native(lm, lid, s[lid], B[lid], PipelineParams())
+                    ms[lid] = best.mesh
+                    used.append(best.method)
+                name = f"{name} [{' / '.join(used)}]"
             else:
                 kw = dict(kw)
                 if kw.get("sn_constraint_distance_mm") == "half":
