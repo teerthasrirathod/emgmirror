@@ -31,3 +31,6 @@ Thumbs.db
 # Clinical imaging (personal health data, never in git)
 01_clinical_CT/
 data/dataset/
+
+# multimodal sessions (video, pose, analysis): personal data, never committed
+data/multimodal/
