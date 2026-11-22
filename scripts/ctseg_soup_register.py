@@ -3,7 +3,7 @@
 Run inside the environment that has requirements-ctseg.txt installed:
 
     python scripts/ctseg_soup_register.py --weights-dir ~/.totalsegmentator/nnunet/results \
-        --moose-zips DIR --out docs/ct_platform/device/SOUP_register.md
+        --moose-zips DIR --out docs/ct_platform/device/SOUP_register_ctseg.md
 
 * Software: the full dependency closure of the engine's direct dependencies, from installed metadata
   (name, version, licence), with the SHA-256 of the exact wheel file published on PyPI for the installed build

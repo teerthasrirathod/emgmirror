@@ -8,7 +8,7 @@ Research use, not for diagnosis or surgical planning, until licensed.
 | Status | Draft for design control. Not yet reviewed or approved under a quality system. |
 | Intended use | Draft v1 in [../REGULATORY_PATH.md](../REGULATORY_PATH.md) section 2: adult CT → 3D models of bony anatomy (pelvis/acetabulum, spine, shoulder girdle, proximal femur, humerus) for pre-operative orthopaedic and trauma planning, after clinician review and approval. |
 | Software safety class | To be decided in the risk file (plan for IEC 62304 class B or C). |
-| Related | [SOUP_register.md](SOUP_register.md), [../S1_segmentation.md](../S1_segmentation.md), [../results/S1_benchmark.md](../results/S1_benchmark.md) |
+| Related | [SOUP_register_ctseg.md](SOUP_register_ctseg.md), [../S1_segmentation.md](../S1_segmentation.md), [../results/S1_benchmark.md](../results/S1_benchmark.md) |
 
 Each requirement is verified by the listed tests in `tests/ctseg/`. `tests/ctseg/test_ctseg_traceability.py`
 fails if a requirement has no test, or if a listed test does not exist. "Device" means `--build device`;

@@ -54,7 +54,7 @@ Intended-use structures (first intended use, REGULATORY_PATH.md section 2):
 
 `total` has no separate acetabulum label: the acetabulum is part of `hip_*`. Design records:
 [device/S1_software_requirements.md](device/S1_software_requirements.md) (requirements traced to tests) and
-[device/SOUP_register.md](device/SOUP_register.md) (every package and weight with version, licence and hash).
+[device/SOUP_register_ctseg.md](device/SOUP_register_ctseg.md) (every package and weight with version, licence and hash).
 Re-pin the weights only as a controlled change: run `scripts/ctseg_pin_device_weights.py`, then regenerate the
 register with `scripts/ctseg_soup_register.py`.
 

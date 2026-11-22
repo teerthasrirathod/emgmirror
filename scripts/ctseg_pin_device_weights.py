@@ -4,7 +4,7 @@
 
 Writes src/emgmirror/ctseg/resources/device_weights.json with a SHA-256 for every weight file of datasets
 291-295 (1.5 mm `total`) and 297 (3 mm `total`, `--fast`). Changing this file is a model change: update the SOUP
-register (docs/ct_platform/device/SOUP_register.md) and re-run verification.
+register (docs/ct_platform/device/SOUP_register_ctseg.md) and re-run verification.
 """
 
 from __future__ import annotations
