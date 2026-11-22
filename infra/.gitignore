@@ -1,0 +1,13 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+*.tfplan
+tfplan*
+crash.log
+.terraform.tfstate.lock.info
+# Lock files are not committed yet: generate them with all platforms once, from a machine
+# with registry access, then commit and remove this line:
+#   terraform providers lock -platform=linux_amd64 -platform=darwin_arm64 -platform=darwin_amd64 -platform=windows_amd64
+.terraform.lock.hcl

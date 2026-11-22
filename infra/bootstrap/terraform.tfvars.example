@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars (git-ignored). Placeholder values only.
+project_id         = "ct-platform-stg-000000"
+github_environment = "staging"
+
+# Only in ONE bootstrap run (e.g. staging), to create the Rs 30,000 credit budget:
+# create_budget          = true
+# billing_account        = "000000-000000-000000"
+# budget_project_numbers = ["000000000000", "111111111111"]
+# alert_email            = "alerts@example.in"

@@ -1,0 +1,68 @@
+# Dispatch one CT job from Pub/Sub to the GPU Cloud Run job.
+# Trigger: Eventarc, on every message published to the jobs topic.
+# Message: {"job_id": "...", "input_uri": "gs://...", "profile": "..."} (RUNTIME_CONTRACT.md)
+# The job runs `python -m emgmirror.ctservice.worker run --job-id <job_id>`.
+# On a bad message or a failed run the original message goes to the dead-letter topic and
+# the workflow ends successfully, so Pub/Sub does not redeliver it (no GPU retry storm).
+main:
+  params: [event]
+  steps:
+    - init:
+        assign:
+          - raw: $${event.data.message.data}
+          - job_id: ""
+    - decode:
+        try:
+          assign:
+            - payload: $${json.decode(base64.decode(raw))}
+            - job_id: $${payload.job_id}
+        except:
+          as: e
+          steps:
+            - bad_message:
+                assign:
+                  - reason: "undecodable message"
+                next: dead_letter
+    - validate:
+        switch:
+          - condition: $${not(text.match_regex(job_id, "^[A-Za-z0-9_-]{8,64}$"))}
+            assign:
+              - reason: "invalid job_id"
+            next: dead_letter
+    - run_job:
+        try:
+          call: googleapis.run.v2.projects.locations.jobs.run
+          args:
+            name: "projects/${project_id}/locations/${region}/jobs/${job_name}"
+            body:
+              overrides:
+                containerOverrides:
+                  - args: ["run", "--job-id", $${job_id}]
+            connector_params:
+              timeout: ${timeout_seconds}
+          result: execution
+        except:
+          as: e
+          steps:
+            - run_failed:
+                assign:
+                  - reason: "job execution failed"
+                next: dead_letter
+    - done:
+        return:
+          job_id: $${job_id}
+          status: "succeeded"
+    - dead_letter:
+        call: googleapis.pubsub.v1.projects.topics.publish
+        args:
+          topic: "${dead_letter_topic}"
+          body:
+            messages:
+              - data: $${raw}
+                attributes:
+                  reason: $${reason}
+                  job_id: $${job_id}
+    - dead_lettered:
+        return:
+          job_id: $${job_id}
+          status: "dead-lettered"

@@ -1,0 +1,10 @@
+# Copy to terraform.tfvars (git-ignored). Placeholder values only.
+project_id     = "ct-platform-stg-000000"
+project_number = "000000000000"
+domain         = "staging.ct.example.in"
+api_domain     = "api.staging.ct.example.in"
+alert_email    = "alerts@example.in"
+wif_pool_name  = "projects/000000000000/locations/global/workloadIdentityPools/github"
+
+# First apply only:
+# deploy_workloads = false

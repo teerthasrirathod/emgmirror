@@ -1,0 +1,195 @@
+name: deploy-infra
+# Terraform for the CT platform (infra/).
+#   PR      : fmt, validate, tflint, checkov, a credential-free plan against a placeholder
+#             project, and (once the owner has bootstrapped) a real read-only plan per env.
+#   main    : apply to staging after manual approval (GitHub environment "staging"),
+#             then to production after a second approval (environment "production").
+# Authentication is Workload Identity Federation only: no JSON keys exist.
+on:
+  pull_request:
+    paths: ["infra/**", ".github/workflows/deploy-infra.yml"]
+  push:
+    branches: [main]
+    paths: ["infra/**", ".github/workflows/deploy-infra.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-infra-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  TF_VERSION: "1.17.2"
+  TFLINT_VERSION: "v0.66.0"
+  CHECKOV_VERSION: "3.4.6"
+  TF_IN_AUTOMATION: "1"
+  TF_INPUT: "0"
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+      - name: terraform fmt -check
+        run: terraform fmt -check -recursive -diff infra
+      - name: terraform validate
+        run: |
+          set -euo pipefail
+          for d in infra/bootstrap infra/envs/staging infra/envs/prod; do
+            echo "::group::validate $d"
+            terraform -chdir="$d" init -backend=false -input=false
+            terraform -chdir="$d" validate
+            echo "::endgroup::"
+          done
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: ${{ env.TFLINT_VERSION }}
+      - name: tflint
+        working-directory: infra
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          tflint --init --config="$PWD/.tflint.hcl"
+          tflint --recursive --config="$PWD/.tflint.hcl" -f compact
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: checkov
+        run: |
+          python -m pip install --quiet "checkov==${CHECKOV_VERSION}"
+          checkov -d infra --framework terraform --skip-path .terraform --compact --quiet
+      - name: plan against a placeholder project (no credentials)
+        run: |
+          set -euo pipefail
+          for e in staging prod; do
+            d="infra/envs/$e"
+            printf 'terraform {\n  backend "local" {}\n}\n' > "$d/backend_override.tf"
+            cat > "$d/ci-placeholder.auto.tfvars" <<VARS
+          project_id     = "ct-placeholder-$e"
+          project_number = "123456789012"
+          domain         = "$e.ct.example.in"
+          api_domain     = "api.$e.ct.example.in"
+          alert_email    = "alerts@example.in"
+          wif_pool_name  = "projects/123456789012/locations/global/workloadIdentityPools/github"
+          VARS
+            terraform -chdir="$d" init -input=false -reconfigure > /dev/null
+            # A fake token: the plan of a fresh project needs no API calls.
+            GOOGLE_OAUTH_ACCESS_TOKEN=placeholder terraform -chdir="$d" plan -refresh=false -no-color -input=false > "plan-$e.txt"
+            echo "### $e: $(grep -E '^Plan:' "plan-$e.txt")" >> "$GITHUB_STEP_SUMMARY"
+            rm "$d/backend_override.tf" "$d/ci-placeholder.auto.tfvars"
+          done
+
+  plan:
+    # Real, read-only plans once infra/bootstrap has been applied by the owner and the
+    # repository variables below exist. Skipped (not failed) until then.
+    if: github.event_name == 'pull_request' && vars.GCP_WIF_PROVIDER_STAGING != ''
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - env: staging
+            wif: GCP_WIF_PROVIDER_STAGING
+            sa: GCP_TF_PLAN_SA_STAGING
+            bucket: TF_STATE_BUCKET_STAGING
+            tfvars: TF_VARS_STAGING
+          - env: prod
+            wif: GCP_WIF_PROVIDER_PROD
+            sa: GCP_TF_PLAN_SA_PROD
+            bucket: TF_STATE_BUCKET_PROD
+            tfvars: TF_VARS_PROD
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars[matrix.wif] }}
+          service_account: ${{ vars[matrix.sa] }}
+      - name: terraform plan (${{ matrix.env }})
+        working-directory: infra/envs/${{ matrix.env }}
+        env:
+          TFVARS: ${{ secrets[matrix.tfvars] }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$TFVARS" > terraform.tfvars
+          terraform init -input=false -backend-config="bucket=${{ vars[matrix.bucket] }}"
+          terraform plan -lock=false -no-color -input=false | tee plan.txt
+          echo "### ${{ matrix.env }}: $(grep -E '^(Plan:|No changes)' plan.txt)" >> "$GITHUB_STEP_SUMMARY"
+          rm terraform.tfvars
+
+  apply-staging:
+    # Gated on the bootstrap variables so main stays green before the owner has bootstrapped.
+    if: vars.GCP_WIF_PROVIDER_STAGING != '' && ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch')
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: staging
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_TF_APPLY_SA }}
+      - name: terraform apply (staging)
+        working-directory: infra/envs/staging
+        env:
+          TFVARS: ${{ secrets.TF_VARS }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$TFVARS" > terraform.tfvars
+          terraform init -input=false -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}"
+          terraform plan -no-color -input=false -out=tfplan
+          terraform apply -no-color -input=false tfplan
+          rm terraform.tfvars tfplan
+
+  apply-prod:
+    needs: apply-staging
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_TF_APPLY_SA }}
+      - name: terraform apply (prod)
+        working-directory: infra/envs/prod
+        env:
+          TFVARS: ${{ secrets.TF_VARS }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$TFVARS" > terraform.tfvars
+          terraform init -input=false -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}"
+          terraform plan -no-color -input=false -out=tfplan
+          terraform apply -no-color -input=false tfplan
+          rm terraform.tfvars tfplan

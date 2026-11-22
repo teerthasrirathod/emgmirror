@@ -1,0 +1,254 @@
+name: deploy-images
+# Container images for the CT service (Dockerfiles owned by the service milestone, S4).
+#   PR       : build and scan both images (Trivy) and produce SBOMs; nothing is pushed.
+#   main/tag : staging  - build, scan, SBOM, push to Artifact Registry, sign (cosign
+#                         keyless, GitHub OIDC), attest the SBOM, deploy by digest.
+#              prod     - after manual approval: verify the signature, copy the SAME digest
+#                         from staging to prod with its signatures, deploy by digest.
+#   tag v*   : attach SBOMs, scan reports, digests and signature verification output to the
+#              GitHub release (design history file / device file).
+on:
+  pull_request:
+    paths:
+      - "docker/**"
+      - "src/emgmirror/ctservice/**"
+      - "src/emgmirror/ctseg/**"
+      - "src/emgmirror/ctmesh/**"
+      - "pyproject.toml"
+      - "requirements-*.txt"
+      - ".github/workflows/deploy-images.yml"
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths:
+      - "docker/**"
+      - "src/emgmirror/ctservice/**"
+      - "src/emgmirror/ctseg/**"
+      - "src/emgmirror/ctmesh/**"
+      - "pyproject.toml"
+      - "requirements-*.txt"
+      - ".github/workflows/deploy-images.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-images-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGION: asia-south1
+  # Pin Trivy to a version you have verified (and ideally its image digest): scanner
+  # images and actions have been targets of supply-chain attacks.
+  TRIVY_IMAGE: aquasec/trivy:0.67.2
+  API_DOCKERFILE: docker/api/Dockerfile
+  WORKER_DOCKERFILE: docker/worker/Dockerfile
+
+jobs:
+  scan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [api, worker]
+    steps:
+      - uses: actions/checkout@v4
+      - name: locate Dockerfile
+        id: df
+        run: |
+          f=$([ "${{ matrix.image }}" = api ] && echo "$API_DOCKERFILE" || echo "$WORKER_DOCKERFILE")
+          if [ -f "$f" ]; then echo "file=$f" >> "$GITHUB_OUTPUT"; else echo "::notice::$f not present yet (S4); skipping"; fi
+      - name: free disk for the CUDA image
+        if: steps.df.outputs.file != '' && matrix.image == 'worker'
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+      - name: build
+        if: steps.df.outputs.file != ''
+        run: docker build -f "${{ steps.df.outputs.file }}" -t "ct-${{ matrix.image }}:pr" .
+      - name: trivy (fail on fixable HIGH/CRITICAL)
+        if: steps.df.outputs.file != ''
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock "$TRIVY_IMAGE" image \
+            --scanners vuln,secret,misconfig --severity HIGH,CRITICAL --ignore-unfixed \
+            --exit-code 1 --no-progress "ct-${{ matrix.image }}:pr"
+      - name: SBOM (SPDX)
+        if: steps.df.outputs.file != ''
+        uses: anchore/sbom-action@v0
+        with:
+          image: ct-${{ matrix.image }}:pr
+          format: spdx-json
+          output-file: sbom-${{ matrix.image }}.spdx.json
+          upload-artifact: true
+
+  staging:
+    if: github.event_name != 'pull_request' && vars.GCP_WIF_PROVIDER_STAGING != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    environment: staging
+    permissions:
+      contents: read
+      id-token: write # WIF to Google Cloud and keyless cosign signing
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        image: [api, worker]
+    steps:
+      - uses: actions/checkout@v4
+      - name: locate Dockerfile
+        id: df
+        run: |
+          f=$([ "${{ matrix.image }}" = api ] && echo "$API_DOCKERFILE" || echo "$WORKER_DOCKERFILE")
+          if [ -f "$f" ]; then echo "file=$f" >> "$GITHUB_OUTPUT"; else echo "::notice::$f not present yet (S4); skipping"; fi
+      - name: free disk for the CUDA image
+        if: steps.df.outputs.file != '' && matrix.image == 'worker'
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+      - uses: google-github-actions/auth@v2
+        if: steps.df.outputs.file != ''
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+        if: steps.df.outputs.file != ''
+      - uses: sigstore/cosign-installer@v3
+        if: steps.df.outputs.file != ''
+      - name: build
+        if: steps.df.outputs.file != ''
+        run: |
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          docker build -f "${{ steps.df.outputs.file }}" \
+            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            --label "org.opencontainers.image.source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" \
+            -t "${{ vars.AR_REPO }}/${{ matrix.image }}:${GITHUB_SHA}" .
+      - name: trivy (fail on fixable HIGH/CRITICAL)
+        if: steps.df.outputs.file != ''
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:/out" "$TRIVY_IMAGE" image \
+            --scanners vuln,secret,misconfig --severity HIGH,CRITICAL --ignore-unfixed \
+            --format json --output "/out/trivy-${{ matrix.image }}.json" \
+            --exit-code 1 --no-progress "${{ vars.AR_REPO }}/${{ matrix.image }}:${GITHUB_SHA}"
+      - name: push
+        id: push
+        if: steps.df.outputs.file != ''
+        run: |
+          docker push "${{ vars.AR_REPO }}/${{ matrix.image }}:${GITHUB_SHA}"
+          ref=$(docker inspect --format '{{index .RepoDigests 0}}' "${{ vars.AR_REPO }}/${{ matrix.image }}:${GITHUB_SHA}")
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "$ref" > "digest-${{ matrix.image }}.txt"
+      - name: SBOM (SPDX + CycloneDX)
+        if: steps.df.outputs.file != ''
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ steps.push.outputs.ref }}
+          format: spdx-json
+          output-file: sbom-${{ matrix.image }}.spdx.json
+          upload-artifact: false
+      - name: SBOM (CycloneDX)
+        if: steps.df.outputs.file != ''
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ steps.push.outputs.ref }}
+          format: cyclonedx-json
+          output-file: sbom-${{ matrix.image }}.cdx.json
+          upload-artifact: false
+      - name: sign and attest (keyless)
+        if: steps.df.outputs.file != ''
+        run: |
+          cosign sign --yes "${{ steps.push.outputs.ref }}"
+          cosign attest --yes --type spdxjson --predicate "sbom-${{ matrix.image }}.spdx.json" "${{ steps.push.outputs.ref }}"
+          cosign verify "${{ steps.push.outputs.ref }}" \
+            --certificate-identity-regexp "^${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/.github/workflows/deploy-images.yml@" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com > "cosign-verify-${{ matrix.image }}.json"
+      - name: deploy by digest (staging)
+        if: steps.df.outputs.file != ''
+        run: |
+          if [ "${{ matrix.image }}" = api ]; then
+            gcloud run deploy "${{ vars.API_SERVICE }}" --image "${{ steps.push.outputs.ref }}" --region "$REGION" --quiet
+          else
+            gcloud run jobs update "${{ vars.WORKER_JOB }}" --image "${{ steps.push.outputs.ref }}" --region "$REGION" --quiet
+          fi
+      - uses: actions/upload-artifact@v4
+        if: steps.df.outputs.file != ''
+        with:
+          name: device-file-${{ matrix.image }}
+          path: |
+            sbom-${{ matrix.image }}.spdx.json
+            sbom-${{ matrix.image }}.cdx.json
+            trivy-${{ matrix.image }}.json
+            cosign-verify-${{ matrix.image }}.json
+            digest-${{ matrix.image }}.txt
+          retention-days: 90
+
+  prod:
+    needs: staging
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      max-parallel: 1
+      matrix:
+        image: [api, worker]
+    steps:
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: device-file-${{ matrix.image }}
+      - name: staging digest
+        id: src
+        run: |
+          if [ -f "digest-${{ matrix.image }}.txt" ]; then echo "ref=$(cat digest-${{ matrix.image }}.txt)" >> "$GITHUB_OUTPUT"; else echo "::notice::no ${{ matrix.image }} image built"; fi
+      - uses: google-github-actions/auth@v2
+        if: steps.src.outputs.ref != ''
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+        if: steps.src.outputs.ref != ''
+      - uses: sigstore/cosign-installer@v3
+        if: steps.src.outputs.ref != ''
+      - name: verify signature, promote the same digest, deploy
+        if: steps.src.outputs.ref != ''
+        run: |
+          set -euo pipefail
+          src="${{ steps.src.outputs.ref }}"
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          cosign verify "$src" \
+            --certificate-identity-regexp "^${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/.github/workflows/deploy-images.yml@" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com > /dev/null
+          digest="${src#*@}"
+          dst="${{ vars.AR_REPO }}/${{ matrix.image }}:${GITHUB_SHA}"
+          cosign copy --force "$src" "$dst"
+          ref="${{ vars.AR_REPO }}/${{ matrix.image }}@${digest}"
+          if [ "${{ matrix.image }}" = api ]; then
+            gcloud run deploy "${{ vars.API_SERVICE }}" --image "$ref" --region "$REGION" --quiet
+          else
+            gcloud run jobs update "${{ vars.WORKER_JOB }}" --image "$ref" --region "$REGION" --quiet
+          fi
+
+  release-assets:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: staging
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: device-file-*
+          merge-multiple: true
+          path: device-file
+      - name: attach SBOMs, scans, digests and signature checks to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ls -la device-file
+          gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1 \
+            || gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --notes "Release $GITHUB_REF_NAME"
+          gh release upload "$GITHUB_REF_NAME" device-file/* --repo "$GITHUB_REPOSITORY" --clobber
