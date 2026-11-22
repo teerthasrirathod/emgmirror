@@ -1,0 +1,72 @@
+{
+ "about": "Pinned TotalSegmentator `total` weights for the device build. Regenerate only through a controlled change (new SOUP register entry, re-verification).",
+ "totalsegmentator_version": "2.18.0",
+ "datasets": {
+  "291": {
+   "tree_sha256": "59148fbf86e27e54f3f768babef895ada23fcfd27e8107736064854cb8aca527",
+   "files": {
+    "Dataset291_TotalSegmentator_part1_organs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/dataset.json": "09089590277fe1e62e73857145617c2392f449fe98a6c752a67aa6dc2023b1e2",
+    "Dataset291_TotalSegmentator_part1_organs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/dataset_fingerprint.json": "6a711df76da7c84bf17f237040610e8de5cc7ba86d6e63ee8df34b9345bc9c12",
+    "Dataset291_TotalSegmentator_part1_organs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/checkpoint_final.pth": "98c429f89fd9b3b08890fbb2b4c08c365ad4655fdcadb45efaa29380129fd890",
+    "Dataset291_TotalSegmentator_part1_organs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/debug.json": "80c629b877ccb4566ff5f78f3f1e80a6ea3f57a0977cabe689c99e5566275f85",
+    "Dataset291_TotalSegmentator_part1_organs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/progress.png": "3dfadddc6228d02b485d3261a2b5ba417e4bc0f03c568bad9cea56abb1d1487e",
+    "Dataset291_TotalSegmentator_part1_organs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/plans.json": "d77d815eb2bd11ec79b623161561dab4cef3def17dec0a0fe0f8d8dee3a761d5"
+   }
+  },
+  "292": {
+   "tree_sha256": "7e46098ae152faf4f57332affcb34f3b45ba1207ba7df62ff5834aeaa568290c",
+   "files": {
+    "Dataset292_TotalSegmentator_part2_vertebrae_1532subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/dataset.json": "5c967bfe82c846a6491473706e3c5d322f470ed4fce2eb5047a22c702ae64c79",
+    "Dataset292_TotalSegmentator_part2_vertebrae_1532subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/dataset_fingerprint.json": "7937cb753bcbfd131846263b45166270169c28ab1b2f4826673e9ca595a36ff3",
+    "Dataset292_TotalSegmentator_part2_vertebrae_1532subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/checkpoint_final.pth": "7022f71829ef00aa14d790a7667bc18eb1691f2fe5b0a38c475862abc84c2457",
+    "Dataset292_TotalSegmentator_part2_vertebrae_1532subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/debug.json": "10f8d4364c9e395ee3bbe173c07cb97b2c6fa6059e481a3ab4f9cd563a7f909d",
+    "Dataset292_TotalSegmentator_part2_vertebrae_1532subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/progress.png": "e13c4076982470c035642b92461ee0fd5fb7b3d33bff9e8ac585cd38f499fcc8",
+    "Dataset292_TotalSegmentator_part2_vertebrae_1532subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/plans.json": "72fcde2fa59183f65b92fc86a12467acd81511d93d8d2577608550ad0c1938cd"
+   }
+  },
+  "293": {
+   "tree_sha256": "315533d9defdb5c56de8709049c9fb1e581c49e1eeb09cd56abbfa412cf9ebcc",
+   "files": {
+    "Dataset293_TotalSegmentator_part3_cardiac_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/dataset.json": "ac8ee8e6d0040938a0e621b025fddd9fb82d15842b427ef1e590e84c6bb390c5",
+    "Dataset293_TotalSegmentator_part3_cardiac_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/dataset_fingerprint.json": "65c72df8d3d93340f2855d7fa7d5ab0c78a2db01c05f602e09ccca6fb1978959",
+    "Dataset293_TotalSegmentator_part3_cardiac_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/checkpoint_final.pth": "189010ac67fec3f1704df7547306d0067eabaaf620e0a46a1bdd183afa0800e4",
+    "Dataset293_TotalSegmentator_part3_cardiac_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/debug.json": "fe054079d62c463a86b4c105758e177b770728140cf0efb7a87b0ebfe3bdb7fc",
+    "Dataset293_TotalSegmentator_part3_cardiac_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/progress.png": "a501c311ca5cbdfa550593f64fd261ba1ada2cf2bde63b96e06b37ad740e744a",
+    "Dataset293_TotalSegmentator_part3_cardiac_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/plans.json": "a048b27bfe30ca72a7a76f16cc5145ecc15f28911c6897793b93e6bea4b0e4a3"
+   }
+  },
+  "294": {
+   "tree_sha256": "8c67fa02ade5c74dca796a6a3249e4485206938fc124e9b0c73faf371c9a4601",
+   "files": {
+    "Dataset294_TotalSegmentator_part4_muscles_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/dataset.json": "3c0002bc06677197f1597a5143ccfebd556508563edd9282a46f057d5a0d5965",
+    "Dataset294_TotalSegmentator_part4_muscles_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/dataset_fingerprint.json": "fb2ec614faf486159a4bd660f50a1ba44a72eacffd5d67feb7409765d56f2e24",
+    "Dataset294_TotalSegmentator_part4_muscles_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/checkpoint_final.pth": "655eb40de03aa3de7348b69d7569a1cc3a2dc7969a11c0d60a7331e07df11c28",
+    "Dataset294_TotalSegmentator_part4_muscles_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/debug.json": "2cab20a494100bd07b67b94957f3411e2e20a4f7ffe813d8f4a3138d61cd3cd2",
+    "Dataset294_TotalSegmentator_part4_muscles_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/progress.png": "835036e5d2a65c296764f0e90c8f307899982a930fc7442a571a3c2b9450bcc3",
+    "Dataset294_TotalSegmentator_part4_muscles_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/plans.json": "63c9175c2f3fdff5e67ae55ea56250fb44ba53034335f1781081da9b9bdea709"
+   }
+  },
+  "295": {
+   "tree_sha256": "935829298555492434b0f78581fde7adc0c16aba6a32648605a934b8831c9c05",
+   "files": {
+    "Dataset295_TotalSegmentator_part5_ribs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/dataset.json": "71228770dbcb9d303e6943dd1017b19346857b3fbc30e912dba30a704d1ac8f6",
+    "Dataset295_TotalSegmentator_part5_ribs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/dataset_fingerprint.json": "287b5d036b3145284a13fa9477e5f748648889592aee4c7330d06e40df6cdcfa",
+    "Dataset295_TotalSegmentator_part5_ribs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/checkpoint_final.pth": "a674364c60b304fbd56feccdd95f8d0fe0c45a5bfa1ef25815516e4dde04d3fc",
+    "Dataset295_TotalSegmentator_part5_ribs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/debug.json": "1cb081c186f8ff92992e36392b2dc1e79a323608a5081374bd466c6d48763600",
+    "Dataset295_TotalSegmentator_part5_ribs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/fold_0/progress.png": "f38ff0e71e72d70b443efe5e529870eab5b474cc01d3701b633da14ae3eab9ca",
+    "Dataset295_TotalSegmentator_part5_ribs_1559subj/nnUNetTrainerNoMirroring__nnUNetPlans__3d_fullres/plans.json": "241fa585e763462a7f4ab593d34e466a58cbce17c87b64d260a7ee5010416132"
+   }
+  },
+  "297": {
+   "tree_sha256": "4e53abbb8531c05603572163ecbb254688780463ec75951db84b2081e08868fe",
+   "files": {
+    "Dataset297_TotalSegmentator_total_3mm_1559subj/nnUNetTrainer_4000epochs_NoMirroring__nnUNetPlans__3d_fullres/dataset.json": "e804e08ad8912e3a6f541741c8c78799d75acbd3f4f3f18ff5f211bbd3da961a",
+    "Dataset297_TotalSegmentator_total_3mm_1559subj/nnUNetTrainer_4000epochs_NoMirroring__nnUNetPlans__3d_fullres/dataset_fingerprint.json": "f1336cd0df44e0eeecfa69143226c05b246c550e690b7b12929f65ca9843260f",
+    "Dataset297_TotalSegmentator_total_3mm_1559subj/nnUNetTrainer_4000epochs_NoMirroring__nnUNetPlans__3d_fullres/fold_0/checkpoint_final.pth": "1e38e40356adc2706a662e365405a97f862d62a7da65f6bf81d025aee1b979ac",
+    "Dataset297_TotalSegmentator_total_3mm_1559subj/nnUNetTrainer_4000epochs_NoMirroring__nnUNetPlans__3d_fullres/fold_0/debug.json": "43567a34b1bc755d66ce2cbbf171f1d18d0da44067e7c38810774da781ddd7f4",
+    "Dataset297_TotalSegmentator_total_3mm_1559subj/nnUNetTrainer_4000epochs_NoMirroring__nnUNetPlans__3d_fullres/fold_0/progress.png": "69eb4c93cd35411d39763d0759e29cbf83cfa1fca880c5c0de988f1caea1199e",
+    "Dataset297_TotalSegmentator_total_3mm_1559subj/nnUNetTrainer_4000epochs_NoMirroring__nnUNetPlans__3d_fullres/plans.json": "d1cb3c15f53dc36fdb618e0f9082573d1f50b74a9b5fa73094ac8680845839f1"
+   }
+  }
+ }
+}
