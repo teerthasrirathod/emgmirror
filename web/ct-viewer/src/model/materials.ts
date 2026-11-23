@@ -3,8 +3,20 @@ import type { MaterialKind } from '../lib/manifest'
 export { defaultOpacity } from '../lib/appearance'
 
 /** PBR surface material for one structure. */
+/** Natural anatomy colours (atlas look); organs keep their table colour so they stay distinguishable. */
+const NATURAL: Partial<Record<MaterialKind, [number, number, number]>> = {
+  bone: [233, 223, 200],
+  muscle: [176, 72, 62],
+  artery: [196, 42, 40],
+  vein: [52, 86, 170],
+}
+
 export function surfaceMaterial(kind: MaterialKind, rgb: [number, number, number]): THREE.MeshPhysicalMaterial {
-  const color = new THREE.Color().setRGB(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255, THREE.SRGBColorSpace)
+  // small per-structure variation keeps neighbouring bones and muscles apart without rainbow colours
+  const base = NATURAL[kind]
+  const jitter = base ? ((rgb[0] * 7 + rgb[1] * 13 + rgb[2] * 17) % 21) - 10 : 0
+  const c = base ? [base[0] + jitter, base[1] + jitter, base[2] + jitter * 0.6] : rgb
+  const color = new THREE.Color().setRGB(c[0] / 255, c[1] / 255, c[2] / 255, THREE.SRGBColorSpace)
   const m = new THREE.MeshPhysicalMaterial({ color, metalness: 0, side: THREE.FrontSide })
   switch (kind) {
     case 'bone':

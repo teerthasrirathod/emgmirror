@@ -77,7 +77,7 @@ export default function App() {
   const [panelOpen, setPanelOpen] = useState(false)
   const [announce, setAnnounce] = useState('')
   // device groundwork: reference mode, review/approval, offline
-  const [reference, setReference] = useState(() => new URLSearchParams(location.search).get('mode') === 'reference')
+  const [reference] = useState(() => new URLSearchParams(location.search).get('mode') === 'reference')
   const [record, setRecord] = useState<ReviewRecord | null>(null)
   const [version, setVersion] = useState<{ editsHash: string; versionHash: string } | null>(null)
   const [reviewer, setReviewerState] = useState<Reviewer | null>(() => {
@@ -101,6 +101,9 @@ export default function App() {
   })
   const [saveState, setSaveState] = useState<string | null>(null)
   const orientRef = useRef<HTMLDivElement>(null)
+  const measureRef = useRef<SVGSVGElement>(null)
+  const [measuring, setMeasuring] = useState(false)
+  const [measurePts, setMeasurePts] = useState<THREE.Vector3[]>([])
   const orientRef2 = useRef<HTMLDivElement>(null)
   const systemDark = useMedia('(prefers-color-scheme: dark)')
   const [themePref, setThemePref] = useState<'system' | 'light' | 'dark'>(() => {
@@ -128,7 +131,8 @@ export default function App() {
         setManifest(m)
         const s = normalise(m)
         setStructures(s)
-        setStates(s.map((x) => ({ visible: true, opacity: defaultOpacity(x.material, x.id) })))
+        // the body surface (skin and fat) starts hidden so the anatomy inside is visible; one click shows it
+        setStates(s.map((x) => ({ visible: !/^(body_|skin|subcutaneous_fat|torso_fat)/.test(x.id), opacity: defaultOpacity(x.material, x.id) })))
       })
       .catch((e) => setError(String(e?.message ?? e)))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -310,15 +314,8 @@ export default function App() {
   const ctUrl = manifest ? join(base, manifest.volumes?.ct ?? 'ct.nii.gz') : ''
   const labelsUrl = manifest ? join(base, manifest.volumes?.labels ?? 'labels.nii.gz') : null
 
-  const setTheme = () => {
-    const next = dark ? 'light' : 'dark'
-    setThemePref(next)
-    try {
-      localStorage.setItem('ctv-theme', next)
-    } catch {
-      /* storage unavailable */
-    }
-  }
+  // the simple build has no theme toggle (the viewer follows the system theme)
+  void setThemePref
 
   const windowSelect = (
     <label className="field">
@@ -338,7 +335,7 @@ export default function App() {
   )
 
   return (
-    <div className={`app ${panelOpen ? 'panel-open' : ''} ${reference ? 'reference' : ''} ${reviewOpen ? 'review-open' : ''}`}>
+    <div className={`app simple ${panelOpen ? 'panel-open' : ''} ${reference ? 'reference' : ''} ${reviewOpen ? 'review-open' : ''}`}>
       <a className="skip" href="#main">
         {COPY.skip}
       </a>
@@ -376,21 +373,13 @@ export default function App() {
             {COPY.structures}
           </button>
           {!reference && (
-            <button className="ghost" onClick={() => setReviewOpen((v) => !v)} aria-expanded={reviewOpen} disabled={!record}>
-              {COPY.review}
-            </button>
-          )}
-          {!reference && (
             <button className="ghost" onClick={() => setShowDownloads(true)} disabled={!manifest}>
               {COPY.downloads}
             </button>
           )}
-          <button className="ghost" aria-pressed={reference} onClick={() => setReference((v) => !v)}>
-            {reference ? COPY.exitReference : COPY.referenceMode}
-          </button>
-          {!reference && <button className="ghost icon" onClick={setTheme} aria-label={dark ? COPY.toLight : COPY.toDark} title={dark ? COPY.toLight : COPY.toDark}>
-            {dark ? '☀' : '☾'}
-          </button>}
+          <a className="new-scan" href="/">
+            New scan
+          </a>
         </div>
       </header>
       {reference && (
@@ -414,6 +403,10 @@ export default function App() {
             onToggle={(i) => setStates((p) => p.map((s, k) => (k === i ? { ...s, visible: !s.visible } : s)))}
             onOpacity={(i, o) => setStates((p) => p.map((s, k) => (k === i ? { ...s, opacity: o } : s)))}
             onSetMany={(idx, visible) => setStates((p) => p.map((s, k) => (idx.includes(k) ? { ...s, visible } : s)))}
+            onShowOnly={(idx) => {
+              setIsolated(-1)
+              setStates((p) => p.map((s, k) => ({ ...s, visible: idx === null || idx.includes(k) })))
+            }}
             onSelect={(i) => {
               setSelected(i)
               setIsolated(-1)
@@ -461,6 +454,23 @@ export default function App() {
                   {COPY.cutMode[m]}
                 </button>
               ))}
+            </div>
+            <div className="group" role="group" aria-label="Measure">
+              <button
+                aria-pressed={measuring}
+                title="Measure a straight-line distance: click two points on the model"
+                onClick={() => {
+                  setMeasuring((m) => !m)
+                  setMeasurePts([])
+                }}
+              >
+                Measure
+              </button>
+              {measuring && (
+                <span className="hint" role="status">
+                  {measurePts.length === 0 ? 'Click the first point' : measurePts.length === 1 ? 'Click the second point' : 'Click again to start a new measurement'}
+                </span>
+              )}
             </div>
           </div>
 
@@ -525,10 +535,20 @@ export default function App() {
                   erasures={erasures}
                   hoverEnabled={!reference}
                   orientEl={orientRef}
+                  measuring={measuring}
+                  measurePts={measurePts}
+                  onMeasure={(p) => setMeasurePts((prev) => (prev.length >= 2 ? [p] : [...prev, p]))}
+                  measureEl={measureRef}
                 />
               </Suspense>
             )}
             <OrientationMarkers ref={orientRef} />
+            <svg ref={measureRef} className="measure-layer" aria-hidden={measurePts.length === 0} />
+            {measuring && measurePts.length === 2 && (
+              <p className="sr-only" role="status">
+                {`Distance ${(measurePts[0].distanceTo(measurePts[1]) * 1000).toFixed(1)} millimetres`}
+              </p>
+            )}
             {!modelReady && !error && (
               <div className="loading" role="status">
                 <span className="spinner" aria-hidden="true" />

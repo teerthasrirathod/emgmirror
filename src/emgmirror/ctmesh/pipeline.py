@@ -230,7 +230,10 @@ def run(labels_nii: str | Path, out_dir: str | Path, labels_json: str | Path | N
     global _G
     _G = {"lm": lm, "sn": sn, "p": p, "web_budget": web_budget}
     natives, lods, reports = {}, {}, {}
-    workers = max(1, min(p.workers or os.cpu_count() or 1, len(todo)))
+    # CTMESH_WORKERS caps the pool where os.cpu_count() reports the host's cores rather than the
+    # container's CPU quota (Cloud Run, Kubernetes): one process per host core thrashes memory.
+    env_workers = int(os.environ.get("CTMESH_WORKERS", "0") or 0)
+    workers = max(1, min(p.workers or env_workers or os.cpu_count() or 1, len(todo)))
     if workers > 1:
         # spawn, not fork: VTK keeps worker threads, and forking a threaded process can deadlock
         with multiprocessing.get_context("spawn").Pool(workers, initializer=_init_worker, initargs=(_G,)) as pool:

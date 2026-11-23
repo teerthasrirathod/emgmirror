@@ -1,10 +1,11 @@
 import type { MaterialKind } from './manifest'
 
-/** Default opacity per material kind (organs are slightly translucent). */
+/**
+ * Default opacity per material kind. Everything is solid by default so shapes read clearly;
+ * only the lungs start see-through, because they would otherwise hide the heart and vessels.
+ * The viewer can make any structure see-through on request.
+ */
 export function defaultOpacity(kind: MaterialKind, id: string): number {
-  if (kind !== 'organ') return 1
-  if (/lung/.test(id)) return 0.28
-  if (/(colon|small_bowel|duodenum|stomach)/.test(id)) return 0.5
-  return 0.62
+  if (kind === 'organ' && /lung/.test(id)) return 0.3
+  return 1
 }
-

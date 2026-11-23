@@ -44,6 +44,64 @@ export interface ModelViewProps {
   erasures: { index: number; center: THREE.Vector3; radius: number }[]
   hoverEnabled: boolean
   orientEl: React.RefObject<HTMLDivElement | null>
+  /** distance tool: clicks add surface points; the overlay draws the line and length */
+  measuring: boolean
+  measurePts: THREE.Vector3[]
+  onMeasure: (p: THREE.Vector3) => void
+  measureEl: React.RefObject<SVGSVGElement | null>
+}
+
+/** Draw the measurement (world units are metres, labels in mm) into the SVG overlay. */
+function drawMeasure(svg: SVGSVGElement | null, pts: THREE.Vector3[], cam: THREE.Camera, w: number, h: number) {
+  if (!svg) return
+  if (pts.length === 0) {
+    if (svg.firstChild) svg.replaceChildren()
+    return
+  }
+  const scr = pts.map((p) => {
+    const v = p.clone().project(cam)
+    return { x: (v.x * 0.5 + 0.5) * w, y: (-v.y * 0.5 + 0.5) * h, front: v.z < 1 }
+  })
+  const ns = 'http://www.w3.org/2000/svg'
+  const nodes: SVGElement[] = []
+  if (scr.length === 2) {
+    const line = document.createElementNS(ns, 'line')
+    line.setAttribute('x1', String(scr[0].x))
+    line.setAttribute('y1', String(scr[0].y))
+    line.setAttribute('x2', String(scr[1].x))
+    line.setAttribute('y2', String(scr[1].y))
+    line.setAttribute('class', 'm-line')
+    nodes.push(line)
+    const mm = pts[0].distanceTo(pts[1]) * 1000
+    const g = document.createElementNS(ns, 'g')
+    const mx = (scr[0].x + scr[1].x) / 2, my = (scr[0].y + scr[1].y) / 2
+    g.setAttribute('transform', `translate(${mx},${my - 14})`)
+    const label = `${mm.toFixed(1)} mm`
+    const bg = document.createElementNS(ns, 'rect')
+    const tw = label.length * 8 + 14
+    bg.setAttribute('x', String(-tw / 2))
+    bg.setAttribute('y', '-13')
+    bg.setAttribute('width', String(tw))
+    bg.setAttribute('height', '24')
+    bg.setAttribute('rx', '12')
+    bg.setAttribute('class', 'm-label-bg')
+    const t = document.createElementNS(ns, 'text')
+    t.setAttribute('text-anchor', 'middle')
+    t.setAttribute('y', '4')
+    t.setAttribute('class', 'm-label')
+    t.textContent = label
+    g.append(bg, t)
+    nodes.push(g)
+  }
+  for (const s of scr) {
+    const c = document.createElementNS(ns, 'circle')
+    c.setAttribute('cx', String(s.x))
+    c.setAttribute('cy', String(s.y))
+    c.setAttribute('r', '5')
+    c.setAttribute('class', 'm-point')
+    nodes.push(c)
+  }
+  svg.replaceChildren(...nodes)
 }
 
 MeshoptDecoder.useWorkers?.(Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 2) - 1)))
@@ -142,6 +200,10 @@ function Scene(props: ModelViewProps) {
   }, [engine, props.states, props.isolated, props.selected, invalidate])
 
   useEffect(() => {
+    invalidate()
+  }, [props.measurePts, invalidate])
+
+  useEffect(() => {
     if (!engine) return
     engine.setErasures(props.erasures)
     invalidate()
@@ -223,6 +285,7 @@ function Scene(props: ModelViewProps) {
     if (!engine) return
     engine.render()
     writeEdgeLabels(propsRef.current.orientEl.current, camera.quaternion)
+    drawMeasure(propsRef.current.measureEl.current, propsRef.current.measurePts, camera, size.width, size.height)
     const pr = pendingReady.current
     if (pr) {
       // report "ready" only once the first full frame has been drawn
@@ -287,7 +350,7 @@ function Scene(props: ModelViewProps) {
           engine.rebuild()
           invalidate()
         }
-        el.style.cursor = idx >= 0 ? (propsRef.current.tool === 'erase' ? 'crosshair' : 'pointer') : 'grab'
+        el.style.cursor = idx >= 0 ? (propsRef.current.tool === 'erase' || propsRef.current.measuring ? 'crosshair' : 'pointer') : 'grab'
         propsRef.current.onHover(idx, last.clientX - rect.left, last.clientY - rect.top)
       })
     }
@@ -305,7 +368,14 @@ function Scene(props: ModelViewProps) {
       const moved = Math.hypot(ev.clientX - down.x, ev.clientY - down.y)
       if (moved < 6 && performance.now() - down.t < 600) {
         const idx = pickAt(ev)
-        if (propsRef.current.tool === 'erase') {
+        if (propsRef.current.measuring) {
+          if (idx >= 0) {
+            const rect = el.getBoundingClientRect()
+            const dpr = gl.getPixelRatio()
+            const p = engine.surfacePoint(idx, (ev.clientX - rect.left) * dpr, (ev.clientY - rect.top) * dpr)
+            if (p) propsRef.current.onMeasure(p)
+          }
+        } else if (propsRef.current.tool === 'erase') {
           if (idx >= 0) {
             const rect = el.getBoundingClientRect()
             const dpr = gl.getPixelRatio()

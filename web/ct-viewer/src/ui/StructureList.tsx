@@ -10,6 +10,8 @@ interface Props {
   onToggle: (i: number) => void
   onOpacity: (i: number, o: number) => void
   onSetMany: (idx: number[], visible: boolean) => void
+  /** show only these structures (null = show everything) */
+  onShowOnly: (idx: number[] | null) => void
   onSelect: (i: number) => void
   onIsolate: (i: number) => void
   excluded: Set<string>
@@ -20,7 +22,14 @@ const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'bas
 
 export default function StructureList(p: Props) {
   const [q, setQ] = useState('')
-  const [open, setOpen] = useState<Record<string, boolean>>({ skeleton: true, organs: true, vessels: true, muscles: false, other: true })
+  const [open, setOpen] = useState<Record<string, boolean>>({})
+  const [view, setView] = useState<string>('all')
+  const bySystem = (sys: string) => p.structures.map((s, i) => ({ s, i })).filter(({ s }) => s.system === sys).map(({ i }) => i)
+  const presets = SYSTEM_ORDER.filter((sys) => p.structures.some((s) => s.system === sys))
+  const applyView = (v: string) => {
+    setView(v)
+    p.onShowOnly(v === 'all' ? null : bySystem(v))
+  }
   const groups = useMemo(() => {
     const needle = q.trim().toLowerCase()
     return SYSTEM_ORDER.map((sys) => ({
@@ -41,6 +50,16 @@ export default function StructureList(p: Props) {
           <span className="sr-only">{COPY.search}</span>
           <input type="search" placeholder={COPY.searchPlaceholder} value={q} onChange={(e) => setQ(e.target.value)} aria-label={COPY.search} />
         </label>
+        <div className="quick-views" role="group" aria-label="Quick views">
+          <button aria-pressed={view === 'all'} onClick={() => applyView('all')}>
+            Everything
+          </button>
+          {presets.map((sys) => (
+            <button key={sys} aria-pressed={view === sys} onClick={() => applyView(sys)}>
+              {SYSTEM_LABEL[sys]}
+            </button>
+          ))}
+        </div>
         <p className="count" aria-live="polite">
           {COPY.count(shown, p.structures.length)}
         </p>
@@ -88,7 +107,7 @@ export default function StructureList(p: Props) {
                           </span>
                         )}
                       </button>
-                      {!p.readOnly && <input
+                      {!p.readOnly && p.selected === i && <input
                         className="opacity"
                         type="range"
                         min={0.05}

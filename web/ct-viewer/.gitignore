@@ -6,3 +6,4 @@ playwright-report/
 *.tsbuildinfo
 .scratch/
 dist-*/
+public/live-test/

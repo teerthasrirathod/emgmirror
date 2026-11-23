@@ -70,6 +70,7 @@ export const SYSTEM_LABEL: Record<System, string> = {
 /** Infer system and material from a structure id when `display` does not say. */
 export function inferKind(id: string): { system: System; material: MaterialKind } {
   const n = id.toLowerCase()
+  if (/^(body_|skin|subcutaneous_fat|torso_fat)/.test(n)) return { system: 'other', material: 'organ' }
   if (/(vertebra|rib|sacrum|hip|femur|humerus|scapula|clavic|skull|sternum|costal|bone|tibia|fibula|radius|ulna|patella|pelvis|mandible|carpal|tarsal|phalan)/.test(n))
     return { system: 'skeleton', material: 'bone' }
   if (/(aorta|artery|arteries|trunk|carotid|subclavian)/.test(n)) return { system: 'vessels', material: 'artery' }
@@ -96,11 +97,16 @@ function kindFromDisplay(display: unknown, id: string): { system: System; materi
 
 export function normalise(m: Manifest): Structure[] {
   return m.structures.map((s, i) => {
-    const { system, material } = kindFromDisplay(s.display, s.id)
+    // S2 mesher output: id = label value (number), name = code (also the GLB node name), display = readable name
+    const raw = s as unknown as { id: string | number; name?: string; display?: unknown; label?: number }
+    const numeric = typeof raw.id === 'number'
+    const code = numeric ? String(raw.name ?? raw.id) : String(raw.id)
+    const readable = numeric ? (typeof raw.display === 'string' ? raw.display : code) : s.name || code
+    const { system, material } = kindFromDisplay(numeric ? null : s.display, code)
     return {
-      id: s.id,
-      name: s.name || s.id,
-      label: typeof s.label === 'number' ? s.label : i + 1,
+      id: code,
+      name: readable,
+      label: typeof raw.label === 'number' ? raw.label : numeric ? (raw.id as number) : i + 1,
       system,
       material,
       rgb: s.rgb,

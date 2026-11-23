@@ -71,6 +71,8 @@ export class ModelEngine {
   private transScene = new THREE.Scene()
   private pickScene = new THREE.Scene()
   private keyLights: THREE.DirectionalLight[] = []
+  private rimLights: THREE.DirectionalLight[] = []
+  private fillLights: THREE.DirectionalLight[] = []
   private ct = makeCTUniforms()
   private ctPlane: THREE.Mesh
   private capGeom = new THREE.BoxGeometry(1, 1, 1)
@@ -114,7 +116,17 @@ export class ModelEngine {
       sc.add(key)
       sc.add(key.target)
       this.keyLights.push(key)
-      sc.add(new THREE.HemisphereLight(0xf4f1ea, 0x5b544c, 0.35))
+      // rim light from behind the subject: separates anatomy from the dark stage
+      const rim = new THREE.DirectionalLight(0xcfe0ff, 1.35)
+      sc.add(rim)
+      sc.add(rim.target)
+      this.rimLights.push(rim)
+      // soft warm fill from the lower right
+      const fill = new THREE.DirectionalLight(0xffe9d6, 0.45)
+      sc.add(fill)
+      sc.add(fill.target)
+      this.fillLights.push(fill)
+      sc.add(new THREE.HemisphereLight(0xf4f1ea, 0x3a3530, 0.3))
     }
 
     this.ctPlane = new THREE.Mesh(this.capGeom, ctPlaneMaterial(this.ct))
@@ -149,7 +161,9 @@ vec3 aces(vec3 x){ x *= uExposure * 0.85; return clamp((x*(2.51*x+0.03))/(x*(2.4
 vec3 toSRGB(vec3 c){ return mix(c * 12.92, 1.055 * pow(c, vec3(1.0/2.4)) - 0.055, step(0.0031308, c)); }
 void main(){
   vec4 c = texture2D(tColor, vUv);
-  vec3 bg = mix(uBottom, uTop, smoothstep(0.0, 1.0, vUv.y));
+  // studio stage: a soft radial glow behind the subject, falling off to the edges
+  float d = distance(vUv * vec2(1.0, 0.85), vec2(0.5, 0.5));
+  vec3 bg = mix(uTop, uBottom, smoothstep(0.05, 0.75, d));
   vec3 fg = toSRGB(aces(c.rgb / max(c.a, 1e-4)));
   gl_FragColor = vec4(mix(bg, fg, clamp(c.a, 0.0, 1.0)), 1.0);
 }`,
@@ -200,12 +214,14 @@ void main(){
   }
 
   setTheme(dark: boolean) {
+    // The 3D stage is a dark studio in both themes (anatomy reads best on deep navy);
+    // light theme gets a slightly lifted stage so it does not feel like a hole in the page.
     if (dark) {
-      this.background[0].set('#20242b')
-      this.background[1].set('#0f1115')
+      this.background[0].set('#1d3150')
+      this.background[1].set('#04070c')
     } else {
-      this.background[0].set('#f3f4f6')
-      this.background[1].set('#d6dae0')
+      this.background[0].set('#2a4468')
+      this.background[1].set('#0b1220')
     }
   }
 
@@ -467,6 +483,18 @@ void main(){
     for (const k of this.keyLights) {
       k.position.copy(cam.position).add(new THREE.Vector3(-0.6, 0.8, 0.2).applyQuaternion(cam.quaternion).multiplyScalar(2))
       k.target.position.copy(this.bounds.getCenter(new THREE.Vector3()))
+      k.target.updateMatrixWorld()
+    }
+    const centre = this.bounds.getCenter(new THREE.Vector3())
+    const reach = Math.max(0.1, this.bounds.getSize(new THREE.Vector3()).length())
+    for (const k of this.rimLights) {
+      k.position.copy(centre).add(new THREE.Vector3(0.35, 0.55, -1).applyQuaternion(cam.quaternion).multiplyScalar(reach))
+      k.target.position.copy(centre)
+      k.target.updateMatrixWorld()
+    }
+    for (const k of this.fillLights) {
+      k.position.copy(centre).add(new THREE.Vector3(0.8, -0.35, 0.6).applyQuaternion(cam.quaternion).multiplyScalar(reach))
+      k.target.position.copy(centre)
       k.target.updateMatrixWorld()
     }
 
