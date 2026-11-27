@@ -1,0 +1,100 @@
+name: deploy-viewer
+# Static viewer (web/ct-viewer): build once, upload to the viewer bucket behind Cloud CDN,
+# staging first, then production after manual approval. Hashed assets are cached for a
+# year; index.html is never cached, so a rollback is "re-run the previous run".
+on:
+  push:
+    branches: [main]
+    paths: ["web/ct-viewer/**", ".github/workflows/deploy-viewer.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-viewer
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web/ct-viewer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/ct-viewer/package-lock.json
+      - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: viewer-dist
+          path: web/ct-viewer/dist
+          retention-days: 30
+
+  staging:
+    if: vars.GCP_WIF_PROVIDER_STAGING != ''
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: staging
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: viewer-dist
+          path: dist
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: upload
+        run: |
+          set -euo pipefail
+          b="gs://${{ vars.VIEWER_BUCKET }}"
+          # Hashed assets first (immutable), then everything else, then index.html last.
+          gcloud storage rsync dist "$b" --recursive --cache-control="public, max-age=31536000, immutable" \
+            --exclude='.*\.html$'
+          gcloud storage cp dist/*.html "$b/" --cache-control="no-cache, max-age=0"
+          gcloud storage rsync dist "$b" --recursive --delete-unmatched-destination-objects --exclude='.*\.html$'
+      - name: invalidate CDN
+        run: gcloud compute url-maps invalidate-cdn-cache "${{ vars.URL_MAP }}" --path "/index.html" --async --project "${{ vars.GCP_PROJECT_ID }}"
+
+  prod:
+    needs: staging
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: viewer-dist
+          path: dist
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: upload
+        run: |
+          set -euo pipefail
+          b="gs://${{ vars.VIEWER_BUCKET }}"
+          # Hashed assets first (immutable), then everything else, then index.html last.
+          gcloud storage rsync dist "$b" --recursive --cache-control="public, max-age=31536000, immutable" \
+            --exclude='.*\.html$'
+          gcloud storage cp dist/*.html "$b/" --cache-control="no-cache, max-age=0"
+          gcloud storage rsync dist "$b" --recursive --delete-unmatched-destination-objects --exclude='.*\.html$'
+      - name: invalidate CDN
+        run: gcloud compute url-maps invalidate-cdn-cache "${{ vars.URL_MAP }}" --path "/index.html" --async --project "${{ vars.GCP_PROJECT_ID }}"

@@ -1,0 +1,33 @@
+name: credit-expiry-reminder
+# Reminder that the Rs 30,000 Google Cloud credits expire on 13 January 2027.
+# Opens an issue 31, 14, 7 and 1 day(s) before expiry. No cloud access needed.
+on:
+  schedule:
+    - cron: "30 3 13 12 *" # 13 Dec (31 days before)
+    - cron: "30 3 30 12 *" # 30 Dec (14 days before)
+    - cron: "30 3 6 1 *" # 6 Jan (7 days before)
+    - cron: "30 3 12 1 *" # 12 Jan (1 day before)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  remind:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: open reminder issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPIRY: "2027-01-13"
+        run: |
+          set -euo pipefail
+          today=$(date -u +%F)
+          if [[ "$today" > "$EXPIRY" ]]; then echo "credits already expired; nothing to do"; exit 0; fi
+          days=$(( ( $(date -u -d "$EXPIRY" +%s) - $(date -u -d "$today" +%s) ) / 86400 ))
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "Google Cloud credits expire in ${days} day(s) (${EXPIRY})" \
+            --body "The Rs 30,000 credits expire on ${EXPIRY}. Check the credit budget in Billing > Budgets & alerts, finish the GPU benchmark runs, and decide whether to scale staging down (docs/ct_platform/hosting/DEPLOY_RUNBOOK.md, 'Cost checks' and 'Teardown'). After expiry every charge is real money: the monthly budget alert takes over."
