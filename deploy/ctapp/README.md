@@ -3,8 +3,10 @@
 Research use, not for diagnosis or surgical planning.
 
 One container on Google Cloud Run: the web viewer, an upload API and a CPU worker
-(`src/emgmirror/ctapp/server.py`). Upload a CT (DICOM folder, .zip, or .nii/.nii.gz) → TotalSegmentator
-`total` (Apache-licensed weights baked in, usage statistics off) → SurfaceNets meshes → 3D viewer.
+(`src/emgmirror/ctapp/server.py`). Upload a CT package or 3D image volume → TotalSegmentator `total`
+(Apache-licensed weights baked in, usage statistics off) → SurfaceNets meshes → 3D viewer. The app's default
+`skeletal` profile also schedules MOOSE peripheral bones, but this container excludes `moosez`; those structures
+are reported as unavailable in this deployment and the resulting skeleton is incomplete.
 
 Live: https://ct-to-3d-249544398214.asia-south1.run.app (project `ct-to-3d-11222226`, region asia-south1).
 
@@ -30,6 +32,8 @@ The demo result shown by "See a finished example" is the public TotalSegmentator
 
 - About 70 minutes per scan on CPU (segmentation ~27 min, meshing ~43 min). Next: a GPU worker and a
   meshing speed fix.
+- Peripheral-bone extension is unavailable in the hosted image because `moosez` is excluded. No hairline
+  fracture detection model is integrated; the finding-analysis result is `not_scheduled`.
 - Jobs and results live on the instance's temporary disk; a redeploy or restart deletes them. One
   instance only (`--max-instances 1`).
 - `--min-instances 1` keeps the demo fast but bills continuously; set it to 0 after demos.

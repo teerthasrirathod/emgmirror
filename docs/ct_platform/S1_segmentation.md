@@ -26,9 +26,16 @@ python -m emgmirror.ctseg check-licences --weights-dir "$TOTALSEG_WEIGHTS_PATH"
 
 From Python: `emgmirror.ctseg.engine.segment(input, out_dir, SegConfig(...))`.
 
-Options: `--profile minimal|standard` (default `standard`), `--fast` (TotalSegmentator 3 mm models where they
+Options: `--profile minimal|standard|skeletal` (default `standard`), `--fast` (TotalSegmentator 3 mm models where they
 exist), `--modality auto|ct|mr`, `--tasks a,b` (explicit subtasks instead of region selection), `--no-moose`,
 `--config file.json` (any `SegConfig` field).
+
+`skeletal` is a research profile: it keeps the base result, uses full-resolution TotalSegmentator models, and
+always schedules the MOOSE peripheral-bone task for CT even when the base model emits no limb marker. Scheduling
+does not guarantee execution: `moosez` and its model weights must be installed. The current `deploy/ctapp`
+Dockerfile excludes `moosez`, so hosted runs report that task as unavailable and peripheral coverage remains
+incomplete. The pipeline does not claim that unsupported or out-of-field anatomy was detected. The 3 mm
+`--fast` option is rejected for this profile.
 
 ## Builds: research and device
 

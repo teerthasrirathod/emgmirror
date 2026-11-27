@@ -2,7 +2,35 @@
 
 Research use, not for diagnosis or surgical planning (until licensed; see [REGULATORY_PATH.md](REGULATORY_PATH.md)).
 
-Status: plan of 2026-11-22. Owner decisions recorded below; build starts with S1–S3.
+Status: plan initialized 2026-11-22; implementation snapshot updated 2026-11-26. Owner decisions recorded below.
+
+## Implementation snapshot (2026-11-26)
+
+This is the current code state, not a claim of clinical readiness or complete anatomy coverage:
+
+- Intake has registered SimpleITK volume and ZIP DICOM-series adapters. It writes a NIfTI derivative and
+  records source/canonical geometry and conversion history. ZIP packages can hold paired files and multiple
+  DICOM series; selection still follows the documented primary-series policy.
+- Intake now uses a rough 24-bytes-per-voxel planning estimate against `CTAPP_MAX_WORKING_BYTES` (default
+  2 GiB); `CTAPP_MAX_INPUT_VOXELS` remains an optional additional cap. It covers intake-side buffers only,
+  not model-specific workspace. It is not streaming inference or a guarantee that every accepted scan fits.
+- The CT app uses TotalSegmentator and schedules MOOSE peripheral bones for its `skeletal` profile. The
+  hosted Docker image currently excludes `moosez`, so that optional task is unavailable there; the result
+  must say so and must not imply complete peripheral-bone coverage. MOOSE terms/weights remain an explicit
+  deployment decision in the owner decisions below.
+- Region marker patterns and model-task triggers are now in the packaged `planning_catalog.json`; each task
+  is checked against the model-to-anatomy label map and the model allowlist. This removes a second hard-coded
+  task table, while the current marker definitions still need broader validation against focused scans.
+- Anatomy status distinguishes segmented, partial, not scheduled, unavailable, failed, and not detected.
+  A missing label does not prove absence; field-of-view status remains `not_assessed` until a validated
+  method can establish whether an anatomy is in the scan.
+- The app produces scan-linked segmentation meshes, but the finding-analysis sidecar remains
+  `not_scheduled`. No fracture-detection model is integrated or validated. The project therefore does not
+  yet meet the goal of reliable hairline-fracture visualization.
+- Benchmark alignment now compares the full physical grid (size, spacing, origin, direction), not only
+  array dimensions. This guards the evaluation pipeline; it does not establish model accuracy.
+
+The table in section 1 is a **historical pre-migration audit**, not a description of the current code.
 
 **Owner decisions**
 - **Goal (2026-11-21):** a regulated **medical device** that doctors use before surgery (planning) and during surgery (reference display), give feedback on, and that grows toward surgical use. The route, stages and first intended use are in [REGULATORY_PATH.md](REGULATORY_PATH.md), which overrides the "research only" recommendation in section 2.1 below. Until a licence or a permitted clinical investigation exists, outputs stay labelled research use, and the engineering follows device design controls from now on.
@@ -22,7 +50,7 @@ Evidence: five reports in [research/](research/):
 
 Where they disagree, **critique.md wins**, and this plan follows it.
 
-## 1. Where we are (honest summary of the audit)
+## 1. Historical baseline before the CT platform migration
 
 | Part | Today | Verdict |
 |---|---|---|
@@ -68,6 +96,10 @@ Where they disagree, **critique.md wins**, and this plan follows it.
 | Demo gallery | Pre-computed results from the TotalSegmentator dataset (1,228 CTs, **CC BY 4.0**) | CC BY 4.0 | High |
 
 ## 4. Safety and privacy rules for the hosted service
+
+### Optional findings/reasoning layer
+
+Keep structured finding analysis separate from segmentation and meshing. A future region-aware 3D model may produce concise observations and evidence locations, but it must not be treated as a fracture segmenter or a substitute for human review. The optional result contract and coordinate-mapping gates are in [REASONING_WORKFLOW.md](REASONING_WORKFLOW.md). Do not schedule a model by default until scope, terms, and source-coordinate round trips are reviewed.
 
 - **Upload path.** No raw DICOM ever reaches the server:
   - the browser de-identifies (DICOM PS3.15 Annex E), drops scouts, screenshots and dose reports, converts to NIfTI, and uploads that;

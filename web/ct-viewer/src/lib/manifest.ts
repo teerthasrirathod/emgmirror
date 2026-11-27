@@ -10,6 +10,8 @@ export interface QC {
   mean_dist_mm?: number | null
   volume_change_pct?: number | null
   cut_by_scan_edge?: boolean | null
+  /** Minimum distance from any mask voxel center to a CT volume boundary, in mm. */
+  minimum_scan_edge_distance_mm?: number | null
 }
 
 export interface StructureEntry {
@@ -22,6 +24,9 @@ export interface StructureEntry {
   volume_ml?: number | null
   surface_area_cm2?: number | null
   qc?: QC
+  /** Source-reference coverage, distinct from model processing status and mesh QC. */
+  source_status?: 'complete' | 'partial' | 'unknown'
+  source_status_reason?: string
 }
 
 /** De-identified study identifiers (proposed S2 key `study`). */
@@ -32,6 +37,69 @@ export interface StudyInfo {
   study_hash?: string | null
 }
 
+/** Sanitized execution summary. It reports work performed, not complete anatomy coverage. */
+export interface ProcessingSummary {
+  profile?: string
+  detected_regions?: Record<string, number>
+  planned_regions?: Record<string, number>
+  planned_models?: string[]
+  model_runs?: Array<{ source: string; status: string; seconds?: number }>
+  anatomy_coverage?: Array<{
+    anatomy_id: string
+    label_id: number
+    name: string
+    laterality: 'left' | 'right' | 'not_applicable'
+    status: 'segmented' | 'partial' | 'not_scheduled' | 'unavailable' | 'failed' | 'not_detected'
+    capable_models: string[]
+    scheduled_models: string[]
+    completed_models: string[]
+    failed_models: string[]
+    unavailable_models?: string[]
+    field_of_view_status?: 'not_assessed'
+  }>
+  geometry?: Record<string, unknown>
+  warnings?: string[]
+}
+
+export type AnalysisStatus = 'not_scheduled' | 'unavailable' | 'failed' | 'partial' | 'complete'
+
+export interface AnalysisReference {
+  file: string
+}
+
+export interface AnalysisFinding {
+  finding_id: string
+  finding_type: string
+  anatomy_id?: string
+  region_id: string
+  assertion: 'present' | 'absent' | 'uncertain' | 'not_assessed'
+  summary: string
+  source: { kind: 'model' | 'human'; id: string; version?: string; task_id?: string }
+  review_status: 'unreviewed' | 'reviewed' | 'disagreement' | 'adjudicated'
+  review_coverage: 'complete' | 'partial' | 'unknown'
+  evidence: {
+    volume_id: 'ct'
+    coordinate_frame: 'LPS-mm'
+    point_xyz_mm: [number, number, number]
+    extent_xyz_mm?: [number, number, number]
+  }
+}
+
+export interface AnalysisResult {
+  version: 1
+  status: AnalysisStatus
+  runs: Array<{
+    task_id: string
+    model_id?: string
+    model_version?: string
+    status: AnalysisStatus
+    regions?: string[]
+    warnings?: string[]
+  }>
+  findings: AnalysisFinding[]
+  warnings?: string[]
+}
+
 export interface Manifest {
   version: number
   units: string
@@ -39,9 +107,15 @@ export interface Manifest {
   lps_to_gltf: number[][]
   structures: StructureEntry[]
   combined: { web: string; print?: string }
-  volumes?: { ct?: string; labels?: string; ct_preview?: string }
+  volumes?: { ct?: string; labels?: string; ct_preview?: string; labels_preview?: string; model_input?: string; labels_model_grid?: string }
   source?: Record<string, string>
   study?: StudyInfo
+  /** Intake adapter and source-to-canonical geometry record, when produced by upload processing. */
+  intake?: Record<string, unknown>
+  /** Planner and per-model results retained from the segmentation pipeline. */
+  processing?: ProcessingSummary
+  /** Optional region-aware finding analysis sidecar; independent of segmentation. */
+  analysis?: AnalysisReference
 }
 
 /** One structure as the viewer uses it. */
@@ -56,6 +130,8 @@ export interface Structure {
   volumeMl: number | null
   areaCm2: number | null
   qc: QC
+  sourceStatus?: 'complete' | 'partial' | 'unknown'
+  sourceStatusReason?: string
 }
 
 export const SYSTEM_ORDER: System[] = ['skeleton', 'organs', 'vessels', 'muscles', 'other']
@@ -114,6 +190,8 @@ export function normalise(m: Manifest): Structure[] {
       volumeMl: s.volume_ml ?? null,
       areaCm2: s.surface_area_cm2 ?? null,
       qc: s.qc ?? {},
+      sourceStatus: s.source_status,
+      sourceStatusReason: s.source_status_reason,
     }
   })
 }
@@ -126,6 +204,42 @@ export async function loadManifest(base: string): Promise<Manifest> {
   return m
 }
 
+export async function loadAnalysis(base: string, file: string): Promise<AnalysisResult> {
+  const segments = file.replace(/\\/g, '/').split('/')
+  if (!file || file.startsWith('/') || file.includes(':') || segments.some((part) => !part || part === '.' || part === '..')) {
+    throw new Error('The analysis result path is invalid.')
+  }
+  const r = await fetch(join(base, file))
+  if (!r.ok) throw new Error(`Could not read the analysis result (${file}: HTTP ${r.status}).`)
+  const value: unknown = await r.json()
+  if (!value || typeof value !== 'object') throw new Error('The analysis result is not an object.')
+  const doc = value as Partial<AnalysisResult>
+  const statuses: AnalysisStatus[] = ['not_scheduled', 'unavailable', 'failed', 'partial', 'complete']
+  if (doc.version !== 1 || !statuses.includes(doc.status as AnalysisStatus) || !Array.isArray(doc.runs) || !Array.isArray(doc.findings)) {
+    throw new Error('The analysis result does not match the supported contract.')
+  }
+  const validFindings = doc.findings.every((f) =>
+    !!f && typeof f.finding_id === 'string' && typeof f.finding_type === 'string' &&
+    typeof f.region_id === 'string' && typeof f.summary === 'string' &&
+    ['present', 'absent', 'uncertain', 'not_assessed'].includes(f.assertion) &&
+    !!f.source && ['model', 'human'].includes(f.source.kind) && typeof f.source.id === 'string' &&
+    ['unreviewed', 'reviewed', 'disagreement', 'adjudicated'].includes(f.review_status) &&
+    ['complete', 'partial', 'unknown'].includes(f.review_coverage) &&
+    (f.assertion !== 'absent' || (f.source.kind === 'human' && f.review_status !== 'unreviewed' && f.review_status !== 'disagreement' && f.review_coverage === 'complete')) &&
+    !!f.evidence && f.evidence.volume_id === 'ct' && f.evidence.coordinate_frame === 'LPS-mm' &&
+    Array.isArray(f.evidence.point_xyz_mm) && f.evidence.point_xyz_mm.length === 3 &&
+    f.evidence.point_xyz_mm.every(Number.isFinite),
+  )
+  const validRuns = doc.runs.every((run) =>
+    !!run && typeof run.task_id === 'string' && statuses.includes(run.status) &&
+    (run.model_id === undefined || typeof run.model_id === 'string') &&
+    (run.regions === undefined || (Array.isArray(run.regions) && run.regions.every((region) => typeof region === 'string'))),
+  )
+  const validWarnings = doc.warnings === undefined || (Array.isArray(doc.warnings) && doc.warnings.every((warning) => typeof warning === 'string'))
+  if (!validFindings || !validRuns || !validWarnings) throw new Error('The analysis result contains invalid run, finding, or evidence data.')
+  return doc as AnalysisResult
+}
+
 export function join(base: string, path: string): string {
   if (/^(https?:)?\/\//.test(path) || path.startsWith('/')) return path
   return base.replace(/\/?$/, '/') + path
@@ -135,6 +249,9 @@ export function join(base: string, path: string): string {
 export function qcBadges(qc: QC): { text: string; tone: 'warn' | 'info' }[] {
   const out: { text: string; tone: 'warn' | 'info' }[] = []
   if (qc.cut_by_scan_edge) out.push({ text: 'Cut by scan edge', tone: 'warn' })
+  else if (typeof qc.minimum_scan_edge_distance_mm === 'number' && qc.minimum_scan_edge_distance_mm <= 5) {
+    out.push({ text: `Near scan edge (${qc.minimum_scan_edge_distance_mm.toFixed(1)} mm)`, tone: 'warn' })
+  }
   if (qc.watertight === false) out.push({ text: 'Surface has gaps', tone: 'warn' })
   if (qc.self_intersections) out.push({ text: 'Self-intersecting surface', tone: 'warn' })
   if (typeof qc.hd95_mm === 'number' && qc.hd95_mm > 2) out.push({ text: `Shape deviates up to ${qc.hd95_mm.toFixed(1)} mm`, tone: 'info' })

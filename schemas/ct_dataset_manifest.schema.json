@@ -1,0 +1,226 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:emgmirror:schema:ct-dataset-manifest:1.0",
+  "title": "CT Dataset Manifest Record",
+  "description": "One record per JSONL line. Use pseudonymous identifiers and non-identifying technical metadata only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_version", "dataset_id", "case_id", "patient_group_id", "site_id", "split", "split_strategy", "cohort_ids", "source", "modality", "original_geometry", "anatomy_annotations", "fracture_assessment", "fracture_lesions"],
+  "properties": {
+    "manifest_version": {"const": "1.0"},
+    "dataset_id": {"$ref": "#/definitions/opaqueId"},
+    "case_id": {"$ref": "#/definitions/opaqueId"},
+    "patient_group_id": {"$ref": "#/definitions/opaqueId"},
+    "site_id": {"$ref": "#/definitions/opaqueId"},
+    "split": {"enum": ["train", "validation", "internal_test", "external_test"]},
+    "split_strategy": {"$ref": "#/definitions/splitStrategy"},
+    "cohort_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/definitions/opaqueId"}},
+    "source": {"$ref": "#/definitions/source"},
+    "modality": {"type": "string", "minLength": 1, "description": "Extensible modality identifier; this protocol currently targets CT."},
+    "technical_metadata": {"$ref": "#/definitions/technicalMetadata"},
+    "original_geometry": {"$ref": "#/definitions/geometry"},
+    "derived_volumes": {"type": "array", "items": {"$ref": "#/definitions/derivedVolume"}},
+    "region_fov": {"type": "array", "items": {"$ref": "#/definitions/regionFov"}},
+    "anatomy_annotations": {"type": "array", "items": {"$ref": "#/definitions/anatomyAnnotation"}},
+    "model_runs": {"type": "array", "items": {"$ref": "#/definitions/modelRun"}},
+    "fracture_assessment": {"$ref": "#/definitions/fractureAssessment"},
+    "fracture_lesions": {"type": "array", "items": {"$ref": "#/definitions/fractureLesion"}},
+    "extensions": {
+      "type": "object",
+      "description": "Only pre-reviewed, non-identifying extensions. Keys must start x-. Never place free text or source headers here.",
+      "patternProperties": {"^x-[a-z0-9][a-z0-9._-]*$": {"oneOf": [{"type": "string", "maxLength": 200}, {"type": "number"}, {"type": "integer"}, {"type": "boolean"}]}},
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"fracture_assessment": {"properties": {"status": {"const": "positive"}}}}},
+      "then": {"properties": {"fracture_lesions": {"minItems": 1}}}
+    },
+    {
+      "if": {"properties": {"fracture_assessment": {"properties": {"status": {"enum": ["negative", "not_applicable"]}}}}},
+      "then": {"properties": {"fracture_lesions": {"maxItems": 0}}}
+    }
+  ],
+  "definitions": {
+    "opaqueId": {"type": "string", "minLength": 8, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+    "relativePath": {"type": "string", "minLength": 1, "maxLength": 1024, "description": "Relative path below the local dataset root; validator rejects absolute, traversal, and escaping symlink paths."},
+    "splitStrategy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "version"],
+      "properties": {
+        "mode": {"enum": ["patient_grouped", "site_held_out"]},
+        "version": {"type": "string", "minLength": 1, "maxLength": 80},
+        "held_out_site_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/definitions/opaqueId"}}
+      }
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "format_id", "adapter_id", "paths"],
+      "properties": {
+        "kind": {"type": "string", "minLength": 1, "maxLength": 80},
+        "format_id": {"type": "string", "minLength": 1, "maxLength": 120},
+        "adapter_id": {"type": "string", "minLength": 1, "maxLength": 120},
+        "paths": {"type": "array", "minItems": 1, "items": {"$ref": "#/definitions/relativePath"}}
+      }
+    },
+    "geometry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dimensions_xyz", "spacing_mm_xyz", "origin_mm", "direction_3x3", "coordinate_frame"],
+      "properties": {
+        "dimensions_xyz": {"type": "array", "items": {"type": "integer", "minimum": 1}, "minItems": 3, "maxItems": 3},
+        "spacing_mm_xyz": {"type": "array", "items": {"type": "number", "exclusiveMinimum": 0}, "minItems": 3, "maxItems": 3},
+        "origin_mm": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3},
+        "direction_3x3": {"type": "array", "items": {"type": "number", "minimum": -1.000001, "maximum": 1.000001}, "minItems": 9, "maxItems": 9},
+        "coordinate_frame": {"type": "string", "minLength": 1, "maxLength": 80}
+      }
+    },
+    "derivedVolume": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "path", "geometry", "parent_artifact_id", "conversion_history"],
+      "properties": {
+        "artifact_id": {"$ref": "#/definitions/opaqueId"},
+        "path": {"$ref": "#/definitions/relativePath"},
+        "geometry": {"$ref": "#/definitions/geometry"},
+        "parent_artifact_id": {"type": "string", "minLength": 1},
+        "conversion_history": {"type": "array", "minItems": 1, "items": {"$ref": "#/definitions/conversion"}}
+      }
+    },
+    "conversion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["operation", "software", "version"],
+      "properties": {
+        "operation": {"type": "string", "minLength": 1},
+        "software": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "resampling": {"type": "boolean"},
+        "reason_code": {"enum": ["outside_scope", "outside_fov", "not_applicable_by_protocol", "other_reviewed"]}
+      }
+    },
+    "regionFov": {
+      "type": "object", "additionalProperties": false,
+      "required": ["region_id", "status"],
+      "properties": {
+        "region_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["in_fov", "partial_fov", "out_of_fov", "uncertain", "not_applicable"]},
+        "basis": {"enum": ["geometry_estimate", "reviewed", "not_recorded"]}
+      }
+    },
+    "anatomyAnnotation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["anatomy_id", "region_id", "fov_status", "annotation_status"],
+      "properties": {
+        "anatomy_id": {"type": "string", "minLength": 1},
+        "region_id": {"type": "string", "minLength": 1},
+        "fov_status": {"enum": ["in_fov", "partial_fov", "out_of_fov", "uncertain", "not_applicable"]},
+        "annotation_status": {"enum": ["annotated", "not_annotated", "uncertain", "not_applicable"]},
+        "finding_status": {"enum": ["present", "absent", "uncertain", "not_assessed", "not_applicable"]},
+        "mask_path": {"$ref": "#/definitions/relativePath"},
+        "reference_artifact_id": {"type": "string", "minLength": 1},
+        "review_status": {"enum": ["unreviewed", "reviewed", "disagreement", "adjudicated"]}
+      },
+      "allOf": [
+        {"if": {"properties": {"annotation_status": {"const": "annotated"}}}, "then": {"required": ["mask_path"]}},
+        {"if": {"properties": {"finding_status": {"const": "absent"}}}, "then": {
+          "required": ["review_status"],
+          "properties": {
+            "review_status": {"enum": ["reviewed", "adjudicated"]},
+            "annotation_status": {"const": "annotated"}
+          }
+        }}
+      ]
+    },
+    "modelRun": {
+      "type": "object", "additionalProperties": false,
+      "required": ["model_id", "task_id", "version", "status"],
+      "properties": {
+        "model_id": {"type": "string", "minLength": 1},
+        "task_id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "anatomy_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "status": {"enum": ["segmented", "not_scheduled", "unavailable", "failed", "not_detected", "partial", "uncertain"]},
+        "output_path": {"$ref": "#/definitions/relativePath"},
+        "qc_status": {"enum": ["pass", "warn", "fail", "not_assessed"]}
+      }
+    },
+    "review": {
+      "type": "object", "additionalProperties": false,
+      "required": ["coverage", "status", "reviewer_count"],
+      "properties": {
+        "coverage": {"enum": ["complete", "partial", "unknown"]},
+        "status": {"enum": ["unreviewed", "reviewed", "disagreement", "adjudicated"]},
+        "reviewer_count": {"type": "integer", "minimum": 0},
+        "reviewer_roles": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 80}},
+        "reviewer_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/definitions/opaqueId"}},
+        "adjudication": {"enum": ["not_needed", "pending", "resolved", "unresolved"]},
+        "protocol_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "fractureAssessment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "scope_region_id", "review"],
+      "properties": {
+        "status": {"enum": ["positive", "negative", "uncertain", "unreviewed", "not_applicable"]},
+        "scope_region_id": {"type": "string", "minLength": 1},
+        "reason_code": {"enum": ["outside_scope", "outside_fov", "not_applicable_by_protocol", "other_reviewed"]},
+        "review": {"$ref": "#/definitions/review"}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "negative"}}}, "then": {
+          "properties": {"review": {"properties": {
+            "coverage": {"const": "complete"},
+            "status": {"enum": ["reviewed", "adjudicated"]},
+            "reviewer_count": {"minimum": 1}
+          }}}
+        }},
+        {"if": {"properties": {"status": {"const": "not_applicable"}}}, "then": {"required": ["reason_code"]}}
+      ]
+    },
+    "fractureLesion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["lesion_id", "anatomy_id", "laterality", "fracture_type", "review_status"],
+      "properties": {
+        "lesion_id": {"$ref": "#/definitions/opaqueId"},
+        "anatomy_id": {"type": "string", "minLength": 1},
+        "laterality": {"enum": ["left", "right", "midline", "bilateral", "unknown"]},
+        "location": {"$ref": "#/definitions/localization"},
+        "fracture_type": {"type": "string", "minLength": 1},
+        "acuity": {"enum": ["acute", "subacute", "chronic", "healing", "unknown"]},
+        "subtlety": {"type": "integer", "minimum": 1, "maximum": 5},
+        "review_status": {"enum": ["unreviewed", "reviewed", "disagreement", "adjudicated", "uncertain"]},
+        "mask_path": {"$ref": "#/definitions/relativePath"},
+        "reviewer_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/definitions/opaqueId"}}
+      },
+      "anyOf": [{"required": ["location"]}, {"required": ["mask_path"]}]
+    },
+    "localization": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "voxel_ijk": {"type": "array", "items": {"type": "number", "minimum": 0}, "minItems": 3, "maxItems": 3},
+        "world_xyz_mm": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3},
+        "coordinate_frame": {"type": "string", "minLength": 1, "maxLength": 80},
+        "artifact_id": {"type": "string", "minLength": 1},
+        "bbox": {"type": "array", "items": {"type": "number"}, "minItems": 6, "maxItems": 6}
+      },
+      "anyOf": [{"required": ["voxel_ijk"]}, {"required": ["world_xyz_mm"]}, {"required": ["bbox"]}],
+      "allOf": [
+        {"if": {"required": ["world_xyz_mm"]}, "then": {"required": ["coordinate_frame"]}},
+        {"if": {"required": ["bbox"]}, "then": {"required": ["coordinate_frame"]}}
+      ]
+    },
+    "technicalMetadata": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "manufacturer": {"type": "string", "maxLength": 100},
+        "scanner_model": {"type": "string", "maxLength": 100},
+        "kvp": {"type": "number", "exclusiveMinimum": 0},
+        "exposure_mas": {"type": "number", "exclusiveMinimum": 0},
+        "slice_thickness_mm": {"type": "number", "exclusiveMinimum": 0},
+        "reconstruction_kernel": {"type": "string", "maxLength": 100},
+        "contrast_status": {"enum": ["with_contrast", "without_contrast", "unknown"]},
+        "intensity_scale": {"type": "string", "maxLength": 80},
+        "protocol_category": {"type": "string", "maxLength": 80}
+      }
+    }
+  }
+}

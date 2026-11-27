@@ -9,6 +9,11 @@ export function StructureFacts({ s, compact }: { s: Structure; compact?: boolean
         <span className="swatch" style={{ background: `rgb(${s.rgb.join(',')})` }} aria-hidden="true" />
         {s.name}
       </div>
+      {s.sourceStatus === 'partial' && (
+        <p className="note source-coverage-warning" role="note">
+          Source annotation is incomplete. {s.sourceStatusReason ?? 'The source dataset does not contain complete anatomy for this structure.'}
+        </p>
+      )}
       <div className="facts-row">
         {s.volumeMl != null && <span>{COPY.volume(s.volumeMl)}</span>}
         {!compact && s.areaCm2 != null && <span>{COPY.area(s.areaCm2)}</span>}
@@ -23,6 +28,9 @@ export function StructureFacts({ s, compact }: { s: Structure; compact?: boolean
         </ul>
       )}
       {!compact && s.qc.cut_by_scan_edge && <p className="note">{COPY.cutNote}</p>}
+      {!compact && !s.qc.cut_by_scan_edge && typeof s.qc.minimum_scan_edge_distance_mm === 'number' && s.qc.minimum_scan_edge_distance_mm <= 5 && (
+        <p className="note">{COPY.qcExplain.Near}</p>
+      )}
     </div>
   )
 }

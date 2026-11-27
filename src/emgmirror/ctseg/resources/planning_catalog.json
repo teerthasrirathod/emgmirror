@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "regions": {
+    "head": {"markers": ["^(brain|skull)$"]},
+    "neck": {"markers": ["^(vertebrae_C[1-7]|thyroid_gland)$"]},
+    "thorax": {"markers": ["^(lung_.*|heart|vertebrae_T([1-9]|1[0-2])|rib_.*)$"]},
+    "abdomen": {"markers": ["^(liver|spleen|kidney_(left|right)|pancreas|stomach|vertebrae_L[1-5])$"]},
+    "pelvis": {"markers": ["^(hip_(left|right)|sacrum|urinary_bladder|gluteus_maximus_(left|right))$"]},
+    "spine": {"markers": ["^(vertebrae_.*|vertebrae)$"]},
+    "upper_limb": {"markers": ["^humerus_(left|right)$"]},
+    "lower_limb": {"markers": ["^femur_(left|right)$"]},
+    "lumbar": {"markers": ["^(vertebrae_L[1-5])$"]}
+  },
+  "tasks": {
+    "totalsegmentator:craniofacial_structures": {"regions": ["head"], "modalities": ["CT"]},
+    "totalsegmentator:head_glands_cavities": {"regions": ["head"], "modalities": ["CT"]},
+    "totalsegmentator:headneck_bones_vessels": {"regions": ["neck"], "modalities": ["CT"]},
+    "totalsegmentator:headneck_muscles": {"regions": ["neck"], "modalities": ["CT"]},
+    "totalsegmentator:lung_vessels": {"regions": ["thorax"], "modalities": ["CT"]},
+    "totalsegmentator:trunk_cavities": {"regions": ["thorax", "abdomen"], "modalities": ["CT"]},
+    "totalsegmentator:liver_segments": {"regions": ["abdomen"], "modalities": ["CT"], "requires_marker": "liver"},
+    "totalsegmentator:vertebrae_pp_refined": {"regions": ["spine"], "modalities": ["CT"]},
+    "moose:clin_ct_peripheral_bones": {
+      "regions": ["upper_limb", "lower_limb", "limbs_soft_tissue"],
+      "modalities": ["CT"],
+      "profiles": ["skeletal"],
+      "profile_policy": "always_or_any_region"
+    },
+    "moose:clin_ct_body_composition": {"regions": ["lumbar"], "modalities": ["CT"]}
+  }
+}

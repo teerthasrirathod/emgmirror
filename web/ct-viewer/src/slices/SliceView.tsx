@@ -20,6 +20,8 @@ export interface SliceViewProps {
   dragMode: 'windowing' | 'pan' | 'crosshair'
   dark: boolean
   zoomSeq: { factor: number; seq: number }
+  /** Evidence point in patient LPS millimetres; Niivue navigation uses RAS. */
+  focusPointLps?: [number, number, number] | null
   onStatus: (s: { loading: boolean; error?: string; ms?: number }) => void
 }
 
@@ -141,6 +143,13 @@ export default function SliceView(p: SliceViewProps) {
       nv.scaleMultiplier = Math.min(8, Math.max(0.5, nv.scaleMultiplier * p.zoomSeq.factor))
     }
   }, [p.zoomSeq, ready])
+
+  useEffect(() => {
+    const nv = nvRef.current
+    const point = p.focusPointLps
+    if (!nv || !ready || !point) return
+    nv.setCrosshairPos([-point[0], -point[1], point[2]])
+  }, [p.focusPointLps, ready])
 
   useEffect(() => {
     const nv = nvRef.current

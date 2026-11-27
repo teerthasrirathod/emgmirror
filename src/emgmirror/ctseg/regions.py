@@ -1,9 +1,8 @@
-"""Region detection from the base model's result, and the run plan that follows from it.
+"""Region evidence and the run plan derived from the base model's output.
 
-A region is present when its marker structures (from ``total``/``total_mr`` and ``body``) add up to at least
-``region_min_ml``; markers are chosen so that a region only counts when the scan actually covers it (a few
-slices of liver at the bottom of a chest CT still count as abdomen, deliberately: the subtask then runs and
-QC marks its structures as cut by the scan edge).
+Thresholded ``regions`` are retained for summary/QC. Planning uses any non-zero marker evidence so a small
+field of view cannot silently suppress a relevant task; partial structures are still passed to QC, which
+marks surfaces cut by the scan edge.
 
 Limbs: ``upper_limb``/``lower_limb`` come from humerus/femur and from ``body_extremities``. Any limb, or a
 ``body_extremities`` volume of at least ``limb_min_ml``, triggers MOOSE ``clin_ct_peripheral_bones`` (the only
@@ -16,28 +15,31 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from functools import lru_cache
+from importlib import resources
+import json
 
 import numpy as np
 
-from .config import REGION_SUBTASKS, SegConfig
+from .config import SegConfig
 
-_MARKERS: dict[str, re.Pattern] = {
-    "head": re.compile(r"^(brain|skull)$"),
-    "neck": re.compile(r"^(vertebrae_C[1-7]|thyroid_gland)$"),
-    "thorax": re.compile(r"^(lung_.*|heart|vertebrae_T([1-9]|1[0-2])|rib_.*)$"),
-    "abdomen": re.compile(r"^(liver|spleen|kidney_(left|right)|pancreas|stomach|vertebrae_L[1-5])$"),
-    "pelvis": re.compile(r"^(hip_(left|right)|sacrum|urinary_bladder|gluteus_maximus_(left|right))$"),
-    "spine": re.compile(r"^(vertebrae_.*|vertebrae)$"),
-    "upper_limb": re.compile(r"^humerus_(left|right)$"),
-    "lower_limb": re.compile(r"^femur_(left|right)$"),
-    "lumbar": re.compile(r"^(vertebrae_L[1-5])$"),
-}
+
+@lru_cache(maxsize=1)
+def _planning_catalog() -> dict:
+    return json.loads(resources.files("emgmirror.ctseg.resources").joinpath("planning_catalog.json").read_text())
+
+
+@lru_cache(maxsize=1)
+def _markers() -> dict[str, tuple[re.Pattern, ...]]:
+    return {region: tuple(re.compile(pattern) for pattern in entry["markers"])
+            for region, entry in _planning_catalog()["regions"].items()}
 
 
 @dataclass
 class Plan:
     base: str  # "totalsegmentator:total" | "totalsegmentator:total_mr"
     regions: dict[str, float] = field(default_factory=dict)  # region -> marker volume (mL)
+    planning_regions: dict[str, float] = field(default_factory=dict)  # any positive marker evidence
     subtasks: list[str] = field(default_factory=list)  # "totalsegmentator:<task>"
     moose: list[str] = field(default_factory=list)  # "moose:<model>"
     reasons: list[str] = field(default_factory=list)
@@ -48,6 +50,7 @@ class Plan:
 
     def to_dict(self) -> dict:
         return {"base": self.base, "regions": {k: round(v, 1) for k, v in self.regions.items()},
+                "planning_regions": {k: round(v, 1) for k, v in self.planning_regions.items()},
                 "subtasks": self.subtasks, "moose": self.moose, "reasons": self.reasons}
 
 
@@ -58,8 +61,8 @@ def volumes_ml(labels: np.ndarray, classes: dict[int, str], voxel_ml: float) -> 
 
 def detect(vols: dict[str, float], cfg: SegConfig) -> dict[str, float]:
     out = {}
-    for region, pat in _MARKERS.items():
-        v = sum(ml for name, ml in vols.items() if pat.match(name))
+    for region, patterns in _markers().items():
+        v = sum(ml for name, ml in vols.items() if any(pat.match(name) for pat in patterns))
         if v >= cfg.region_min_ml:
             out[region] = v
     ext = vols.get("body_extremities", 0.0)
@@ -68,8 +71,21 @@ def detect(vols: dict[str, float], cfg: SegConfig) -> dict[str, float]:
     return out
 
 
+def _planning_evidence(vols: dict[str, float]) -> dict[str, float]:
+    """Use any non-zero catalog marker to select tasks; volume thresholds are reporting-only."""
+    out = {}
+    for region, patterns in _markers().items():
+        v = sum(ml for name, ml in vols.items() if any(pat.match(name) for pat in patterns))
+        if v > 0:
+            out[region] = v
+    ext = vols.get("body_extremities", 0.0)
+    if ext > 0:
+        out["limbs_soft_tissue"] = ext
+    return out
+
+
 def make_plan(base: str, vols: dict[str, float], cfg: SegConfig, modality: str) -> Plan:
-    plan = Plan(base=base, regions=detect(vols, cfg))
+    plan = Plan(base=base, regions=detect(vols, cfg), planning_regions=_planning_evidence(vols))
     if cfg.profile == "minimal" and cfg.tasks is None:
         plan.reasons.append("profile 'minimal': no region subtasks, no MOOSE")
         return plan
@@ -81,24 +97,40 @@ def make_plan(base: str, vols: dict[str, float], cfg: SegConfig, modality: str) 
         plan.reasons.append("MR: only total_mr and body_mr have open MR weights in the allowlist")
     else:
         wanted = []
-        for region in plan.regions:
-            for t in REGION_SUBTASKS.get(region, []):
-                if t == "liver_segments" and vols.get("liver", 0.0) < cfg.region_min_ml:
+        for region in plan.planning_regions:
+            for source, task in _planning_catalog()["tasks"].items():
+                if not source.startswith("totalsegmentator:") or region not in task.get("regions", []):
                     continue
-                if t not in wanted:
-                    wanted.append(t)
-                    plan.reasons.append(f"{t}: region '{region}' in view")
+                if modality not in task.get("modalities", []):
+                    continue
+                required_marker = task.get("requires_marker")
+                if required_marker and vols.get(required_marker, 0.0) <= 0:
+                    continue
+                name = source.split(":", 1)[1]
+                if name not in wanted:
+                    wanted.append(name)
+                    plan.reasons.append(f"{name}: non-zero anatomy marker for region '{region}'")
     for t in cfg.extra_tasks:
         if t not in wanted:
             wanted.append(t)
             plan.reasons.append(f"{t}: requested")
     plan.subtasks = [f"totalsegmentator:{t}" for t in wanted]
-    if cfg.moose and modality == "CT":
-        limbs = any(r in plan.regions for r in ("upper_limb", "lower_limb", "limbs_soft_tissue"))
-        if limbs and "clin_ct_peripheral_bones" in cfg.moose_models:
-            plan.moose.append("moose:clin_ct_peripheral_bones")
-            plan.reasons.append("MOOSE clin_ct_peripheral_bones: limbs in view")
-        if "lumbar" in plan.regions and "clin_ct_body_composition" in cfg.moose_models:
-            plan.moose.append("moose:clin_ct_body_composition")
-            plan.reasons.append("MOOSE clin_ct_body_composition: lumbar trunk wall in view")
+    if cfg.moose:
+        for source, task in _planning_catalog()["tasks"].items():
+            if not source.startswith("moose:") or modality not in task.get("modalities", []):
+                continue
+            name = source.split(":", 1)[1]
+            if name not in cfg.moose_models:
+                continue
+            matching_regions = set(task.get("regions", [])) & set(plan.planning_regions)
+            scheduled_by_profile = cfg.profile in task.get("profiles", [])
+            policy = task.get("profile_policy")
+            should_schedule = bool(matching_regions)
+            if policy == "always_or_any_region":
+                should_schedule = should_schedule or scheduled_by_profile
+            if should_schedule:
+                plan.moose.append(source)
+                reason = (f"profile '{cfg.profile}' or region evidence {sorted(matching_regions)}"
+                          if scheduled_by_profile else f"region evidence {sorted(matching_regions)}")
+                plan.reasons.append(f"{source}: {reason}")
     return plan

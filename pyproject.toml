@@ -3,21 +3,18 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "emgmirror"
-version = "0.1.0"
-description = "Bilateral forearm sEMG: use the healthy arm as a live reference to visualise and quantify the recovering arm."
+name = "emgmirror-ct"
+version = "0.2.0"
+description = "CT volume intake, segmentation orchestration, and 3D visualization research software"
 readme = "README.md"
-license = { text = "Apache-2.0" }
+license = "Apache-2.0"
 requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.26",
     "scipy>=1.11",
-    "scikit-learn>=1.4",
     "pyyaml>=6.0",
-    "plotly>=5.20",
     "fastapi>=0.110",
     "uvicorn[standard]>=0.29",
-    "pyserial>=3.5",
     "pydicom>=3.0",
     "SimpleITK>=2.5",
     "nibabel>=5.3",
@@ -31,14 +28,13 @@ dependencies = [
 dev = ["pytest>=8.0", "httpx>=0.27"]
 
 [project.scripts]
-emgmirror = "emgmirror.cli:main"
+ct3d = "emgmirror.ctapp.server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-emgmirror = ["server/static/*", "ct/static/*", "viewer/static/*"]
+emgmirror = ["ctseg/resources/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["hardware: needs a connected ESP32 running firmware/emg_esp32_v2 (set EMGMIRROR_PORT)"]

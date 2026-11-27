@@ -4,6 +4,7 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+.runtime/
 .pytest_cache/
 build/
 dist/
@@ -37,6 +38,10 @@ data/multimodal/
 
 # CT viewer sample data (downloaded, see web/ct-viewer/README.md)
 data/ct_sample/
+web/ct-viewer/public/sample/
+web/ct-viewer/public/visible-human/
 
 # CT platform result write-ups are documentation, not run output
 !docs/ct_platform/results/
+# Dataset evaluation private data (scans, metadata) – keep out of git
+data/ct_eval/

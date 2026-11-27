@@ -1,0 +1,239 @@
+{
+  "source": {
+    "dataset": "201 healthy elbow CT cohort",
+    "doi": "10.5281/zenodo.20305534",
+    "license": "CC BY 4.0",
+    "case_id": "001",
+    "source_reference_scope": [
+      "distal humerus",
+      "proximal ulna"
+    ],
+    "not_reference_annotated": [
+      "radius",
+      "fracture"
+    ]
+  },
+  "comparison": {
+    "model_source": "moose:clin_ct_peripheral_bones",
+    "model_seconds": 77.95805859565735,
+    "model_device": "cpu",
+    "model_classes": {
+      "1": "carpal_left",
+      "2": "carpal_right",
+      "3": "clavicula_left",
+      "4": "clavicula_right",
+      "5": "femur_left",
+      "6": "femur_right",
+      "7": "fibula_left",
+      "8": "fibula_right",
+      "9": "phalanges_hand_left",
+      "10": "phalanges_hand_right",
+      "11": "humerus_left",
+      "12": "humerus_right",
+      "13": "metacarpal_left",
+      "14": "metacarpal_right",
+      "15": "metatarsal_left",
+      "16": "metatarsal_right",
+      "17": "patella_left",
+      "18": "patella_right",
+      "19": "radius_left",
+      "20": "radius_right",
+      "21": "scapula_left",
+      "22": "scapula_right",
+      "23": "skull",
+      "24": "tarsal_left",
+      "25": "tarsal_right",
+      "26": "tibia_left",
+      "27": "tibia_right",
+      "28": "phalanges_feet_left",
+      "29": "phalanges_feet_right",
+      "30": "ulna_left",
+      "31": "ulna_right"
+    },
+    "reference_label_mapping": {
+      "1": {
+        "anatomy": "humerus_right",
+        "basis": "CT overlay plus source named humerus/ulna surfaces; case-specific"
+      },
+      "2": {
+        "anatomy": "ulna_right",
+        "basis": "CT overlay plus source named humerus/ulna surfaces; case-specific"
+      }
+    },
+    "geometry": {
+      "ct": {
+        "size_xyz": [
+          512,
+          512,
+          105
+        ],
+        "spacing_mm_xyz": [
+          0.45507800579071045,
+          0.45507800579071045,
+          1.7211538553237915
+        ],
+        "origin_mm_lps": [
+          -264.4549865722656,
+          53.20000076293945,
+          -1401.989990234375
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      "reference_original": {
+        "size_xyz": [
+          512,
+          512,
+          105
+        ],
+        "spacing_mm_xyz": [
+          0.45507800579071045,
+          0.45507800579071045,
+          1.7211538553237915
+        ],
+        "origin_mm_lps": [
+          -264.4549865722656,
+          53.20000076293945,
+          -1580.989990234375
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "model_original": {
+        "size_xyz": [
+          512,
+          512,
+          105
+        ],
+        "spacing_mm_xyz": [
+          0.45507800579071045,
+          0.45507800579071045,
+          1.7211538553237915
+        ],
+        "origin_mm_lps": [
+          -264.4549865722656,
+          53.20000076293945,
+          -1401.989990234375
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      "reference_resampled_to_ct": {
+        "size_xyz": [
+          512,
+          512,
+          105
+        ],
+        "spacing_mm_xyz": [
+          0.45507800579071045,
+          0.45507800579071045,
+          1.7211538553237915
+        ],
+        "origin_mm_lps": [
+          -264.4549865722656,
+          53.20000076293945,
+          -1401.989990234375
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      "model_resampled_to_ct": {
+        "size_xyz": [
+          512,
+          512,
+          105
+        ],
+        "spacing_mm_xyz": [
+          0.45507800579071045,
+          0.45507800579071045,
+          1.7211538553237915
+        ],
+        "origin_mm_lps": [
+          -264.4549865722656,
+          53.20000076293945,
+          -1401.989990234375
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      "resampling": "nearest-neighbour into the original CT physical grid; no CT resampling"
+    },
+    "metrics_on_matched_anatomy_only": {
+      "humerus_right": {
+        "reference_label_id": 1,
+        "model_class_id": 12,
+        "reference_voxels": 124598,
+        "prediction_voxels": 222390,
+        "reference_volume_ml": 44.41221747902215,
+        "prediction_volume_ml": 79.26959538002002,
+        "dice": 0.5253207603721166,
+        "hd95_mm": 108.28877699122467,
+        "reference_status": "annotated",
+        "review_status": "single_case_exploratory_comparison"
+      },
+      "ulna_right": {
+        "reference_label_id": 2,
+        "model_class_id": 31,
+        "reference_voxels": 79117,
+        "prediction_voxels": 90681,
+        "reference_volume_ml": 28.200785006884505,
+        "prediction_volume_ml": 32.32270416230764,
+        "dice": 0.39826146362147963,
+        "hd95_mm": 49.83973576917274,
+        "reference_status": "annotated",
+        "review_status": "single_case_exploratory_comparison"
+      }
+    },
+    "radius_model_output_voxels_by_class": {
+      "radius_left": 0,
+      "radius_right": 35566
+    },
+    "radius_reference_status": "not_annotated; model radius output is unscored, not a validated radius",
+    "interpretation": "Single healthy right-elbow case; no fracture sensitivity claim. Exploratory model comparison, not clinical validation."
+  }
+}

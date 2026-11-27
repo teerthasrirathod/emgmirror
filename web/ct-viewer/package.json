@@ -10,8 +10,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --port 4173 --strictPort",
     "typecheck": "tsc -b",
-    "sample": "python3 tools/fetch_sample.py --subject s0024 --out ../../data/ct_sample/raw && python3 tools/build_sample.py ../../data/ct_sample/raw/s0024 public/sample && npm run sample:compress",
-    "sample:compress": "gltf-transform meshopt public/sample/combined_web_raw.glb public/sample/combined_web.glb && rm public/sample/combined_web_raw.glb",
+    "sample": "node tools/run_sample.mjs",
+    "sample:compress": "gltf-transform meshopt public/sample/combined_web_raw.glb public/sample/combined_web.glb && node -e \"require('node:fs').rmSync('public/sample/combined_web_raw.glb')\"",
     "test": "playwright test",
     "screenshots": "SCREENSHOTS=1 playwright test tests/screenshots.spec.ts"
   },

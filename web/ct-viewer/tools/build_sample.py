@@ -36,11 +36,20 @@ from skimage import measure
 # anatomical). System grouping drives the material in the viewer.
 SKIP = {"face"}  # never render a face surface (re-identification risk)
 
+SKELETAL_LABEL = re.compile(
+    r"(vertebra|rib|sacrum|coccyx|hip|pelvis|femur|patella|tibia|fibula|"
+    r"tarsal|metatarsal|toe|foot|clavic|scapula|humerus|radius|ulna|"
+    r"carpal|metacarpal|finger|phalange|skull|mandible|maxilla|sternum|hyoid|"
+    r"calcaneus|talus|navicular|cuboid|cuneiform|capitate|hamate|lunate|pisiform|"
+    r"scaphoid|triquetrum|trapezium|trapezoid|bone)",
+    re.IGNORECASE,
+)
+
 
 def classify(name: str) -> tuple[str, str, tuple[int, int, int]]:
     """Return (system, material, rgb) for a TotalSegmentator structure name."""
-    n = name
-    if re.match(r"(vertebrae_|rib_|sacrum|hip_|femur_|humerus_|scapula_|clavicula_|skull|sternum|costal)", n):
+    n = name.lower()
+    if SKELETAL_LABEL.search(n):
         return "skeleton", "bone", (241, 233, 214)
     if re.search(r"(aorta|artery|iliac_artery|pulmonary_artery|brachiocephalic_trunk|carotid|subclavian)", n):
         return "vessels", "artery", (200, 52, 52)
@@ -79,9 +88,15 @@ def pretty(name: str) -> str:
     m = re.match(r"vertebrae_([CTL]\d+)", name)
     if m:
         return f"Vertebra {m.group(1)}"
+    m = re.match(r"vertebra_([CTL]\d+)", name, re.IGNORECASE)
+    if m:
+        return f"Vertebra {m.group(1).upper()}"
     m = re.match(r"rib_(left|right)_(\d+)", name)
     if m:
         return f"Rib {m.group(2)}, {m.group(1)}"
+    m = re.match(r"rib_(\d+)_(left|right)", name, re.IGNORECASE)
+    if m:
+        return f"Rib {m.group(1)}, {m.group(2).lower()}"
     words = name.split("_")
     side = ""
     if words[-1] in ("left", "right"):
@@ -150,6 +165,24 @@ def touches_edge(mask: np.ndarray) -> bool:
         mask[0].any() or mask[-1].any() or mask[:, 0].any() or mask[:, -1].any()
         or mask[:, :, 0].any() or mask[:, :, -1].any()
     )
+
+
+def scan_edge_distance_mm(mask: np.ndarray, affine: np.ndarray) -> float | None:
+    """Minimum occupied-voxel-center distance to a volume boundary, in mm.
+
+    This is a proximity warning only. A nonzero distance does not prove that
+    anatomy is complete; zero is separately reported by ``touches_edge``.
+    The affine's column lengths preserve anisotropic voxel spacing.
+    """
+    coords = np.nonzero(mask)
+    if not coords[0].size:
+        return None
+    spacing = np.linalg.norm(affine[:3, :3], axis=0)
+    distances = []
+    for axis, (values, size) in enumerate(zip(coords, mask.shape)):
+        distances.append(float(values.min()) * spacing[axis])
+        distances.append(float(size - 1 - values.max()) * spacing[axis])
+    return min(distances)
 
 
 def web_budget(material: str, nvox: int) -> int:
@@ -264,6 +297,7 @@ def main() -> None:
                     "mean_dist_mm": round(mean_d, 2),
                     "volume_change_pct": None if np.isnan(vol_change) else round(vol_change, 1),
                     "cut_by_scan_edge": touches_edge(mask),
+                    "minimum_scan_edge_distance_mm": round(scan_edge_distance_mm(mask, ct.affine), 2),
                 },
             }
         )
@@ -272,31 +306,50 @@ def main() -> None:
     lab_img = nib.Nifti1Image(labels, ct.affine)
     lab_img.header.set_xyzt_units("mm", "sec")
     nib.save(lab_img, out / "labels.nii.gz")
+    # The preview CT above is an exact stride sample. Keep a label preview on
+    # that same voxel grid so the linked slice view stays aligned without
+    # forcing browsers to decompress the full-resolution label volume.
+    label_preview = labels[::step, ::step, ::step]
+    label_preview_img = nib.Nifti1Image(label_preview, prev_aff)
+    label_preview_img.header.set_xyzt_units("mm", "sec")
+    nib.save(label_preview_img, out / "labels_preview.nii.gz")
     web_scene.export(out / "combined_web_raw.glb")
     print_scene.export(out / "combined_print.glb")
 
+    source_file = src / "SOURCE.txt"
+    source_lines = source_file.read_text(encoding="utf-8").splitlines() if source_file.exists() else []
+    dataset_name = source_lines[0].split(", subject ", 1)[0] if source_lines else "Unspecified reference dataset"
+    doi_line = next((line for line in source_lines if "doi.org/" in line), "")
+    doi = doi_line.split("doi.org/", 1)[-1].split()[0] if doi_line else ""
+    segmentation_kind = source_lines[2] if len(source_lines) > 2 else "Dataset reference labels; no emgmirror inference."
     manifest = {
         "version": 1,
         "units": "m",
         "axes": "glTF (+Y up, from patient LPS)",
         "lps_to_gltf": LPS_TO_GLTF.tolist(),
         "source": {
-            "dataset": "TotalSegmentator dataset v1 (CC BY 4.0)",
-            "doi": "10.5281/zenodo.6802613",
+            "dataset": dataset_name,
+            "doi": doi,
             "subject": src.name,
             "mesher": "sample builder (marching cubes + quadric decimation), not the S2 mesher",
+            "segmentation_kind": segmentation_kind,
         },
         # De-identified study identifiers shown on screen at all times (proposed for S2).
         # The public dataset has no study date or series text.
         "study": {
             "study_date": None,
-            "series_description": f"TotalSegmentator {src.name} (public dataset)",
+            "series_description": f"{dataset_name}: {src.name} (public dataset)",
             "study_hash": hashlib.sha256((out / "ct.nii.gz").read_bytes()).hexdigest(),
         },
         "structures": structures,
         "combined": {"web": "combined_web.glb", "print": "combined_print.glb"},
         # Optional keys the viewer understands (proposed for S2):
-        "volumes": {"ct": "ct.nii.gz", "labels": "labels.nii.gz", "ct_preview": "ct_preview.nii.gz"},
+        "volumes": {
+            "ct": "ct.nii.gz",
+            "labels": "labels.nii.gz",
+            "ct_preview": "ct_preview.nii.gz",
+            "labels_preview": "labels_preview.nii.gz",
+        },
     }
     (out / "manifest.json").write_text(json.dumps(manifest, indent=1))
     shutil.copy(src / "SOURCE.txt", out / "SOURCE.txt") if (src / "SOURCE.txt").exists() else None

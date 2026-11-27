@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { join, loadManifest, normalise, type Manifest, type Structure } from './lib/manifest'
+import { join, loadAnalysis, loadManifest, normalise, type AnalysisResult, type Manifest, type Structure } from './lib/manifest'
 import { loadVolume, type VolumeResult } from './lib/volume'
 import { preset, WINDOW_PRESETS, type WindowState } from './lib/windows'
 import { DEFAULT_CLIP, type ClipState } from './model/clip'
@@ -18,6 +18,8 @@ import { builtAssets, offlineUrls, registerSW, saveOffline } from './lib/offline
 import { isApproved, loadRecord, saveRecord, versionOf, type AuditEvent, type Edit, type ReviewRecord, type Reviewer } from './review/review'
 import ReviewPanel from './review/ReviewPanel'
 import StatusBar from './ui/StatusBar'
+import ProcessingReport from './ui/ProcessingReport'
+import FindingsPanel from './ui/FindingsPanel'
 import OrientationMarkers from './ui/OrientationMarkers'
 
 const ModelView = lazy(() => import('./model/ModelView'))
@@ -50,6 +52,8 @@ const PRESETS: { name: ViewPreset; label: string; short: string }[] = [
 export default function App() {
   const base = useMemo(() => new URLSearchParams(location.search).get('result') || 'sample/', [])
   const [manifest, setManifest] = useState<Manifest | null>(null)
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null)
+  const [analysisError, setAnalysisError] = useState<string | null>(null)
   const [structures, setStructures] = useState<Structure[]>([])
   const [states, setStates] = useState<StructureState[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -61,6 +65,7 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('model')
   const [sliceMode, setSliceMode] = useState<SliceMode>('multi')
   const [slicesOpened, setSlicesOpened] = useState(false)
+  const [findingFocus, setFindingFocus] = useState<[number, number, number] | null>(null)
   const [sliceStatus, setSliceStatus] = useState<{ loading: boolean; error?: string }>({ loading: false })
   const [win, setWin] = useState<WindowState>(preset('soft'))
   const [clip, setClip] = useState<ClipState>(DEFAULT_CLIP)
@@ -129,6 +134,11 @@ export default function App() {
     loadManifest(base)
       .then((m) => {
         setManifest(m)
+        setAnalysis(null)
+        setAnalysisError(null)
+        if (m.analysis?.file) {
+          void loadAnalysis(base, m.analysis.file).then(setAnalysis).catch((e) => setAnalysisError(String(e?.message ?? e)))
+        }
         const s = normalise(m)
         setStructures(s)
         // the body surface (skin and fat) starts hidden so the anatomy inside is visible; one click shows it
@@ -290,7 +300,7 @@ export default function App() {
   const doSaveOffline = async () => {
     if (!manifest) return
     const v = manifest.volumes ?? {}
-    const files = ['manifest.json', manifest.combined.web, v.ct ?? 'ct.nii.gz', v.labels ?? 'labels.nii.gz', ...(v.ct_preview ? [v.ct_preview] : [])].map((f) => join(base, f))
+    const files = ['manifest.json', manifest.combined.web, v.ct ?? 'ct.nii.gz', v.labels ?? 'labels.nii.gz', ...(v.ct_preview ? [v.ct_preview] : []), ...(v.labels_preview ? [v.labels_preview] : [])].map((f) => join(base, f))
     setSaveState(COPY.savingOffline(0, files.length))
     try {
       const urls = [...new Set([...offlineUrls(files), ...(await builtAssets())])]
@@ -311,8 +321,8 @@ export default function App() {
   const visibleList = useMemo(() => effStates.map((s) => s.visible), [effStates])
   const hovered = hover.index >= 0 ? structures[hover.index] : null
   const sel = selected >= 0 ? structures[selected] : null
-  const ctUrl = manifest ? join(base, manifest.volumes?.ct ?? 'ct.nii.gz') : ''
-  const labelsUrl = manifest ? join(base, manifest.volumes?.labels ?? 'labels.nii.gz') : null
+  const ctUrl = manifest ? join(base, manifest.volumes?.ct_preview ?? manifest.volumes?.ct ?? 'ct.nii.gz') : ''
+  const labelsUrl = manifest ? join(base, manifest.volumes?.labels_preview ?? manifest.volumes?.labels ?? 'labels.nii.gz') : null
 
   // the simple build has no theme toggle (the viewer follows the system theme)
   void setThemePref
@@ -393,6 +403,23 @@ export default function App() {
       )}
 
       <aside id="sidebar" className="sidebar" aria-label={COPY.structures}>
+        <ProcessingReport report={manifest?.processing} />
+        {manifest?.source?.segmentation_kind && (
+          <p className="source-note" role="note">
+            {manifest.source.segmentation_kind}
+          </p>
+        )}
+        <FindingsPanel
+          analysis={analysis}
+          error={analysisError}
+          onOpenEvidence={(pointLpsMm) => {
+            setFindingFocus(pointLpsMm)
+            setSliceMode('multi')
+            setSlicesOpened(true)
+            setTab('slices')
+            if (narrow) setPanelOpen(false)
+          }}
+        />
         {structures.length > 0 && (
           <StructureList
             structures={structures}
@@ -655,6 +682,7 @@ export default function App() {
                   dragMode={dragMode}
                   dark={dark}
                   zoomSeq={zoomSeq}
+                  focusPointLps={findingFocus}
                   onStatus={setSliceStatus}
                 />
               </Suspense>

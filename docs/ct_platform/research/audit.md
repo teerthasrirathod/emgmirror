@@ -1,3 +1,5 @@
+> Historical audit from before the CT-only consolidation (2026-11-25). Paths and runtime findings below describe the previous local threshold-based CT app; that app was removed. Shared DICOM, validation, and mesh benchmark helpers were retained. Use README.md and docs/CT_TO_3D.md for the current application path.
+
 # Audit of the current CT-to-3D pipeline (read-only, 2026-11-21)
 
 Files read: `src/emgmirror/ct/{webapp,pipeline,dicom,segment,mesh,viewer,labels,explain(part)}.py`, `static/ct.html`, `static/viewer_template.html`, `docs/CT_TO_3D.md`, `docs/VALIDATION.md` (this one covers EMG simulator validation, not CT, so it doesn't apply here), `docs/EMG_ON_CT.md`, and the test names in `tests/test_ct_*.py` (151 tests). I opened no patient data. The audit made no web claims except where a URL is cited.

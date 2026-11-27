@@ -102,6 +102,22 @@ def test_failed_optional_model_gives_partial_result(run, phantom):
     assert any(m["status"] == "failed" and "simulated" in m["error"] for m in p["models"])
 
 
+def test_missing_optional_model_is_unavailable_not_failed_or_not_detected(run, phantom):
+    class MissingMoose(FakeRunner):
+        def run(self, source, image_path, image, workdir):
+            if source.startswith("moose:"):
+                raise ModuleNotFoundError("No module named 'moosez'")
+            return super().run(source, image_path, image, workdir)
+
+    res, _, out = run(cfg(profile="skeletal"), runner=MissingMoose(phantom[1]))
+    coverage = {row["anatomy_id"]: row for row in res.labels_json["qc"]["anatomy_coverage"]}
+    assert coverage["radius_left"]["status"] == "unavailable"
+    assert "moose:clin_ct_peripheral_bones" in coverage["radius_left"]["unavailable_models"]
+    assert coverage["radius_left"]["field_of_view_status"] == "not_assessed"
+    prov = json.loads((out / "provenance.json").read_text())
+    assert any(row["status"] == "unavailable" for row in prov["models"])
+
+
 def test_failed_base_model_fails_the_job(run, phantom):
     with pytest.raises(RuntimeError):
         run(runner=FakeRunner(phantom[1], fail={"totalsegmentator:total"}))

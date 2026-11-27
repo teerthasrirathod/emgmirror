@@ -1,0 +1,3 @@
+Visible Human Full-Skeleton 3D Bone Models, subject 02_Female
+https://doi.org/10.57967/hf/10464; source CT paper https://doi.org/10.1038/s41597-022-01905-2; CC BY 4.0
+BoneHub source STL surfaces and voxel reference labels, same-subject CT. No emgmirror inference. Both elbow meshes remain partial; source surfaces were imported and decimated, not geometrically repaired. This educational source is not validated for diagnosis or treatment planning.

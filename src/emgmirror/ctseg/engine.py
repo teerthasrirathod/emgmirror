@@ -20,6 +20,7 @@ import numpy as np
 import SimpleITK as sitk
 
 from . import CONTRACT_VERSION, DISCLAIMER, ENGINE_VERSION, allowlist, device, inputs, ontology, regions
+from .coverage import anatomy_coverage
 from .config import SegConfig
 from .fusion import fuse
 from .qc import structure_qc
@@ -138,13 +139,17 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
                      "weight_ids": list(a.weight_ids), "note": a.note}
             try:
                 r = runner.run(source, Path(model_input), img, work)
-            except Exception as e:  # noqa: BLE001 - a failed optional model must not sink the job
-                entry.update(status="failed", error=f"{type(e).__name__}: {str(e)[:300]}",
+            except Exception as e:  # noqa: BLE001 - an optional model must not sink the job
+                # Missing optional packages are capability gaps, not inference failures. Keep the
+                # distinction in provenance and anatomy coverage so the viewer cannot imply a negative result.
+                unavailable = isinstance(e, ModuleNotFoundError)
+                entry.update(status="unavailable" if unavailable else "failed",
+                             error=f"{type(e).__name__}: {str(e)[:300]}",
                              seconds=round(time.time() - t0, 1))
                 runs.append(entry)
                 if required:
                     raise
-                say(f"{source} failed: {entry['error']}")
+                say(f"{source} {'unavailable' if unavailable else 'failed'}: {entry['error']}")
                 return None
             entry.update(status="ok", seconds=round(r.seconds or (time.time() - t0), 1), meta=r.meta)
             runs.append(entry)
@@ -195,6 +200,10 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
         summary: dict = {}
         sq = structure_qc(fused.labels, img, scan, label_sources=fused.label_sources, part_of=fused.part_of,
                           warn_slice_mm=cfg.warn_slice_mm, metal_hu=cfg.metal_hu, summary=summary)
+        coverage = anatomy_coverage(
+            [base, *plan.sources], runs, set(sq),
+            {cid for cid, item in sq.items() if "cut_by_scan_edge" in item.get("flags", [])}, cfg.build,
+        )
         timings["qc_s"] = round(time.time() - t, 2)
 
         # 5. outputs
@@ -208,8 +217,11 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
             entries.append({"id": cid, "name": lab.name, "display": lab.display, "rgb": list(lab.rgb),
                             "snomed": lab.snomed, "source_model": max(srcs, key=srcs.get) if srcs else None,
                             "flags": q["flags"]})
-        failed = [r["source"] for r in runs if r["status"] != "ok"]
-        warnings = list(scan.warnings) + [f"model {s} failed; its structures are missing" for s in failed]
+        unavailable = [r["source"] for r in runs if r["status"] == "unavailable"]
+        failed = [r["source"] for r in runs if r["status"] == "failed"]
+        warnings = list(scan.warnings)
+        warnings.extend(f"model {s} is unavailable; its structures were not assessed" for s in unavailable)
+        warnings.extend(f"model {s} failed; its structures may be missing" for s in failed)
         grid = {"size": list(fused.labels.GetSize()), "spacing": list(fused.labels.GetSpacing()),
                 "origin": list(fused.labels.GetOrigin()), "direction": list(fused.labels.GetDirection()),
                 "frame": "LPS mm (SimpleITK); NIfTI header stores RAS"}
@@ -229,6 +241,7 @@ def segment(input_path: Path | str, out_dir: Path | str, cfg: SegConfig | None =
                            "rule": "rank-based, see emgmirror/ctseg/fusion.py and docs/ct_platform/S1_segmentation.md"},
                 "build": cfg.build,
                 "laterality": summary.get("laterality"),
+                "anatomy_coverage": coverage,
             },
         }
         if scan.series:

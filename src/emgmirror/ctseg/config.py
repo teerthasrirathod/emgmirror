@@ -4,18 +4,21 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass, field
+from importlib import resources
 from pathlib import Path
 
-# Region -> open TotalSegmentator subtasks run when that region is in the field of view.
-REGION_SUBTASKS: dict[str, list[str]] = {
-    "head": ["craniofacial_structures", "head_glands_cavities"],
-    "neck": ["headneck_bones_vessels", "headneck_muscles"],
-    "thorax": ["lung_vessels", "trunk_cavities"],
-    "abdomen": ["liver_segments", "trunk_cavities"],
-    "spine": ["vertebrae_pp_refined"],
-}
+# Backward-compatible view derived from the data registry; do not add task rules here.
+_PLANNING_CATALOG = json.loads(
+    resources.files("emgmirror.ctseg.resources").joinpath("planning_catalog.json").read_text()
+)
+REGION_SUBTASKS: dict[str, list[str]] = {}
+for _source, _task in _PLANNING_CATALOG["tasks"].items():
+    if _source.startswith("totalsegmentator:"):
+        _name = _source.split(":", 1)[1]
+        for _region in _task.get("regions", []):
+            REGION_SUBTASKS.setdefault(_region, []).append(_name)
 
-PROFILES = ("minimal", "standard")
+PROFILES = ("minimal", "standard", "skeletal")
 
 
 @dataclass
@@ -23,7 +26,8 @@ class SegConfig:
     """Settings for one run.
 
     profile: ``minimal`` runs only the base model (``total``/``total_mr``) plus ``body``; ``standard`` adds
-    the region subtasks and MOOSE. ``tasks``: explicit subtask list overriding region selection (None = by
+    the region subtasks and MOOSE; ``skeletal`` also schedules peripheral-bone segmentation without relying
+    on baseline limb markers. Existing base anatomy is retained. ``tasks``: explicit subtask list overriding region selection (None = by
     region). ``fast``: TotalSegmentator 3 mm models where they exist (``total``, ``body``); the subtasks have
     no fast model and run at their native resolution."""
 
@@ -63,6 +67,12 @@ class SegConfig:
             self.moose = not device
         if self.profile not in PROFILES:
             raise ValueError(f"profile must be one of {PROFILES}, not '{self.profile}'")
+        if self.profile == "skeletal" and (device or not self.moose):
+            raise ValueError("profile 'skeletal' requires the research build with MOOSE peripheral-bone weights enabled")
+        if self.profile == "skeletal" and "clin_ct_peripheral_bones" not in self.moose_models:
+            raise ValueError("profile 'skeletal' requires 'clin_ct_peripheral_bones' in moose_models")
+        if self.profile == "skeletal" and self.fast:
+            raise ValueError("profile 'skeletal' requires full-resolution TotalSegmentator models; remove --fast")
         if self.modality not in ("auto", "ct", "mr"):
             raise ValueError("modality must be auto, ct or mr")
         if self.device not in ("cpu", "gpu", "mps"):

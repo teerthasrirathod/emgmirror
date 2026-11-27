@@ -65,6 +65,7 @@ export const COPY = {
   area: (cm2: number) => `${fmt1(cm2)} cm² surface`,
   qcExplain: {
     Cut: 'This structure reaches the edge of the scan, so part of it is missing from the model.',
+    Near: 'This structure is within 5 mm of the scan boundary. Review the source CT because nearby anatomy may be outside the field of view.',
     Surface: 'The surface is not fully closed. Repair it before 3D printing.',
     'Self-intersecting': 'The surface crosses itself in places. Repair it before 3D printing.',
     Shape: 'The smoothed surface differs from the scan outline by up to this distance in places.',

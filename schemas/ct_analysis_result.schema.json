@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:emgmirror:schema:ct-analysis-result:1.0",
+  "title": "CT analysis result",
+  "description": "Optional finding-analysis sidecar. Findings are separate from anatomy segmentations and are research outputs, not diagnoses.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "status", "runs", "findings"],
+  "properties": {
+    "version": {"const": 1},
+    "status": {"enum": ["not_scheduled", "unavailable", "failed", "partial", "complete"]},
+    "runs": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/run"}
+    },
+    "findings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/finding"}
+    },
+    "warnings": {
+      "type": "array",
+      "items": {"type": "string", "maxLength": 500}
+    }
+  },
+  "$defs": {
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "status"],
+      "properties": {
+        "task_id": {"type": "string", "minLength": 1, "maxLength": 120},
+        "model_id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "model_version": {"type": "string", "minLength": 1, "maxLength": 120},
+        "status": {"enum": ["not_scheduled", "unavailable", "failed", "partial", "complete"]},
+        "regions": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "input_volume_id": {"const": "ct"},
+        "input_geometry_sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+        "preprocessing": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/preprocessingStep"}
+        },
+        "warnings": {"type": "array", "items": {"type": "string", "maxLength": 500}}
+      }
+    },
+    "preprocessingStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operation"],
+      "properties": {
+        "operation": {"type": "string", "minLength": 1, "maxLength": 120},
+        "source_to_model_affine": {
+          "type": "array",
+          "description": "Maps source CT voxel indices (i,j,k) to model-input voxel indices (i,j,k), including crop, orientation, and resampling.",
+          "items": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "details": {"type": "string", "maxLength": 300}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "finding_type", "region_id", "assertion", "summary", "source", "review_status", "review_coverage", "evidence"],
+      "properties": {
+        "finding_id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+        "finding_type": {"type": "string", "minLength": 1, "maxLength": 120},
+        "anatomy_id": {"type": "string", "minLength": 1, "maxLength": 120},
+        "region_id": {"type": "string", "minLength": 1, "maxLength": 120},
+        "assertion": {"enum": ["present", "absent", "uncertain", "not_assessed"]},
+        "summary": {"type": "string", "minLength": 1, "maxLength": 1000},
+        "source": {"$ref": "#/$defs/source"},
+        "review_status": {"enum": ["unreviewed", "reviewed", "disagreement", "adjudicated"]},
+        "review_coverage": {"enum": ["complete", "partial", "unknown"]},
+        "evidence": {"$ref": "#/$defs/evidence"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"assertion": {"const": "absent"}}},
+          "then": {
+            "properties": {
+              "source": {"properties": {"kind": {"const": "human"}}},
+              "review_status": {"enum": ["reviewed", "adjudicated"]},
+              "review_coverage": {"const": "complete"}
+            }
+          }
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": {"enum": ["model", "human"]},
+        "id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "version": {"type": "string", "maxLength": 120},
+        "task_id": {"type": "string", "maxLength": 120}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["volume_id", "coordinate_frame", "point_xyz_mm"],
+      "properties": {
+        "volume_id": {"const": "ct"},
+        "coordinate_frame": {"const": "LPS-mm"},
+        "point_xyz_mm": {
+          "type": "array",
+          "items": {"type": "number"},
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "Evidence point transformed back into the original canonical CT volume's LPS millimetres."
+        },
+        "extent_xyz_mm": {
+          "type": "array",
+          "items": {"type": "number", "minimum": 0},
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    }
+  }
+}

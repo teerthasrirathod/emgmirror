@@ -129,6 +129,16 @@ def _read(path: Path) -> sitk.Image:
         return _load_nifti_repaired(Path(path), 10**10, 10**10)[0]
 
 
+def _same_physical_grid(a: sitk.Image, b: sitk.Image) -> bool:
+    """Whether voxel indices refer to the same physical coordinates, not just same array shape."""
+    return (
+        a.GetSize() == b.GetSize()
+        and np.allclose(a.GetSpacing(), b.GetSpacing(), atol=1e-4, rtol=0)
+        and np.allclose(a.GetOrigin(), b.GetOrigin(), atol=1e-3, rtol=0)
+        and np.allclose(a.GetDirection(), b.GetDirection(), atol=1e-5, rtol=0)
+    )
+
+
 def score_subject(labels_path: Path, labels_json: dict, seg_dir: Path, *, surface: bool = True,
                   max_points: int = 20_000) -> list[dict]:
     """Per-structure Dice (+ surface distance) of the engine output against the reference masks."""
@@ -149,7 +159,7 @@ def score_subject(labels_path: Path, labels_json: dict, seg_dir: Path, *, surfac
         if name not in ontology.table():
             continue
         ref_img = _read(f)
-        if ref_img.GetSize() != pred_img.GetSize():  # engine resampled an oversized input
+        if not _same_physical_grid(ref_img, pred_img):
             ref_img = sitk.Resample(ref_img, pred_img, sitk.Transform(), sitk.sitkNearestNeighbor, 0)
         ref = sitk.GetArrayViewFromImage(ref_img) > 0
         ids = [ontology.label(name).id] + children.get(name, [])
@@ -174,7 +184,7 @@ def score_subject(labels_path: Path, labels_json: dict, seg_dir: Path, *, surfac
             other = seg_dir / f"{base}_{'right' if side == 'left' else 'left'}.nii.gz"
             if other.exists():
                 o_img = _read(other)
-                if o_img.GetSize() != pred_img.GetSize():
+                if not _same_physical_grid(o_img, pred_img):
                     o_img = sitk.Resample(o_img, pred_img, sitk.Transform(), sitk.sitkNearestNeighbor, 0)
                 same = inter
                 opposite = int(np.count_nonzero(tst & (sitk.GetArrayViewFromImage(o_img) > 0)))

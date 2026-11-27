@@ -10,15 +10,25 @@ Milestone S3 of [docs/ct_platform/PLAN.md](../../docs/ct_platform/PLAN.md). Resu
 
 ```bash
 npm install
-npm run sample      # downloads one public TotalSegmentator case (~60 MB) and builds public/sample/ (~10 min)
+npm run sample      # downloads one public TotalSegmentator case (~48 MB compressed) and builds public/sample/
 npm run dev         # http://localhost:5173/
 ```
 
-`npm run sample` needs Python 3 with `numpy scipy nibabel scikit-image trimesh fast_simplification`
-and network access to zenodo.org.
+`npm run sample` builds the TotalSegmentator v2.0.1 small-subset subject `s0011` from the Zenodo
+reference masks. It is a thorax, abdomen and pelvis scan, not a head-to-toe study. The 117 structures
+are dataset reference labels, not emgmirror model predictions. The sample is kept in ignored local
+data folders and is not committed. The command needs Python 3 with `numpy scipy nibabel scikit-image
+trimesh fast_simplification lxml`, Node dependencies from `npm install`, and network access to
+`zenodo.org` if the subject has not already been downloaded.
 
 Open another result folder with `?result=<url-or-path>/` (it must contain `manifest.json`).
 Add `&mode=reference` for the read-only reference mode.
+
+The upload app defaults to the research `skeletal` segmentation profile: full-resolution TotalSegmentator plus
+the MOOSE peripheral-bone task, scheduled even when baseline limb markers are absent. It is CPU-intensive and
+does not guarantee complete anatomy. Set `CTAPP_SEGMENTATION_PROFILE=standard` to use marker-planned optional
+limb processing. The skeletal profile rejects `CTAPP_FAST=1` and `CTAPP_ENABLE_MOOSE=0` at startup instead of
+silently skipping its required model path. Each result records the profile and model coverage states.
 
 ## Labelling (build-time)
 
@@ -72,4 +82,6 @@ Mesh nodes in `combined_web.glb` are matched to structures by node or mesh name 
 ## Licences
 
 three.js, React, React-Three-Fiber, drei, meshoptimizer, fflate: MIT. NiiVue: BSD-2-Clause.
-Sample data: TotalSegmentator dataset (Wasserthal et al.), CC BY 4.0, doi:10.5281/zenodo.6802613.
+Sample data: TotalSegmentator dataset small v2.0.1 (Wasserthal et al.), CC BY 4.0,
+doi:10.5281/zenodo.10047263. The sample renders reference masks and must not be described as
+segmentation performed by the emgmirror backend.

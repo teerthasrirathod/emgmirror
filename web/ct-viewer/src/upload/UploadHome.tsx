@@ -57,6 +57,10 @@ async function packFolder(files: File[]): Promise<Blob> {
   const entries: Record<string, Uint8Array> = {}
   for (const f of files) {
     const rel = (f as File & { webkitRelativePath?: string }).webkitRelativePath || f.name
+    if (entries[rel]) {
+      // Duplicate relative path – abort and surface a clear error to the user.
+      throw new Error(`Duplicate file path "${rel}" in folder upload. Rename or remove the duplicate files.`)
+    }
     entries[rel] = new Uint8Array(await f.arrayBuffer())
   }
   return new Blob([zipSync(entries, { level: 0 })], { type: 'application/zip' })
@@ -104,7 +108,10 @@ export default function UploadHome() {
       let blob: Blob
       let name: string
       const one = files[0]
-      if (!fromFolder && files.length === 1 && /\.(zip|nii|nii\.gz)$/i.test(one.name)) {
+      if (files.length === 1 && /\.(nhdr|mhd|hdr|img|raw|zraw)$/i.test(one.name)) {
+        throw new Error('This format uses paired files. Select the header and its data file together, or choose the folder containing the complete scan.')
+      }
+      if (!fromFolder && files.length === 1 && /\.(zip|nii|nii\.gz|nrrd|mha)$/i.test(one.name)) {
         blob = one
         name = one.name
       } else {
@@ -149,7 +156,7 @@ export default function UploadHome() {
               }}
             >
               <p className="drop-title">Drop the scan here</p>
-              <p className="drop-sub">a DICOM folder, a .zip of it, or a .nii / .nii.gz file</p>
+              <p className="drop-sub">DICOM folder or ZIP, NIfTI, NRRD, MetaImage, or a volume with paired files</p>
               <div className="drop-actions">
                 <button className="primary" disabled={!agreed} onClick={() => folderRef.current?.click()}>
                   Choose scan folder
@@ -167,20 +174,26 @@ export default function UploadHome() {
                 multiple
                 onChange={(e) => void start(Array.from(e.target.files ?? []), true)}
               />
-              <input ref={fileRef} type="file" hidden accept=".zip,.nii,.gz" onChange={(e) => void start(Array.from(e.target.files ?? []), false)} />
+              <input ref={fileRef} type="file" hidden multiple accept=".zip,.nii,.gz,.nrrd,.nhdr,.mha,.mhd,.hdr,.img,.raw,.zraw" onChange={(e) => void start(Array.from(e.target.files ?? []), false)} />
             </div>
             <label className="consent">
               <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
               <span>
-                I understand this is a research tool, not a medical device. The scan is processed on our server, names and other header details are removed,
-                and everything is deleted after 24 hours.
+                I understand this is a research tool, not a medical device. Uploaded source files and derived processing data are stored on the processing server. Jobs are eligible for cleanup after the configured retention period (default 24 hours); cleanup runs when a later upload creates a job. Original DICOM files may contain identifying information.
               </span>
             </label>
+
             <p className="home-try">
-              <a className="sample-link" href="/?result=demo/">
-                See a finished example
+              <a className="sample-link" href="/?result=sample/">
+                See the multi-structure CT sample
               </a>{' '}
-              (a public chest and abdomen CT, 112 structures)
+              (thorax, abdomen and pelvis only; dataset reference labels, not emgmirror output)
+            </p>
+            <p className="home-try">
+              <a className="sample-link" href="/?result=visible-human/">
+                Open the full-body skeletal CT reference
+              </a>{' '}
+              (142 labelled bones from real whole-body CT; reference data, not emgmirror inference; elbow coverage is incomplete in the source scan)
             </p>
             <p className="home-try">Works best with thin-slice CT (1–2 mm). The 3D model shows the body parts the scan covers.</p>
           </>

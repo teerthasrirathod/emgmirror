@@ -101,9 +101,9 @@ export default function StructureList(p: Props) {
                       <button className="name" onClick={() => p.onSelect(i)} onDoubleClick={() => p.onIsolate(i)} title={COPY.isolateItem(s.name)}>
                         {s.name}
                         {p.excluded.has(s.id) && <span className="tag-excluded">{COPY.excludedTag}</span>}
-                        {s.qc.cut_by_scan_edge && (
-                          <span className="dot-warn" title={COPY.qcExplain.Cut}>
-                            <span className="sr-only">{COPY.qcExplain.Cut}</span>
+                        {(s.sourceStatus === 'partial' || s.qc.cut_by_scan_edge || (typeof s.qc.minimum_scan_edge_distance_mm === 'number' && s.qc.minimum_scan_edge_distance_mm <= 5)) && (
+                          <span className="dot-warn" title={s.sourceStatus === 'partial' ? (s.sourceStatusReason ?? 'Source annotation is incomplete.') : s.qc.cut_by_scan_edge ? COPY.qcExplain.Cut : `Near scan edge: ${s.qc.minimum_scan_edge_distance_mm?.toFixed(1)} mm`}>
+                            <span className="sr-only">{s.sourceStatus === 'partial' ? 'Source annotation is incomplete.' : s.qc.cut_by_scan_edge ? COPY.qcExplain.Cut : `Near scan edge: ${s.qc.minimum_scan_edge_distance_mm?.toFixed(1)} mm`}</span>
                           </span>
                         )}
                       </button>

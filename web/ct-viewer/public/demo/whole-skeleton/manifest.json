@@ -1,0 +1,4070 @@
+{
+ "version": 1,
+ "units": "m",
+ "axes": "glTF (+Y up, from patient LPS)",
+ "lps_to_gltf": [
+  [
+   0.001,
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.001,
+   0.0
+  ],
+  [
+   0.0,
+   -0.001,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   0.0,
+   1.0
+  ]
+ ],
+ "source": {
+  "dataset": "Visible Human Full-Skeleton 3D Bone Models",
+  "doi": "10.57967/hf/10464",
+  "subject": "02_Female",
+  "mesher": "BoneHub source STL surfaces; direct LPS-to-glTF conversion with quadric decimation capped at 12000 triangles per structure. No emgmirror inference.",
+  "segmentation_kind": "BoneHub reference voxel labels and same-subject source meshes; CC BY 4.0. Both elbows remain partial in the rendered mesh; no joint geometry repair was performed. Grouped phalanges/skull/sacrum and absent hyoid/costal cartilage remain source limits."
+ },
+ "study": {
+  "study_date": null,
+  "series_description": "Visible Human whole-body CT, subject 02_Female (public dataset)",
+  "study_hash": "638c569c9a702a6c7b3f50e36fe4be8ef7acc2ab0c53d960ad19418d7f00d979"
+ },
+ "structures": [
+  {
+   "id": "calcaneus_left",
+   "name": "Calcaneus, left",
+   "label": 1,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/calcaneus_left.glb"
+   },
+   "volume_ml": 67.5,
+   "surface_area_cm2": 104.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "calcaneus_right",
+   "name": "Calcaneus, right",
+   "label": 2,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/calcaneus_right.glb"
+   },
+   "volume_ml": 69.5,
+   "surface_area_cm2": 105.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "capitate_left",
+   "name": "Capitate, left",
+   "label": 3,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/capitate_left.glb"
+   },
+   "volume_ml": 3.2,
+   "surface_area_cm2": 12.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "capitate_right",
+   "name": "Capitate, right",
+   "label": 4,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/capitate_right.glb"
+   },
+   "volume_ml": 2.7,
+   "surface_area_cm2": 11.1,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "clavicle_left",
+   "name": "Clavicle, left",
+   "label": 5,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/clavicle_left.glb"
+   },
+   "volume_ml": 26.3,
+   "surface_area_cm2": 78.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "clavicle_right",
+   "name": "Clavicle, right",
+   "label": 6,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/clavicle_right.glb"
+   },
+   "volume_ml": 30.7,
+   "surface_area_cm2": 83.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "cuboid_left",
+   "name": "Cuboid, left",
+   "label": 7,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/cuboid_left.glb"
+   },
+   "volume_ml": 11.8,
+   "surface_area_cm2": 28.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "cuboid_right",
+   "name": "Cuboid, right",
+   "label": 8,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/cuboid_right.glb"
+   },
+   "volume_ml": 11.8,
+   "surface_area_cm2": 28.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "femur_left",
+   "name": "Femur, left",
+   "label": 9,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/femur_left.glb"
+   },
+   "volume_ml": 481.7,
+   "surface_area_cm2": 582.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "femur_right",
+   "name": "Femur, right",
+   "label": 10,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/femur_right.glb"
+   },
+   "volume_ml": 488.3,
+   "surface_area_cm2": 587.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "fibula_left",
+   "name": "Fibula, left",
+   "label": 11,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/fibula_left.glb"
+   },
+   "volume_ml": 47.2,
+   "surface_area_cm2": 150.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "fibula_right",
+   "name": "Fibula, right",
+   "label": 12,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/fibula_right.glb"
+   },
+   "volume_ml": 47.3,
+   "surface_area_cm2": 150.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "hamate_left",
+   "name": "Hamate, left",
+   "label": 13,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/hamate_left.glb"
+   },
+   "volume_ml": 2.2,
+   "surface_area_cm2": 10.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "hamate_right",
+   "name": "Hamate, right",
+   "label": 14,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/hamate_right.glb"
+   },
+   "volume_ml": 2.1,
+   "surface_area_cm2": 9.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "hip_left",
+   "name": "Hip bone, left",
+   "label": 15,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/hip_left.glb"
+   },
+   "volume_ml": 357.2,
+   "surface_area_cm2": 610.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "hip_right",
+   "name": "Hip bone, right",
+   "label": 16,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/hip_right.glb"
+   },
+   "volume_ml": 355.9,
+   "surface_area_cm2": 603.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "humerus_left",
+   "name": "Humerus, left",
+   "label": 17,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/humerus_left.glb"
+   },
+   "volume_ml": 150.0,
+   "surface_area_cm2": 260.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   },
+   "source_status": "partial",
+   "source_status_reason": "Elbow articulation is unverified in the rendered source mesh. A small closest-surface distance alone does not establish complete joint geometry; the imported source surfaces have not been repaired. Treat as partial."
+  },
+  {
+   "id": "humerus_right",
+   "name": "Humerus, right",
+   "label": 18,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/humerus_right.glb"
+   },
+   "volume_ml": 138.1,
+   "surface_area_cm2": 236.4,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   },
+   "source_status": "partial",
+   "source_status_reason": "Elbow articulation is unverified in the rendered source mesh. A small closest-surface distance alone does not establish complete joint geometry; the imported source surfaces have not been repaired. Treat as partial."
+  },
+  {
+   "id": "intermediate_cuneiform_left",
+   "name": "Intermediate cuneiform, left",
+   "label": 19,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/intermediate_cuneiform_left.glb"
+   },
+   "volume_ml": 3.6,
+   "surface_area_cm2": 13.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "intermediate_cuneiform_right",
+   "name": "Intermediate cuneiform, right",
+   "label": 20,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/intermediate_cuneiform_right.glb"
+   },
+   "volume_ml": 3.3,
+   "surface_area_cm2": 12.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "lateral_cuneiform_left",
+   "name": "Lateral cuneiform, left",
+   "label": 21,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/lateral_cuneiform_left.glb"
+   },
+   "volume_ml": 4.6,
+   "surface_area_cm2": 15.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "lateral_cuneiform_right",
+   "name": "Lateral cuneiform, right",
+   "label": 22,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/lateral_cuneiform_right.glb"
+   },
+   "volume_ml": 4.8,
+   "surface_area_cm2": 16.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "lunate_left",
+   "name": "Lunate, left",
+   "label": 23,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/lunate_left.glb"
+   },
+   "volume_ml": 1.9,
+   "surface_area_cm2": 8.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "lunate_right",
+   "name": "Lunate, right",
+   "label": 24,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/lunate_right.glb"
+   },
+   "volume_ml": 1.8,
+   "surface_area_cm2": 8.1,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "medial_cuneiform_left",
+   "name": "Medial cuneiform, left",
+   "label": 25,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/medial_cuneiform_left.glb"
+   },
+   "volume_ml": 8.4,
+   "surface_area_cm2": 23.4,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "medial_cuneiform_right",
+   "name": "Medial cuneiform, right",
+   "label": 26,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/medial_cuneiform_right.glb"
+   },
+   "volume_ml": 8.6,
+   "surface_area_cm2": 23.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metacarpal_1_left",
+   "name": "Metacarpal 1, left",
+   "label": 27,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metacarpal_1_left.glb"
+   },
+   "volume_ml": 5.3,
+   "surface_area_cm2": 19.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metacarpal_1_right",
+   "name": "Metacarpal 1, right",
+   "label": 28,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metacarpal_1_right.glb"
+   },
+   "volume_ml": 5.3,
+   "surface_area_cm2": 19.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metacarpal_2_left",
+   "name": "Metacarpal 2, left",
+   "label": 29,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metacarpal_2_left.glb"
+   },
+   "volume_ml": 6.9,
+   "surface_area_cm2": 26.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metacarpal_2_right",
+   "name": "Metacarpal 2, right",
+   "label": 30,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metacarpal_2_right.glb"
+   },
+   "volume_ml": 7.0,
+   "surface_area_cm2": 26.4,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metacarpal_3_left",
+   "name": "Metacarpal 3, left",
+   "label": 31,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metacarpal_3_left.glb"
+   },
+   "volume_ml": 6.8,
+   "surface_area_cm2": 26.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metacarpal_3_right",
+   "name": "Metacarpal 3, right",
+   "label": 32,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metacarpal_3_right.glb"
+   },
+   "volume_ml": 6.9,
+   "surface_area_cm2": 26.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metacarpal_4_left",
+   "name": "Metacarpal 4, left",
+   "label": 33,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metacarpal_4_left.glb"
+   },
+   "volume_ml": 4.1,
+   "surface_area_cm2": 18.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metacarpal_4_right",
+   "name": "Metacarpal 4, right",
+   "label": 34,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metacarpal_4_right.glb"
+   },
+   "volume_ml": 3.9,
+   "surface_area_cm2": 17.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metacarpal_5_left",
+   "name": "Metacarpal 5, left",
+   "label": 35,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metacarpal_5_left.glb"
+   },
+   "volume_ml": 3.9,
+   "surface_area_cm2": 17.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metacarpal_5_right",
+   "name": "Metacarpal 5, right",
+   "label": 36,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metacarpal_5_right.glb"
+   },
+   "volume_ml": 4.0,
+   "surface_area_cm2": 17.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metatarsal_1_left",
+   "name": "Metatarsal 1, left",
+   "label": 37,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metatarsal_1_left.glb"
+   },
+   "volume_ml": 14.5,
+   "surface_area_cm2": 41.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metatarsal_1_right",
+   "name": "Metatarsal 1, right",
+   "label": 38,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metatarsal_1_right.glb"
+   },
+   "volume_ml": 15.8,
+   "surface_area_cm2": 45.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metatarsal_2_left",
+   "name": "Metatarsal 2, left",
+   "label": 39,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metatarsal_2_left.glb"
+   },
+   "volume_ml": 7.2,
+   "surface_area_cm2": 28.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metatarsal_2_right",
+   "name": "Metatarsal 2, right",
+   "label": 40,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metatarsal_2_right.glb"
+   },
+   "volume_ml": 6.7,
+   "surface_area_cm2": 27.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metatarsal_3_left",
+   "name": "Metatarsal 3, left",
+   "label": 41,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metatarsal_3_left.glb"
+   },
+   "volume_ml": 6.0,
+   "surface_area_cm2": 26.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metatarsal_3_right",
+   "name": "Metatarsal 3, right",
+   "label": 42,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metatarsal_3_right.glb"
+   },
+   "volume_ml": 6.4,
+   "surface_area_cm2": 26.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metatarsal_4_left",
+   "name": "Metatarsal 4, left",
+   "label": 43,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metatarsal_4_left.glb"
+   },
+   "volume_ml": 6.0,
+   "surface_area_cm2": 24.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metatarsal_4_right",
+   "name": "Metatarsal 4, right",
+   "label": 44,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metatarsal_4_right.glb"
+   },
+   "volume_ml": 6.1,
+   "surface_area_cm2": 25.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metatarsal_5_left",
+   "name": "Metatarsal 5, left",
+   "label": 45,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metatarsal_5_left.glb"
+   },
+   "volume_ml": 6.9,
+   "surface_area_cm2": 27.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "metatarsal_5_right",
+   "name": "Metatarsal 5, right",
+   "label": 46,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/metatarsal_5_right.glb"
+   },
+   "volume_ml": 6.8,
+   "surface_area_cm2": 26.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "navicular_left",
+   "name": "Navicular, left",
+   "label": 47,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/navicular_left.glb"
+   },
+   "volume_ml": 9.5,
+   "surface_area_cm2": 26.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "navicular_right",
+   "name": "Navicular, right",
+   "label": 48,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/navicular_right.glb"
+   },
+   "volume_ml": 8.6,
+   "surface_area_cm2": 25.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "patella_left",
+   "name": "Patella, left",
+   "label": 49,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/patella_left.glb"
+   },
+   "volume_ml": 22.3,
+   "surface_area_cm2": 44.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "patella_right",
+   "name": "Patella, right",
+   "label": 50,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/patella_right.glb"
+   },
+   "volume_ml": 22.9,
+   "surface_area_cm2": 44.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_foot_1_left",
+   "name": "Phalange foot 1, left",
+   "label": 51,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_foot_1_left.glb"
+   },
+   "volume_ml": 8.5,
+   "surface_area_cm2": 31.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_foot_1_right",
+   "name": "Phalange foot 1, right",
+   "label": 52,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_foot_1_right.glb"
+   },
+   "volume_ml": 8.0,
+   "surface_area_cm2": 29.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_foot_2_left",
+   "name": "Phalange foot 2, left",
+   "label": 53,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_foot_2_left.glb"
+   },
+   "volume_ml": 2.9,
+   "surface_area_cm2": 15.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_foot_2_right",
+   "name": "Phalange foot 2, right",
+   "label": 54,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_foot_2_right.glb"
+   },
+   "volume_ml": 2.6,
+   "surface_area_cm2": 14.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_foot_3_left",
+   "name": "Phalange foot 3, left",
+   "label": 55,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_foot_3_left.glb"
+   },
+   "volume_ml": 2.1,
+   "surface_area_cm2": 12.4,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_foot_3_right",
+   "name": "Phalange foot 3, right",
+   "label": 56,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_foot_3_right.glb"
+   },
+   "volume_ml": 2.3,
+   "surface_area_cm2": 13.4,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_foot_4_left",
+   "name": "Phalange foot 4, left",
+   "label": 57,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_foot_4_left.glb"
+   },
+   "volume_ml": 1.7,
+   "surface_area_cm2": 10.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_foot_4_right",
+   "name": "Phalange foot 4, right",
+   "label": 58,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_foot_4_right.glb"
+   },
+   "volume_ml": 1.9,
+   "surface_area_cm2": 11.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_foot_5_left",
+   "name": "Phalange foot 5, left",
+   "label": 59,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_foot_5_left.glb"
+   },
+   "volume_ml": 1.9,
+   "surface_area_cm2": 11.1,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_foot_5_right",
+   "name": "Phalange foot 5, right",
+   "label": 60,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_foot_5_right.glb"
+   },
+   "volume_ml": 1.7,
+   "surface_area_cm2": 10.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_hand_1_left",
+   "name": "Phalange hand 1, left",
+   "label": 61,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_hand_1_left.glb"
+   },
+   "volume_ml": 3.9,
+   "surface_area_cm2": 18.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_hand_1_right",
+   "name": "Phalange hand 1, right",
+   "label": 62,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_hand_1_right.glb"
+   },
+   "volume_ml": 3.8,
+   "surface_area_cm2": 17.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_hand_2_left",
+   "name": "Phalange hand 2, left",
+   "label": 63,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_hand_2_left.glb"
+   },
+   "volume_ml": 5.7,
+   "surface_area_cm2": 26.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_hand_2_right",
+   "name": "Phalange hand 2, right",
+   "label": 64,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_hand_2_right.glb"
+   },
+   "volume_ml": 6.0,
+   "surface_area_cm2": 27.1,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_hand_3_left",
+   "name": "Phalange hand 3, left",
+   "label": 65,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_hand_3_left.glb"
+   },
+   "volume_ml": 6.9,
+   "surface_area_cm2": 30.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_hand_3_right",
+   "name": "Phalange hand 3, right",
+   "label": 66,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_hand_3_right.glb"
+   },
+   "volume_ml": 6.6,
+   "surface_area_cm2": 29.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_hand_4_left",
+   "name": "Phalange hand 4, left",
+   "label": 67,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_hand_4_left.glb"
+   },
+   "volume_ml": 5.9,
+   "surface_area_cm2": 27.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_hand_4_right",
+   "name": "Phalange hand 4, right",
+   "label": 68,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_hand_4_right.glb"
+   },
+   "volume_ml": 5.5,
+   "surface_area_cm2": 26.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_hand_5_left",
+   "name": "Phalange hand 5, left",
+   "label": 69,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_hand_5_left.glb"
+   },
+   "volume_ml": 3.5,
+   "surface_area_cm2": 19.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "phalange_hand_5_right",
+   "name": "Phalange hand 5, right",
+   "label": 70,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/phalange_hand_5_right.glb"
+   },
+   "volume_ml": 3.8,
+   "surface_area_cm2": 19.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "pisiform_left",
+   "name": "Pisiform, left",
+   "label": 71,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/pisiform_left.glb"
+   },
+   "volume_ml": 0.8,
+   "surface_area_cm2": 4.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "pisiform_right",
+   "name": "Pisiform, right",
+   "label": 72,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/pisiform_right.glb"
+   },
+   "volume_ml": 0.9,
+   "surface_area_cm2": 4.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "radius_left",
+   "name": "Radius, left",
+   "label": 73,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/radius_left.glb"
+   },
+   "volume_ml": 37.9,
+   "surface_area_cm2": 110.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   },
+   "source_status": "partial",
+   "source_status_reason": "Elbow articulation is unverified in the rendered source mesh. A small closest-surface distance alone does not establish complete joint geometry; the imported source surfaces have not been repaired. Treat as partial."
+  },
+  {
+   "id": "radius_right",
+   "name": "Radius, right",
+   "label": 74,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/radius_right.glb"
+   },
+   "volume_ml": 31.5,
+   "surface_area_cm2": 96.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   },
+   "source_status": "partial",
+   "source_status_reason": "Elbow articulation is unverified in the rendered source mesh. A small closest-surface distance alone does not establish complete joint geometry; the imported source surfaces have not been repaired. Treat as partial."
+  },
+  {
+   "id": "rib_10_left",
+   "name": "Rib 10, left",
+   "label": 75,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_10_left.glb"
+   },
+   "volume_ml": 14.7,
+   "surface_area_cm2": 72.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_10_right",
+   "name": "Rib 10, right",
+   "label": 76,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_10_right.glb"
+   },
+   "volume_ml": 11.9,
+   "surface_area_cm2": 65.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_11_left",
+   "name": "Rib 11, left",
+   "label": 77,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_11_left.glb"
+   },
+   "volume_ml": 9.3,
+   "surface_area_cm2": 53.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_11_right",
+   "name": "Rib 11, right",
+   "label": 78,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_11_right.glb"
+   },
+   "volume_ml": 9.9,
+   "surface_area_cm2": 56.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_12_left",
+   "name": "Rib 12, left",
+   "label": 79,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_12_left.glb"
+   },
+   "volume_ml": 4.9,
+   "surface_area_cm2": 32.1,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_12_right",
+   "name": "Rib 12, right",
+   "label": 80,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_12_right.glb"
+   },
+   "volume_ml": 6.9,
+   "surface_area_cm2": 40.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_1_left",
+   "name": "Rib 1, left",
+   "label": 81,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_1_left.glb"
+   },
+   "volume_ml": 9.4,
+   "surface_area_cm2": 51.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_1_right",
+   "name": "Rib 1, right",
+   "label": 82,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_1_right.glb"
+   },
+   "volume_ml": 10.3,
+   "surface_area_cm2": 55.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_2_left",
+   "name": "Rib 2, left",
+   "label": 83,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_2_left.glb"
+   },
+   "volume_ml": 12.2,
+   "surface_area_cm2": 65.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_2_right",
+   "name": "Rib 2, right",
+   "label": 84,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_2_right.glb"
+   },
+   "volume_ml": 11.9,
+   "surface_area_cm2": 62.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_3_left",
+   "name": "Rib 3, left",
+   "label": 85,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_3_left.glb"
+   },
+   "volume_ml": 13.1,
+   "surface_area_cm2": 72.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_3_right",
+   "name": "Rib 3, right",
+   "label": 86,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_3_right.glb"
+   },
+   "volume_ml": 13.0,
+   "surface_area_cm2": 70.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_4_left",
+   "name": "Rib 4, left",
+   "label": 87,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_4_left.glb"
+   },
+   "volume_ml": 15.1,
+   "surface_area_cm2": 78.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_4_right",
+   "name": "Rib 4, right",
+   "label": 88,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_4_right.glb"
+   },
+   "volume_ml": 15.0,
+   "surface_area_cm2": 76.4,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_5_left",
+   "name": "Rib 5, left",
+   "label": 89,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_5_left.glb"
+   },
+   "volume_ml": 18.0,
+   "surface_area_cm2": 84.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_5_right",
+   "name": "Rib 5, right",
+   "label": 90,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_5_right.glb"
+   },
+   "volume_ml": 18.1,
+   "surface_area_cm2": 82.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_6_left",
+   "name": "Rib 6, left",
+   "label": 91,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_6_left.glb"
+   },
+   "volume_ml": 18.4,
+   "surface_area_cm2": 84.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_6_right",
+   "name": "Rib 6, right",
+   "label": 92,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_6_right.glb"
+   },
+   "volume_ml": 19.4,
+   "surface_area_cm2": 86.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_7_left",
+   "name": "Rib 7, left",
+   "label": 93,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_7_left.glb"
+   },
+   "volume_ml": 21.7,
+   "surface_area_cm2": 93.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_7_right",
+   "name": "Rib 7, right",
+   "label": 94,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_7_right.glb"
+   },
+   "volume_ml": 21.9,
+   "surface_area_cm2": 93.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_8_left",
+   "name": "Rib 8, left",
+   "label": 95,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_8_left.glb"
+   },
+   "volume_ml": 20.6,
+   "surface_area_cm2": 90.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_8_right",
+   "name": "Rib 8, right",
+   "label": 96,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_8_right.glb"
+   },
+   "volume_ml": 18.7,
+   "surface_area_cm2": 88.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_9_left",
+   "name": "Rib 9, left",
+   "label": 97,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_9_left.glb"
+   },
+   "volume_ml": 17.6,
+   "surface_area_cm2": 83.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "rib_9_right",
+   "name": "Rib 9, right",
+   "label": 98,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/rib_9_right.glb"
+   },
+   "volume_ml": 17.5,
+   "surface_area_cm2": 83.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "sacrum",
+   "name": "Sacrum",
+   "label": 99,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/sacrum.glb"
+   },
+   "volume_ml": 230.9,
+   "surface_area_cm2": 404.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "scaphoid_left",
+   "name": "Scaphoid, left",
+   "label": 100,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/scaphoid_left.glb"
+   },
+   "volume_ml": 2.7,
+   "surface_area_cm2": 11.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "scaphoid_right",
+   "name": "Scaphoid, right",
+   "label": 101,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/scaphoid_right.glb"
+   },
+   "volume_ml": 2.7,
+   "surface_area_cm2": 10.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "scapula_left",
+   "name": "Scapula, left",
+   "label": 102,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/scapula_left.glb"
+   },
+   "volume_ml": 81.1,
+   "surface_area_cm2": 312.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "scapula_right",
+   "name": "Scapula, right",
+   "label": 103,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/scapula_right.glb"
+   },
+   "volume_ml": 79.0,
+   "surface_area_cm2": 313.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "skull_cranial_maxilla",
+   "name": "Skull cranial maxilla",
+   "label": 104,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/skull_cranial_maxilla.glb"
+   },
+   "volume_ml": 610.4,
+   "surface_area_cm2": 1773.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "skull_mandible",
+   "name": "Skull mandible",
+   "label": 105,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/skull_mandible.glb"
+   },
+   "volume_ml": 48.1,
+   "surface_area_cm2": 165.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "sternum",
+   "name": "Sternum",
+   "label": 106,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/sternum.glb"
+   },
+   "volume_ml": 50.6,
+   "surface_area_cm2": 140.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "talus_left",
+   "name": "Talus, left",
+   "label": 107,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/talus_left.glb"
+   },
+   "volume_ml": 34.7,
+   "surface_area_cm2": 65.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "talus_right",
+   "name": "Talus, right",
+   "label": 108,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/talus_right.glb"
+   },
+   "volume_ml": 34.4,
+   "surface_area_cm2": 64.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "tibia_left",
+   "name": "Tibia, left",
+   "label": 109,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/tibia_left.glb"
+   },
+   "volume_ml": 280.8,
+   "surface_area_cm2": 386.1,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "tibia_right",
+   "name": "Tibia, right",
+   "label": 110,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/tibia_right.glb"
+   },
+   "volume_ml": 283.0,
+   "surface_area_cm2": 390.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "trapezium_left",
+   "name": "Trapezium, left",
+   "label": 111,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/trapezium_left.glb"
+   },
+   "volume_ml": 2.3,
+   "surface_area_cm2": 9.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "trapezium_right",
+   "name": "Trapezium, right",
+   "label": 112,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/trapezium_right.glb"
+   },
+   "volume_ml": 1.8,
+   "surface_area_cm2": 8.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "trapezoid_left",
+   "name": "Trapezoid, left",
+   "label": 113,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/trapezoid_left.glb"
+   },
+   "volume_ml": 0.7,
+   "surface_area_cm2": 3.8,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "trapezoid_right",
+   "name": "Trapezoid, right",
+   "label": 114,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/trapezoid_right.glb"
+   },
+   "volume_ml": 1.1,
+   "surface_area_cm2": 5.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "triquetrum_left",
+   "name": "Triquetrum, left",
+   "label": 115,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/triquetrum_left.glb"
+   },
+   "volume_ml": 1.5,
+   "surface_area_cm2": 6.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "triquetrum_right",
+   "name": "Triquetrum, right",
+   "label": 116,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/triquetrum_right.glb"
+   },
+   "volume_ml": 1.4,
+   "surface_area_cm2": 6.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "ulna_left",
+   "name": "Ulna, left",
+   "label": 117,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/ulna_left.glb"
+   },
+   "volume_ml": 41.4,
+   "surface_area_cm2": 122.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   },
+   "source_status": "partial",
+   "source_status_reason": "Elbow articulation is unverified in the rendered source mesh. A small closest-surface distance alone does not establish complete joint geometry; the imported source surfaces have not been repaired. Treat as partial."
+  },
+  {
+   "id": "ulna_right",
+   "name": "Ulna, right",
+   "label": 118,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/ulna_right.glb"
+   },
+   "volume_ml": 17.7,
+   "surface_area_cm2": 63.4,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   },
+   "source_status": "partial",
+   "source_status_reason": "Elbow articulation is unverified in the rendered source mesh. A small closest-surface distance alone does not establish complete joint geometry; the imported source surfaces have not been repaired. Treat as partial."
+  },
+  {
+   "id": "vertebra_c1",
+   "name": "Vertebra C1",
+   "label": 119,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_c1.glb"
+   },
+   "volume_ml": 15.9,
+   "surface_area_cm2": 65.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_c2",
+   "name": "Vertebra C2",
+   "label": 120,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_c2.glb"
+   },
+   "volume_ml": 16.2,
+   "surface_area_cm2": 59.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_c3",
+   "name": "Vertebra C3",
+   "label": 121,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_c3.glb"
+   },
+   "volume_ml": 9.3,
+   "surface_area_cm2": 43.1,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_c4",
+   "name": "Vertebra C4",
+   "label": 122,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_c4.glb"
+   },
+   "volume_ml": 8.9,
+   "surface_area_cm2": 43.1,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_c5",
+   "name": "Vertebra C5",
+   "label": 123,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_c5.glb"
+   },
+   "volume_ml": 9.9,
+   "surface_area_cm2": 49.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_c6",
+   "name": "Vertebra C6",
+   "label": 124,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_c6.glb"
+   },
+   "volume_ml": 11.3,
+   "surface_area_cm2": 51.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_c7",
+   "name": "Vertebra C7",
+   "label": 125,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_c7.glb"
+   },
+   "volume_ml": 15.9,
+   "surface_area_cm2": 60.4,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_l1",
+   "name": "Vertebra L1",
+   "label": 126,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_l1.glb"
+   },
+   "volume_ml": 48.6,
+   "surface_area_cm2": 116.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_l2",
+   "name": "Vertebra L2",
+   "label": 127,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_l2.glb"
+   },
+   "volume_ml": 54.9,
+   "surface_area_cm2": 134.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_l3",
+   "name": "Vertebra L3",
+   "label": 128,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_l3.glb"
+   },
+   "volume_ml": 63.0,
+   "surface_area_cm2": 151.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_l4",
+   "name": "Vertebra L4",
+   "label": 129,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_l4.glb"
+   },
+   "volume_ml": 67.0,
+   "surface_area_cm2": 154.3,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_l5",
+   "name": "Vertebra L5",
+   "label": 130,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_l5.glb"
+   },
+   "volume_ml": 63.2,
+   "surface_area_cm2": 147.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_l6",
+   "name": "Vertebra L6",
+   "label": 131,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_l6.glb"
+   },
+   "volume_ml": 63.7,
+   "surface_area_cm2": 149.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t1",
+   "name": "Vertebra T1",
+   "label": 132,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t1.glb"
+   },
+   "volume_ml": 20.1,
+   "surface_area_cm2": 66.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t10",
+   "name": "Vertebra T10",
+   "label": 133,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t10.glb"
+   },
+   "volume_ml": 33.3,
+   "surface_area_cm2": 89.9,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t11",
+   "name": "Vertebra T11",
+   "label": 134,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t11.glb"
+   },
+   "volume_ml": 36.6,
+   "surface_area_cm2": 93.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t12",
+   "name": "Vertebra T12",
+   "label": 135,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t12.glb"
+   },
+   "volume_ml": 41.3,
+   "surface_area_cm2": 100.1,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t2",
+   "name": "Vertebra T2",
+   "label": 136,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t2.glb"
+   },
+   "volume_ml": 20.8,
+   "surface_area_cm2": 69.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t3",
+   "name": "Vertebra T3",
+   "label": 137,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t3.glb"
+   },
+   "volume_ml": 21.2,
+   "surface_area_cm2": 71.0,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t4",
+   "name": "Vertebra T4",
+   "label": 138,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t4.glb"
+   },
+   "volume_ml": 20.8,
+   "surface_area_cm2": 70.7,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t5",
+   "name": "Vertebra T5",
+   "label": 139,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t5.glb"
+   },
+   "volume_ml": 21.4,
+   "surface_area_cm2": 71.2,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t6",
+   "name": "Vertebra T6",
+   "label": 140,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t6.glb"
+   },
+   "volume_ml": 23.0,
+   "surface_area_cm2": 73.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t7",
+   "name": "Vertebra T7",
+   "label": 141,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t7.glb"
+   },
+   "volume_ml": 24.7,
+   "surface_area_cm2": 76.4,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t8",
+   "name": "Vertebra T8",
+   "label": 142,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t8.glb"
+   },
+   "volume_ml": 26.8,
+   "surface_area_cm2": 80.5,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  },
+  {
+   "id": "vertebra_t9",
+   "name": "Vertebra T9",
+   "label": 143,
+   "display": {
+    "system": "skeleton",
+    "material": "bone"
+   },
+   "rgb": [
+    241,
+    233,
+    214
+   ],
+   "files": {
+    "glb": "glb/vertebra_t9.glb"
+   },
+   "volume_ml": 27.7,
+   "surface_area_cm2": 80.6,
+   "qc": {
+    "watertight": true,
+    "self_intersections": null,
+    "hd95_mm": null,
+    "mean_dist_mm": null,
+    "volume_change_pct": null,
+    "cut_by_scan_edge": null,
+    "minimum_scan_edge_distance_mm": null
+   }
+  }
+ ],
+ "combined": {
+  "web": "combined_web.glb"
+ },
+ "volumes": {
+  "ct": "ct.nii.gz",
+  "labels": "labels_preview.nii.gz",
+  "ct_preview": "ct_preview.nii.gz",
+  "labels_preview": "labels_preview.nii.gz"
+ }
+}

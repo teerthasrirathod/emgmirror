@@ -6,9 +6,17 @@ builder pull one subject (about 30 MB) without downloading the whole archive.
 from __future__ import annotations
 
 import io
+import concurrent.futures
+import struct
+import time
+import urllib.error
 import urllib.request
+import zlib
+import binascii
+from pathlib import Path, PurePosixPath
+import zipfile
 
-BLOCK = 1 << 20  # 1 MiB
+BLOCK = 2 << 20  # Zenodo reliably returns 2 MiB range responses on this dataset.
 
 
 class HttpRangeFile(io.RawIOBase):
@@ -90,3 +98,68 @@ class HttpRangeFile(io.RawIOBase):
         data = self.read(len(buf))
         buf[: len(data)] = data
         return len(data)
+
+
+def extract_members_parallel(zf: zipfile.ZipFile, members: list[zipfile.ZipInfo], root: Path) -> None:
+    """Extract selected remote ZIP members concurrently using bounded range requests."""
+    remote = zf.fp
+    if not isinstance(remote, HttpRangeFile):
+        raise TypeError("parallel extraction requires an HttpRangeFile-backed ZIP")
+    chunk_size = 2 << 20
+
+    def get_range(start: int, end: int) -> bytes:
+        request = urllib.request.Request(
+            remote.url,
+            headers={"Range": f"bytes={start}-{end - 1}", "User-Agent": remote.ua},
+        )
+        for attempt in range(7):
+            try:
+                with urllib.request.urlopen(request, timeout=180) as response:
+                    data = response.read()
+                    if response.status != 206 or len(data) != end - start:
+                        raise OSError(f"short or invalid range response for bytes {start}-{end - 1}")
+                    return data
+            except urllib.error.HTTPError as exc:
+                if exc.code != 429 or attempt == 6:
+                    raise
+                time.sleep(min(60, int(exc.headers.get("Retry-After", 5)) * (attempt + 1)))
+            except (OSError, TimeoutError):
+                if attempt == 6:
+                    raise
+                time.sleep(2 * (attempt + 1))
+        raise OSError("range request retries exhausted")
+
+    member_starts = []
+    for info in members:
+        remote.seek(info.header_offset)
+        header = remote.read(30)
+        if len(header) != 30 or header[:4] != b"PK\x03\x04":
+            raise OSError(f"invalid local ZIP header: {info.filename}")
+        name_len, extra_len = struct.unpack_from("<HH", header, 26)
+        start = info.header_offset + 30 + name_len + extra_len
+        member_starts.append((info, start))
+
+    def extract(item: tuple[zipfile.ZipInfo, int]) -> None:
+        info, start = item
+        ranges = [
+            (offset, min(offset + chunk_size, info.compress_size))
+            for offset in range(0, info.compress_size, chunk_size)
+        ]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+            chunks = list(pool.map(lambda pair: get_range(start + pair[0], start + pair[1]), ranges))
+        compressed = b"".join(chunks)
+        if info.compress_type == zipfile.ZIP_DEFLATED:
+            data = zlib.decompress(compressed, -15)
+        elif info.compress_type == zipfile.ZIP_STORED:
+            data = compressed
+        else:
+            raise OSError(f"unsupported ZIP compression method {info.compress_type}")
+        if len(data) != info.file_size or (binascii.crc32(data) & 0xFFFFFFFF) != info.CRC:
+            raise OSError(f"size or checksum mismatch: {info.filename}")
+        rel = PurePosixPath(info.filename)
+        target = root.joinpath(*rel.parts)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+        list(pool.map(extract, member_starts))

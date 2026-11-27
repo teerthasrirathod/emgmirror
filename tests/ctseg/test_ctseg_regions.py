@@ -1,7 +1,9 @@
 import numpy as np
 
 from emgmirror.ctseg.config import SegConfig
-from emgmirror.ctseg.regions import detect, make_plan, volumes_ml
+from emgmirror.ctseg.allowlist import allowed
+from emgmirror.ctseg.ontology import task_classes, table
+from emgmirror.ctseg.regions import _markers, _planning_catalog, detect, make_plan, volumes_ml
 
 BASE = "totalsegmentator:total"
 
@@ -38,6 +40,18 @@ def test_limbs_and_lumbar_trigger_moose():
 
 def test_tiny_blobs_do_not_count_as_a_region():
     assert detect({"brain": 1.0, "liver": 4.9}, SegConfig()) == {}
+
+
+def test_planning_catalog_references_real_model_capabilities_and_anatomy():
+    catalog = _planning_catalog()
+    providers = task_classes()
+    anatomies = set(table())
+    for source in catalog["tasks"]:
+        assert source in providers, f"{source} has no model-to-anatomy capability map"
+        allowed(source, "research")
+    for region, patterns in _markers().items():
+        assert patterns, region
+        assert any(pattern.match(name) for pattern in patterns for name in anatomies), region
 
 
 def test_minimal_profile_mr_and_explicit_tasks():
